@@ -4,6 +4,7 @@ import net.cyriaca.riina.misc.iriina.intralism.data.Checkpoint;
 import net.cyriaca.riina.misc.iriina.intralism.data.MapEvent;
 import net.cyriaca.riina.misc.iriina.intralism.data.MapResource;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,8 +32,11 @@ public class ReversibleOperation {
     private List<Float> oldTimeList = null;
     private List<Integer> timedMetaIds = null;
     private int timedMetaId = -1;
+    private long timestamp = -1L;
+    private String operationKey = null;
 
     public ReversibleOperation(){
+    	timestamp = Instant.now().toEpochMilli();
     }
 
     public static ReversibleOperation createResourceModOperation(MapResource oldRes, MapResource res) {
@@ -272,5 +276,13 @@ public class ReversibleOperation {
         CHECKPOINT_MOVE,
         EVENT_DATA_MOD,
         EVENT_GROUP_DATA_MOD
+    }
+    
+    public long getTimestamp(){
+    	return timestamp;
+    }
+    
+    public String getOperationKey(){
+    	return operationKey;
     }
 }

@@ -128,7 +128,7 @@ public class AboutFrame extends JFrame implements IViewFrame, LocaleChangeListen
         tabbedPane.addTab(l.getKey(KEY_FRAME_ABOUT_TEXT_LICENSES_HEADER), licensesTab);
         aboutArea.setText(l.getKey(KEY_FRAME_ABOUT_TEXT_ABOUT));
         if (!aboutArea.getText().contains("CorruptTurret") || !contactArea.getText().contains("\nhttps://discord.gg/425Me2c\n")) {
-            aboutArea.setText("Original program by CorruptTurret\nv0.0.8 maintenance by Riina\nv0.0.9+ hosted on GitHub at\thttps://github.com/cyriaca-technologies/IRiina");
+            aboutArea.setText("Original program by CorruptTurret\nv0.0.8 maintenance by Riina\nv0.0.9+ hosted on GitHub at\nhttps://github.com/cyriaca-technologies/IRiina");
             contactArea.setText("Discord:\nhttps://discord.gg/425Me2c\n");
         }
         contactArea.setText(l.getKey(KEY_FRAME_ABOUT_TEXT_CONTACT));

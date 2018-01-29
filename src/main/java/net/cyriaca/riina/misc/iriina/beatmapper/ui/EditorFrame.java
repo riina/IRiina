@@ -845,9 +845,8 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
                 for (MapEvent e : realSelection) {
                     e.setTimeLight(e.getTime() + deltaTime);
                     TimingProperty tp = e.getTimingProperty();
-                    if (tp != null) {
+                    if (tp != null)
                         eset.addAll(tp.setRootTimeLight(tp.getRootTime()));
-                    }
                     eset.add(e);
                 }
                 mapData.repositionEventsFinalize(new ArrayList<>(eset));

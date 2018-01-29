@@ -16,3 +16,6 @@ out/
 classes/
 *.iml
 .DS_Store
+.classpath
+.project
+.settings/

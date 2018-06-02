@@ -1,0 +1,12 @@
+[
+	{
+		"id": "EN_us",
+		"localizedLocaleName": "English",
+		"resourcePath": "lang/locales/english.json"
+	},
+	{
+		"id": "XX_xx",
+		"localizedLocaleName": "String check",
+		"resourcePath": "lang/locales/stringcheck.json"
+	}
+]

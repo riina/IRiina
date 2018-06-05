@@ -56,6 +56,12 @@ public abstract class MapEvent implements Comparable<MapEvent> {
         setTimeRaw(time);
     }
 
+    public final void setTimeLight(float time) {
+        if (timedEventProperty != null && timedEventProperty.getTimingEventId() != TimedEventProperty.NO_TIMING_EVENT)
+            timedEventProperty.setTimingEventId(TimedEventProperty.NO_TIMING_EVENT);
+        setTimeRawPart1(time);
+    }
+
     public final void revertTime() {
         if (pastTimes.size() != 0) {
             setTimeRaw(pastTimes.remove(pastTimes.size() - 1));
@@ -95,6 +101,13 @@ public abstract class MapEvent implements Comparable<MapEvent> {
     public final void setTimeRaw(float time) {
         if (parent != null)
             parent.repositionEvent(this, time);
+        else
+            internalSetTime(time);
+    }
+
+    public final void setTimeRawPart1(float time) {
+        if (parent != null)
+            parent.repositionEventStart(this, time);
         else
             internalSetTime(time);
     }
@@ -234,8 +247,6 @@ public abstract class MapEvent implements Comparable<MapEvent> {
     public abstract String getEventExtraData();
 
     public abstract void setEventExtraData(String extraData);
-
-    public abstract void propertyUpdated(Property property);
 
     public abstract void addMetaChild(MapEvent event);
 

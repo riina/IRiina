@@ -1,6 +1,6 @@
 package net.cyriaca.riina.misc.iriina.generic.ui.item;
 
-import net.cyriaca.riina.misc.iriina.editor.DataManager;
+import net.cyriaca.riina.misc.iriina.beatmapper.DataManager;
 import net.cyriaca.riina.misc.iriina.generic.FileDialogs;
 
 import javax.swing.*;

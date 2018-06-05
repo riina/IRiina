@@ -53,9 +53,6 @@ public class SetBGColorEvent extends MapEvent {
     public void setEventExtraData(String extraData) {
     }
 
-    public void propertyUpdated(Property property) {
-    }
-
     public void addMetaChild(MapEvent event) {
     }
 

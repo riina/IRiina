@@ -1,9 +1,12 @@
 package net.cyriaca.riina.misc.iriina.intralism.data;
 
+import org.tritonus.share.ArraySet;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
+import java.util.function.Function;
 
 public class MapData {
 
@@ -37,6 +40,12 @@ public class MapData {
 
     private Map<Integer, List<MapEvent>> eventsByMetaId;
     private Map<Integer, MapEvent> metaEventsByMetaId;
+    private Map<Integer, MapEvent> timingEventsByMetaId;
+    private Map<MapEvent.Type, Set<MapEvent>> eventSetByType;
+    private Map<MapEvent.Type, List<MapEvent>> eventListByType;
+    private Map<MapEvent, Integer> offsetsByEvent;
+    private Set<MapEvent> timedEventSet;
+    private List<MapEvent> timedEventList;
     private MapEvent onlyEndEvent;
     private int nextMetaId;
 
@@ -60,6 +69,12 @@ public class MapData {
         eventList = new ArrayList<>();
         eventsByMetaId = new TreeMap<>();
         metaEventsByMetaId = new TreeMap<>();
+        timingEventsByMetaId = new TreeMap<>();
+        eventSetByType = new TreeMap<>();
+        eventListByType = new TreeMap<>();
+        offsetsByEvent = new TreeMap<>();
+        timedEventSet = new ArraySet<>();
+        timedEventList = new ArrayList<>();
         onlyEndEvent = null;
         nextMetaId = 0;
     }
@@ -341,6 +356,18 @@ public class MapData {
                     evt.addMetaChild(e);
                     eventSet.remove(e);
                     eventList.remove(e);
+                    Set<MapEvent> ts = eventSetByType.get(e.getType());
+                    if (ts != null) {
+                        ts.remove(e);
+                        List<MapEvent> tl = eventListByType.get(evt.getType());
+                        tl.clear();
+                        tl.addAll(ts);
+                    }
+                    if (e.getTimedEventProperty() != null) {
+                        timedEventSet.remove(e);
+                        timedEventList.clear();
+                        timedEventList.addAll(timedEventSet);
+                    }
                     e.setParent(null);
                 }
             metaEventsByMetaId.put(evt.getMetaId(), evt);
@@ -363,17 +390,36 @@ public class MapData {
         }
         if (useEvent) {
             TimingProperty tp = evt.getTimingProperty();
-            if (tp != null)
+            if (tp != null) {
                 resyncExistingTimedEventsForTimingEvent(evt);
+                timingEventsByMetaId.put(evt.getMetaId(), evt);
+            }
             TimedEventProperty tep = evt.getTimedEventProperty();
             if (tep != null)
                 tep.refresh();
             eventSet.add(evt);
             eventList.clear();
             eventList.addAll(eventSet);
+            Set<MapEvent> ts = eventSetByType.computeIfAbsent(evt.getType(), k -> new TreeSet<>());
+            ts.add(evt);
+            List<MapEvent> tl = eventListByType.get(evt.getType());
+            if (tl == null) {
+                tl = new ArrayList<>();
+                eventListByType.put(evt.getType(), tl);
+            } else
+                tl.clear();
+            tl.addAll(ts);
+            if (evt.getTimedEventProperty() != null) {
+                timedEventSet.add(evt);
+                timedEventList.clear();
+                timedEventList.addAll(timedEventSet);
+            }
 
             evt.setParent(this);
         }
+        offsetsByEvent.clear();
+        for (int i = 0; i < eventList.size(); i++)
+            offsetsByEvent.put(eventList.get(i), i);
     }
 
     public void addNewEvent(MapEvent evt) {
@@ -392,6 +438,26 @@ public class MapData {
         eventSet.add(evt);
         eventList.clear();
         eventList.addAll(eventSet);
+        if (evt.getTimingProperty() != null)
+            timingEventsByMetaId.put(evt.getMetaId(), evt);
+        Set<MapEvent> ts = eventSetByType.computeIfAbsent(evt.getType(), k -> new TreeSet<>());
+        ts.add(evt);
+        List<MapEvent> tl = eventListByType.get(evt.getType());
+        if (tl == null) {
+            tl = new ArrayList<>();
+            eventListByType.put(evt.getType(), tl);
+        } else
+            tl.clear();
+        tl.addAll(ts);
+        if (evt.getTimedEventProperty() != null) {
+            timedEventSet.remove(evt);
+            timedEventSet.add(evt);
+            timedEventList.clear();
+            timedEventList.addAll(timedEventSet);
+        }
+        offsetsByEvent.clear();
+        for (int i = 0; i < eventList.size(); i++)
+            offsetsByEvent.put(eventList.get(i), i);
     }
 
     public void removeEvent(MapEvent evt) {
@@ -399,6 +465,25 @@ public class MapData {
             evt.setParent(null);
             eventSet.remove(evt);
             eventList.remove(evt);
+            List<MapEvent> li = eventsByMetaId.get(evt.getMetaId());
+            if (li != null)
+                li.remove(evt);
+            timingEventsByMetaId.remove(evt.getMetaId());
+            metaEventsByMetaId.remove(evt.getMetaId());
+            Set<MapEvent> ts = eventSetByType.get(evt.getType());
+            if (ts != null)
+                ts.remove(evt);
+            List<MapEvent> tl = eventListByType.get(evt.getType());
+            if (tl != null)
+                tl.remove(evt);
+            if (evt.getTimedEventProperty() != null) {
+                timedEventSet.remove(evt);
+                timedEventList.clear();
+                timedEventList.addAll(timedEventSet);
+            }
+            offsetsByEvent.clear();
+            for (int i = 0; i < eventList.size(); i++)
+                offsetsByEvent.put(eventList.get(i), i);
         }
     }
 
@@ -414,180 +499,113 @@ public class MapData {
         if (evt == null)
             return;
         if (eventSet.remove(evt)) {
+            Set<MapEvent> ts = eventSetByType.get(evt.getType());
+            ts.remove(evt);
+            if (evt.getTimedEventProperty() != null) {
+                timedEventSet.remove(evt);
+            }
             evt.internalSetTime(time);
             eventSet.add(evt);
             eventList.clear();
             eventList.addAll(eventSet);
+            ts.add(evt);
+            List<MapEvent> tl = eventListByType.get(evt.getType());
+            tl.clear();
+            tl.addAll(ts);
+            if (evt.getTimedEventProperty() != null) {
+                timedEventSet.add(evt);
+                timedEventList.clear();
+                timedEventList.addAll(timedEventSet);
+            }
+            offsetsByEvent.clear();
+            for (int i = 0; i < eventList.size(); i++)
+                offsetsByEvent.put(eventList.get(i), i);
         }
+    }
+
+    public void repositionEventStart(MapEvent evt, float time) {
+        if (evt == null)
+            return;
+        if (eventSet.remove(evt)) {
+            Set<MapEvent> ts = eventSetByType.get(evt.getType());
+            ts.remove(evt);
+            if (evt.getTimedEventProperty() != null) {
+                timedEventSet.remove(evt);
+            }
+            evt.internalSetTime(time);
+        }
+    }
+
+    public void repositionEventsFinalize(List<MapEvent> evts) {
+        for (MapEvent evt : evts) {
+            eventSet.add(evt);
+            Set<MapEvent> ts = eventSetByType.get(evt.getType());
+            ts.add(evt);
+            if (evt.getTimedEventProperty() != null)
+                timedEventSet.add(evt);
+        }
+        for (MapEvent.Type t : MapEvent.Type.values()) {
+            Set<MapEvent> ts = eventSetByType.get(t);
+            if (ts != null) {
+                List<MapEvent> tl = eventListByType.get(t);
+                tl.clear();
+                tl.addAll(ts);
+            }
+        }
+        eventList.clear();
+        eventList.addAll(eventSet);
+        timedEventList.clear();
+        timedEventList.addAll(timedEventSet);
+        offsetsByEvent.clear();
+        for (int i = 0; i < eventList.size(); i++)
+            offsetsByEvent.put(eventList.get(i), i);
     }
 
     public MapEvent getClosestEvent(float time) {
-        if (eventList.size() == 0)
-            return null;
-        List<MapEvent> evtList = getEventList();
-        float closestValue = Math.abs(evtList.get(0).getTime() - time);
-        MapEvent target = evtList.get(0);
-        for (int i = 1; i < evtList.size(); i++) {
-            MapEvent evt = evtList.get(i);
-            if (closestValue > Math.abs(evt.getTime() - time)) {
-                closestValue = Math.abs(evt.getTime() - time);
-                target = evt;
-            } else
-                return target;
-        }
-        return target;
+        return searchEventsUseType(time, 0, null, MapEvent::getTime, true);
     }
 
     public MapEvent getClosestEventRight(float time) {
-        if (eventList.size() == 0)
-            return null;
-        List<MapEvent> evtList = getEventList();
-        MapEvent target = null;
-        for (int i = evtList.size() - 1; i >= 0; i--) {
-            MapEvent evt = evtList.get(i);
-            if (evt.getTime() > time)
-                target = evt;
-            else
-                return target;
-        }
-        return target;
+        return searchEventsUseType(time, 1, null, MapEvent::getTime, true);
     }
 
     public MapEvent getClosestEventLeft(float time) {
-        if (eventList.size() == 0)
-            return null;
-        List<MapEvent> evtList = getEventList();
-        MapEvent target = null;
-        for (MapEvent evt : evtList) {
-            if (evt.getTime() <= time)
-                target = evt;
-            else
-                return target;
-        }
-        return target;
+        return searchEventsUseType(time, -1, null, MapEvent::getTime, true);
     }
 
     public MapEvent getClosestEventRight(float time, MapEvent.Type type) {
-        if (eventList.size() == 0)
-            return null;
-        List<MapEvent> evtList = getEventList(type);
-        MapEvent target = null;
-        for (int i = evtList.size() - 1; i >= 0; i--) {
-            MapEvent evt = evtList.get(i);
-            if (evt.getTime() > time)
-                target = evt;
-            else
-                return target;
-        }
-        return target;
+        return searchEventsUseType(time, 1, type, MapEvent::getTime, true);
     }
 
     public MapEvent getClosestEventLeft(float time, MapEvent.Type type) {
-        if (eventList.size() == 0)
-            return null;
-        List<MapEvent> evtList = getEventList(type);
-        MapEvent target = null;
-        for (MapEvent evt : evtList) {
-            if (evt.getTime() <= time)
-                target = evt;
-            else
-                return target;
-        }
-        return target;
+        return searchEventsUseType(time, -1, type, MapEvent::getTime, true);
     }
 
     public int getClosestEventOffsetRight(float time) {
-        if (eventList.size() == 0)
-            return -1;
-        List<MapEvent> evtList = getEventList();
-        int target = -1;
-        for (int i = evtList.size() - 1; i >= 0; i--) {
-            MapEvent evt = evtList.get(i);
-            if (evt.getTime() > time)
-                target = i;
-            else
-                return target;
-        }
-        return target;
+        return offsetsByEvent.get(searchEventsUseType(time, 1, null, MapEvent::getTime, true));
     }
 
     public int getClosestEventOffsetLeft(float time) {
-        if (eventList.size() == 0)
-            return -1;
-        List<MapEvent> evtList = getEventList();
-        int target = -1;
-        for (int i = 0; i < evtList.size(); i++) {
-            MapEvent evt = evtList.get(i);
-            if (evt.getTime() <= time)
-                target = i;
-            else
-                return target;
-        }
-        return target;
+        return offsetsByEvent.get(searchEventsUseType(time, -1, null, MapEvent::getTime, true));
     }
 
     public MapEvent getClosestEvent(float time, MapEvent.Type eventType) {
-        if (eventList.size() == 0)
-            return null;
-        List<MapEvent> evtList = getEventList(eventType);
-        if (evtList.size() == 0)
-            return null;
-        MapEvent targ = evtList.get(0);
-        float closestVal = Math.abs(targ.getTime() - time);
-        for (int i = 1; i < evtList.size(); i++) {
-            MapEvent evt = evtList.get(i);
-            if (closestVal > Math.abs(evt.getTime() - time)) {
-                closestVal = Math.abs(evt.getTime() - time);
-                targ = evt;
-            } else
-                return targ;
-        }
-        return targ;
+        return searchEventsUseType(time, 0, eventType, MapEvent::getTime, true);
     }
 
     public MapEvent getClosestTimingRootTimeHandle(float time) {
-        if (eventList.size() == 0)
-            return null;
-        List<MapEvent> evtList = getEventList(MapEvent.Type.TIMING);
-        if (evtList.size() == 0)
-            return null;
-        float closestVal = Math.abs(evtList.get(0).getTimingProperty().getRootTime() - time);
-        MapEvent targ = evtList.get(0);
-        for (int i = 1; i < evtList.size(); i++) {
-            MapEvent evt = evtList.get(i);
-            if (closestVal > Math.abs(evt.getTimingProperty().getRootTime() - time)) {
-                closestVal = Math.abs(evt.getTimingProperty().getRootTime() - time);
-                targ = evt;
-            } else
-                return targ;
-        }
-        return targ;
+        return searchTimingEventRootTimeHandle(time, 0);
     }
 
     public MapEvent getClosestTimingLengthHandle(float time) {
-        if (eventList.size() == 0)
-            return null;
-        List<MapEvent> evtList = getEventList(MapEvent.Type.TIMING);
-        if (evtList.size() == 0)
-            return null;
-        float closestVal = Math.abs(evtList.get(0).getTime() + evtList.get(0).getTimingProperty().getLength() - time);
-        MapEvent targ = evtList.get(0);
-        for (int i = 1; i < evtList.size(); i++) {
-            MapEvent evt = evtList.get(i);
-            if (closestVal > Math.abs(evt.getTime() + evt.getTimingProperty().getLength() - time)) {
-                closestVal = Math.abs(evt.getTime() + evt.getTimingProperty().getLength() - time);
-                targ = evt;
-            } else
-                return targ;
-        }
-        return targ;
+        return searchTimingEventLengthHandle(time, 0);
     }
 
     public MapEvent getFirstTimingEventForTime(float time) {
         if (eventList.size() == 0)
             return null;
-        List<MapEvent> evtList = getEventList(MapEvent.Type.TIMING);
-        if (evtList.size() == 0)
+        List<MapEvent> evtList = eventListByType.get(MapEvent.Type.TIMING);
+        if (evtList == null || evtList.size() == 0)
             return null;
         for (MapEvent evt : evtList)
             if (evt.getTime() <= time && evt.getTime() + evt.getTimingProperty().getLength() >= time)
@@ -596,24 +614,29 @@ public class MapData {
     }
 
     public List<MapEvent> getEventsBetweenTimes(float t1, float t2, boolean includeTimingLength) {
-        List<MapEvent> out = new ArrayList<>();
         if (t1 > t2) {
             float temp = t1;
             t1 = t2;
             t2 = temp;
         }
-        List<MapEvent> evtList = getEventList();
-        for (MapEvent e : evtList) {
-
-            float time = e.getTime();
-            TimingProperty tp = e.getTimingProperty();
-            if (includeTimingLength && tp != null) {
-                if (time < t2 && t1 < time + tp.getLength())
-                    out.add(e);
-            } else if (time >= t1 && time <= t2)
-                out.add(e);
+        Set<MapEvent> evtSet = new TreeSet<>();
+        int off1 = searchEventsByOffset(eventList, t1, 1, MapEvent::getTime, true);
+        int off2 = searchEventsByOffset(eventList, t2, -1, MapEvent::getTime, true);
+        if (off2 < off1 || off1 == -1 || off2 == -1)
+            return new ArrayList<>();
+        if (includeTimingLength) {
+            List<MapEvent> timingList = eventListByType.get(MapEvent.Type.TIMING);
+            if (timingList != null)
+                for (MapEvent evt : timingList) {
+                    float time = evt.getTime();
+                    if (time < t2 && t1 < time + evt.getTimingProperty().getLength())
+                        evtSet.add(evt);
+                }
         }
-        return out;
+        for (int i = off1; i <= off2; i++) {
+            evtSet.add(eventList.get(i));
+        }
+        return new ArrayList<>(evtSet);
     }
 
     public List<MapEvent> getEventsBetweenTimes(float t1, float t2, boolean includeTimingLength, MapEvent.Type type) {
@@ -623,26 +646,35 @@ public class MapData {
             t1 = t2;
             t2 = temp;
         }
-        List<MapEvent> evtList = getEventList();
-        for (MapEvent e : evtList) {
-            float time = e.getTime();
-            TimingProperty tp = e.getTimingProperty();
-            if (includeTimingLength && tp != null) {
-                if (e.getType() == type && time < t2 && t1 < time + tp.getLength())
-                    out.add(e);
-            } else if (e.getType() == type && time >= t1 && time <= t2)
-                out.add(e);
+        if (type == MapEvent.Type.TIMING && includeTimingLength) {
+            List<MapEvent> timingList = eventListByType.get(MapEvent.Type.TIMING);
+            if (timingList != null)
+                for (MapEvent evt : timingList) {
+                    float time = evt.getTime();
+                    if (time < t2 && t1 < time + evt.getTimingProperty().getLength())
+                        out.add(evt);
+                }
+        } else {
+            List<MapEvent> list = eventListByType.get(type);
+            if (list == null)
+                return out;
+            int off1 = searchEventsByOffset(list, t1, 1, MapEvent::getTime, true);
+            int off2 = searchEventsByOffset(list, t2, -1, MapEvent::getTime, true);
+            if (off2 < off1 || off1 == -1 || off2 == -1)
+                return out;
+            for (int i = off1; i <= off2; i++) {
+                out.add(list.get(i));
+            }
         }
         return out;
     }
 
     public List<MapEvent> getTimedEventsForTimingEvent(MapEvent event) {
-        if (event == null)
-            return null;
         List<MapEvent> out = new ArrayList<>();
-        List<MapEvent> evtList = getEventList();
+        if (event == null)
+            return out;
         int eventId = event.getMetaId();
-        for (MapEvent e : evtList) {
+        for (MapEvent e : eventList) {
             TimedEventProperty prop = e.getTimedEventProperty();
             if (prop != null && prop.getTimingEventId() == eventId)
                 out.add(e);
@@ -668,17 +700,17 @@ public class MapData {
 
     public List<MapEvent> getTimedEventsBetweenTimes(float t1, float t2) {
         List<MapEvent> out = new ArrayList<>();
+        if (timedEventList.size() == 0)
+            return out;
         if (t1 > t2) {
             float temp = t1;
             t1 = t2;
             t2 = temp;
         }
-        List<MapEvent> evtList = getEventList();
-        for (MapEvent e : evtList) {
-            float time = e.getTime();
-            if (time >= t1 && time <= t2 && e.getTimedEventProperty() != null)
-                out.add(e);
-        }
+        int off1 = searchEventsByOffset(timedEventList, t1, 1, MapEvent::getTime, true);
+        int off2 = searchEventsByOffset(timedEventList, t2, -1, MapEvent::getTime, true);
+        for (int i = off1; i <= off2; i++)
+            out.add(timedEventList.get(i));
         return out;
     }
 
@@ -688,16 +720,6 @@ public class MapData {
 
     public int getEventCount() {
         return eventList.size();
-    }
-
-    public List<MapEvent> getEventList(MapEvent.Type type) {
-        if (eventList.size() == 0)
-            return null;
-        List<MapEvent> out = new ArrayList<>();
-        for (MapEvent f : eventList)
-            if (f.getType() == type)
-                out.add(f);
-        return out;
     }
 
     public MapData clone() {
@@ -728,12 +750,167 @@ public class MapData {
     }
 
     public TimingEvent getTimingEventById(int id) {
-        List<MapEvent> evts;
-        evts = getEventList(MapEvent.Type.TIMING);
-        for (MapEvent evt : evts)
-            if (evt.getMetaId() == id && evt.getTimingProperty() != null)
-                return (TimingEvent) evt;
-        return null;
+        return (TimingEvent) timingEventsByMetaId.get(id);
+    }
+
+    private int searchEventsByOffset(List<MapEvent> list, float time, int dir, Function<MapEvent, Float> operator, boolean sorted) {
+        if (list == null || list.size() == 0)
+            return -1;
+        if (sorted)
+            switch (dir) {
+                case -1:
+                    MapEvent e0 = list.get(0);
+                    if (time < operator.apply(e0)) {
+                        return -1;
+                    }
+                    MapEvent ex = list.get(list.size() - 1);
+                    if (time > operator.apply(ex)) {
+                        return list.size() - 1;
+                    }
+                    int lo = 0;
+                    int hi = list.size() - 1;
+                    while (lo <= hi) {
+                        int mid = (hi + lo) / 2;
+                        MapEvent evtMid = list.get(mid);
+                        if (time < operator.apply(evtMid)) {
+                            hi = mid - 1;
+                        } else if (time > operator.apply(evtMid)) {
+                            lo = mid + 1;
+                        } else {
+                            return mid;
+                        }
+                    }
+                    return hi;
+                case 0:
+                    e0 = list.get(0);
+                    if (time < operator.apply(e0)) {
+                        return 0;
+                    }
+                    ex = list.get(list.size() - 1);
+                    if (time > operator.apply(ex)) {
+                        return list.size() - 1;
+                    }
+                    lo = 0;
+                    hi = list.size() - 1;
+                    while (lo <= hi) {
+                        int mid = (hi + lo) / 2;
+                        MapEvent evtMid = list.get(mid);
+                        if (time < operator.apply(evtMid)) {
+                            hi = mid - 1;
+                        } else if (time > operator.apply(evtMid)) {
+                            lo = mid + 1;
+                        } else {
+                            return mid;
+                        }
+                    }
+                    MapEvent left = list.get(lo);
+                    MapEvent right = list.get(hi);
+                    return (operator.apply(left) - time) < (time - operator.apply(right)) ? lo : hi;
+                case 1:
+                    e0 = list.get(0);
+                    if (time < operator.apply(e0)) {
+                        return 0;
+                    }
+                    ex = list.get(list.size() - 1);
+                    if (time > operator.apply(ex)) {
+                        return -1;
+                    }
+                    lo = 0;
+                    hi = list.size() - 1;
+                    while (lo <= hi) {
+                        int mid = (hi + lo) / 2;
+                        MapEvent evtMid = list.get(mid);
+                        if (time < operator.apply(evtMid)) {
+                            hi = mid - 1;
+                        } else if (time > operator.apply(evtMid)) {
+                            lo = mid + 1;
+                        } else {
+                            return mid;
+                        }
+                    }
+                    return lo;
+            }
+        else
+            switch (dir) {
+                case -1:
+                    boolean found = false;
+                    float closestVal = -1.0f;
+                    int closestOff = -1;
+                    for (int i = 0; i < list.size(); i++) {
+                        MapEvent evt = list.get(i);
+                        if (!found) {
+                            closestVal = operator.apply(evt) - time;
+                            if (closestVal <= 0.0f) {
+                                found = true;
+                                closestOff = 0;
+                            }
+                        } else {
+                            float val = operator.apply(evt) - time;
+                            if (val <= 0.0f && closestVal < val) {
+                                closestVal = val;
+                                closestOff = i;
+                            }
+                        }
+                    }
+                    return closestOff;
+                case 0:
+                    closestVal = Math.abs(operator.apply(list.get(0)) - time);
+                    closestOff = 0;
+                    for (int i = 0; i < list.size(); i++) {
+                        MapEvent evt = list.get(i);
+                        float val = Math.abs(operator.apply(evt) - time);
+                        if (closestVal > val) {
+                            closestVal = val;
+                            closestOff = i;
+                        }
+                    }
+                    return closestOff;
+                case 1:
+                    found = false;
+                    closestVal = -1.0f;
+                    closestOff = -1;
+                    for (int i = 0; i < list.size(); i++) {
+                        MapEvent evt = list.get(i);
+                        if (!found) {
+                            closestVal = operator.apply(evt) - time;
+                            if (closestVal >= 0.0f) {
+                                found = true;
+                                closestOff = 0;
+                            }
+                        } else {
+                            float val = operator.apply(evt) - time;
+                            if (val >= 0.0f && closestVal > val) {
+                                closestVal = val;
+                                closestOff = i;
+                            }
+                        }
+                    }
+                    return closestOff;
+            }
+        return -1;
+    }
+
+    private MapEvent searchTimingEventLengthHandle(float time, int dir) {
+        List<MapEvent> list = eventListByType.get(MapEvent.Type.TIMING);
+        int pos = searchEventsByOffset(list, time, dir, event -> event.getTime() + event.getTimingProperty().getLength(), false);
+        return pos == -1 ? null : list.get(pos);
+    }
+
+    private MapEvent searchTimingEventRootTimeHandle(float time, int dir) {
+        List<MapEvent> list = eventListByType.get(MapEvent.Type.TIMING);
+        int pos = searchEventsByOffset(list, time, dir, event -> event.getTimingProperty().getRootTime(), false);
+        return pos == -1 ? null : list.get(pos);
+    }
+
+    private MapEvent searchEventsUseList(List<MapEvent> list, float time, int dir, Function<MapEvent, Float> operator, boolean sorted) {
+        int pos = searchEventsByOffset(list, time, dir, operator, sorted);
+        return pos == -1 ? null : list.get(pos);
+    }
+
+    private MapEvent searchEventsUseType(float time, int dir, MapEvent.Type type, Function<MapEvent, Float> operator, boolean sorted) {
+        List<MapEvent> list = type == null ? eventList : eventListByType.get(type);
+        int pos = searchEventsByOffset(list, time, dir, operator, sorted);
+        return pos == -1 ? null : list.get(pos);
     }
 
     private void registerImportedEvent(MapEvent event) {
@@ -755,8 +932,7 @@ public class MapData {
         clearTimedEventsForTimingEvent(event);
         TimingProperty prop = event.getTimingProperty();
         int id = event.getMetaId();
-        List<MapEvent> events = getTimedEventsBetweenTimes(event.getTime(), event.getTime() + prop.getLength());
-        for (MapEvent evt : events)
+        for (MapEvent evt : getTimedEventsBetweenTimes(event.getTime(), event.getTime() + prop.getLength()))
             evt.getTimedEventProperty().setTimingEventId(id);
     }
 
@@ -766,10 +942,7 @@ public class MapData {
     }
 
     public void clearTimedEventsForTimingEvent(MapEvent event) {
-        if (event == null)
-            return;
-        List<MapEvent> events = getTimedEventsForTimingEvent(event);
-        for (MapEvent evt : events)
+        for (MapEvent evt : getTimedEventsForTimingEvent(event))
             evt.getTimedEventProperty().clearTimingEventId();
     }
 

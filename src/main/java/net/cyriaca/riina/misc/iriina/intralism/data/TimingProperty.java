@@ -74,11 +74,6 @@ public class TimingProperty extends Property {
                 + length;
     }
 
-    public void setDataValue(String dataValue) {
-        if (dataValue != null)
-            setDataValue(Arrays.asList(dataValue.split("\\s*,\\s*")));
-    }
-
     public void setDataValue(List<String> dataValueElements) {
         if (dataValueElements == null)
             return;
@@ -117,6 +112,11 @@ public class TimingProperty extends Property {
         notifyParentOfChange();
     }
 
+    public void setDataValue(String dataValue) {
+        if (dataValue != null)
+            setDataValue(Arrays.asList(dataValue.split("\\s*,\\s*")));
+    }
+
     public float getRootTime() {
         return rootTime;
     }
@@ -127,7 +127,8 @@ public class TimingProperty extends Property {
             rootTime = Math.max(getParent().getTime(), Math.min(value, getParent().getTime() + length));
             MapData data = parent.getParent();
             if (data != null) {
-                for (MapEvent e : data.getTimedEventsForTimingEvent(parent)) {
+                List<MapEvent> evts = data.getTimedEventsForTimingEvent(parent);
+                for (MapEvent e : evts) {
                     TimedEventProperty tep = e.getTimedEventProperty();
                     if (tep != null)
                         tep.refresh();
@@ -136,6 +137,27 @@ public class TimingProperty extends Property {
         } else
             rootTime = value;
         notifyParentOfChange();
+    }
+
+    public List<MapEvent> setRootTimeLight(float value) {
+        MapEvent parent = getParent();
+        if (parent != null) {
+            rootTime = Math.max(getParent().getTime(), Math.min(value, getParent().getTime() + length));
+            MapData data = parent.getParent();
+            if (data != null) {
+                List<MapEvent> evts = data.getTimedEventsForTimingEvent(parent);
+                for (MapEvent e : evts) {
+                    TimedEventProperty tep = e.getTimedEventProperty();
+                    if (tep != null)
+                        tep.refreshLight();
+
+                }
+                return evts;
+            }
+        } else
+            rootTime = value;
+        notifyParentOfChange();
+        return null;
     }
 
     public TimingMode getTimingMode() {

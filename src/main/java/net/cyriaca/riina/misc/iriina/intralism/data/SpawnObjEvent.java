@@ -38,9 +38,6 @@ public final class SpawnObjEvent extends MapEvent {
         getTimedEventProperty().setExtraDataValue(extraData);
     }
 
-    public void propertyUpdated(Property property) {
-    }
-
     public void addMetaChild(MapEvent event) {
     }
 

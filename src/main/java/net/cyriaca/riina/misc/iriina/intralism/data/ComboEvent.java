@@ -152,8 +152,6 @@ public class ComboEvent extends MapEvent {
         showTitleProperties.add(durationProperty);
 
         setEventProperties(toggles);
-
-        propertyUpdated(null);
     }
 
     public void reevaluateProperties() {
@@ -198,10 +196,6 @@ public class ComboEvent extends MapEvent {
     }
 
     public void setEventExtraData(String extraData) {
-    }
-
-    public void propertyUpdated(Property property) {
-
     }
 
     public MapEvent clone() {

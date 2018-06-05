@@ -11,8 +11,7 @@ public class MapEndEvent extends MapEvent {
     }
 
     public MapEvent clone() {
-        MapEvent out = new MapEndEvent(getTime());
-        return out;
+        return new MapEndEvent(getTime());
     }
 
     public String getEventData() {
@@ -27,9 +26,6 @@ public class MapEndEvent extends MapEvent {
     }
 
     public void setEventExtraData(String extraData) {
-    }
-
-    public void propertyUpdated(Property property) {
     }
 
     public void addMetaChild(MapEvent event) {

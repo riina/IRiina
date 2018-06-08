@@ -32,7 +32,7 @@ public class PreWelcomeFrame extends JFrame
     private static final String KEY_FRAME_PRE_WELCOME_TEXT_WORKSPACE_DIRECTORY_SELECT = "frame_pre_welcome_text_workspace_directory_select";
     private static final String KEY_FRAME_PRE_WELCOME_TEXT_SHOW_PRE_WELCOME_ON_START = "frame_pre_welcome_text_show_pre_welcome_on_start";
     private static final String KEY_FRAME_PRE_WELCOME_TEXT_OPEN_EDITOR = "frame_pre_welcome_text_open_editor";
-    private static String KEY_FRAME_PRE_WELCOME_SAVE_FAIL_WORKSPACE_DIRECTORY_USE_FAILED = "frame_pre_welcome_save_fail_workspace_directory_use_failed";
+    private static final String KEY_FRAME_PRE_WELCOME_SAVE_FAIL_WORKSPACE_DIRECTORY_USE_FAILED = "frame_pre_welcome_save_fail_workspace_directory_use_failed";
     private IRiina parent;
     private ArxTitledComboBoxItem<LocaleDefinition> localeSelect;
     private ArxTitledFolderSelectorItem workspaceSelector;

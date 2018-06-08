@@ -13,12 +13,12 @@ import java.util.Scanner;
 
 public class AboutFrame extends JFrame implements IViewFrame, LocaleChangeListener {
 
-    private static String KEY_FRAME_ABOUT_TITLE = "frame_about_title";
-    private static String KEY_FRAME_ABOUT_TEXT_ABOUT_HEADER = "frame_about_text_about_header";
-    private static String KEY_FRAME_ABOUT_TEXT_ABOUT = "frame_about_text_about";
-    private static String KEY_FRAME_ABOUT_TEXT_CONTACT_HEADER = "frame_about_text_contact_header";
-    private static String KEY_FRAME_ABOUT_TEXT_CONTACT = "frame_about_text_contact";
-    private static String KEY_FRAME_ABOUT_TEXT_LICENSES_HEADER = "frame_about_text_licenses_header";
+    private static final String KEY_FRAME_ABOUT_TITLE = "frame_about_title";
+    private static final String KEY_FRAME_ABOUT_TEXT_ABOUT_HEADER = "frame_about_text_about_header";
+    private static final String KEY_FRAME_ABOUT_TEXT_ABOUT = "frame_about_text_about";
+    private static final String KEY_FRAME_ABOUT_TEXT_CONTACT_HEADER = "frame_about_text_contact_header";
+    private static final String KEY_FRAME_ABOUT_TEXT_CONTACT = "frame_about_text_contact";
+    private static final String KEY_FRAME_ABOUT_TEXT_LICENSES_HEADER = "frame_about_text_licenses_header";
     private Locale l;
     private JTabbedPane tabbedPane;
     private JTextArea aboutArea;

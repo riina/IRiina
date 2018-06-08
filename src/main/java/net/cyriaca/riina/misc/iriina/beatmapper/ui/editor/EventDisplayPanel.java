@@ -82,7 +82,23 @@ public class EventDisplayPanel extends JPanel implements MouseMotionListener, Mo
 
     public void keyPressed(KeyEvent e) {
         MapData data = parent.getMapData();
-        int menuMask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+        int menuMask;
+        switch (Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) {
+            case Event.ALT_MASK:
+                menuMask = KeyEvent.ALT_DOWN_MASK;
+                break;
+            case Event.CTRL_MASK:
+                menuMask = KeyEvent.CTRL_DOWN_MASK;
+                break;
+            case Event.META_MASK:
+                menuMask = KeyEvent.META_DOWN_MASK;
+                break;
+            case Event.SHIFT_MASK:
+                menuMask = KeyEvent.VK_SHIFT;
+                break;
+            default:
+                menuMask = 0;
+        }
         if ((e.getModifiersEx() & (menuMask)) == (menuMask))
             return;
         if ((e.getModifiersEx() & (KeyEvent.SHIFT_DOWN_MASK)) == (KeyEvent.SHIFT_DOWN_MASK)) {

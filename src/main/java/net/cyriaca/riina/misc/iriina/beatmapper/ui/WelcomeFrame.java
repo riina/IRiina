@@ -20,18 +20,18 @@ public class WelcomeFrame extends JFrame implements IViewFrame, LocaleChangeList
     private static final float IMG_SHOW_PERC_W = 0.8f;
     private static final float IMG_SHOW_PERC_H = 0.7f;
 
-    private static String KEY_FRAME_WELCOME_TITLE = "frame_welcome_title";
-    private static String KEY_FRAME_WELCOME_TEXT_CREATE_NEW_PROJECT = "frame_welcome_text_create_new_project";
-    private static String KEY_FRAME_WELCOME_TEXT_IMPORT_MAP = "frame_welcome_text_import_map";
-    private static String KEY_FRAME_WELCOME_TEXT_OPEN_PROJECT = "frame_welcome_text_open_project";
+    private static final String KEY_FRAME_WELCOME_TITLE = "frame_welcome_title";
+    private static final String KEY_FRAME_WELCOME_TEXT_CREATE_NEW_PROJECT = "frame_welcome_text_create_new_project";
+    private static final String KEY_FRAME_WELCOME_TEXT_IMPORT_MAP = "frame_welcome_text_import_map";
+    private static final String KEY_FRAME_WELCOME_TEXT_OPEN_PROJECT = "frame_welcome_text_open_project";
 
-    private static String KEY_MENU_FILE = "menu_file";
-    private static String KEY_MENU_FILE_NEW_PROJECT = "menu_file_new_project";
-    private static String KEY_MENU_FILE_IMPORT_MAP = "menu_file_import_map";
-    private static String KEY_MENU_FILE_OPEN_PROJECT = "menu_file_open_project";
-    private static String KEY_MENU_HELP = "menu_help";
-    private static String KEY_MENU_HELP_ABOUT = "menu_help_about";
-    private static String KEY_MENU_HELP_PREFERENCES = "menu_help_preferences";
+    private static final String KEY_MENU_FILE = "menu_file";
+    private static final String KEY_MENU_FILE_NEW_PROJECT = "menu_file_new_project";
+    private static final String KEY_MENU_FILE_IMPORT_MAP = "menu_file_import_map";
+    private static final String KEY_MENU_FILE_OPEN_PROJECT = "menu_file_open_project";
+    private static final String KEY_MENU_HELP = "menu_help";
+    private static final String KEY_MENU_HELP_ABOUT = "menu_help_about";
+    private static final String KEY_MENU_HELP_PREFERENCES = "menu_help_preferences";
 
     private IRiina parent;
     private Image tempImg;

@@ -10,9 +10,9 @@ public final class SetPlayerDistanceEvent extends MapEvent {
     public static final String KEY_EVENT_SET_PLAYER_DISTANCE_HR_NAME = "event_set_player_distance_hr_name";
     public static final String KEY_EVENT_SET_PLAYER_DISTANCE_PROPERTY_DISTANCE = "event_set_player_distance_property_distance";
 
-    public static byte DISTANCE_MIN = 4;
-    public static byte DISTANCE_MAX = 28;
-    public static byte DISTANCE_DEF = 14;
+    public static final byte DISTANCE_MIN = 4;
+    public static final byte DISTANCE_MAX = 28;
+    public static final byte DISTANCE_DEF = 14;
 
     public SetPlayerDistanceEvent(float time) {
         super(true, false, KEY_EVENT_SET_PLAYER_DISTANCE_HR_NAME, Type.VISUAL, "SetPlayerDistance", time);

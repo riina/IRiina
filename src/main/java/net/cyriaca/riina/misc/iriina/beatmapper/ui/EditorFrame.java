@@ -38,72 +38,75 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
     public static final float EVT_FWD_BACK_MAX_ERR = 0.1f;
     private static final float SKIP_AMT = 5.0f;
     private static final String KEY_PANEL_EVENT_MOD_WRITE_CHANGES = "panel_event_mod_write_changes";
-    private static String KEY_FRAME_EDITOR_TITLE = "frame_editor_title";
-    private static String PROJECT_NAME = "%projectName%";
-    private static String KEY_UI_DIALOG_INFORMATION = "ui_dialog_information";
-    private static String KEY_UI_DIALOG_ERROR = "ui_dialog_error";
-    private static String KEY_FRAME_EDITOR_COPYING_ICON = "frame_editor_copying_icon";
-    private static String KEY_FRAME_EDITOR_SAVING_PROJECT = "frame_editor_saving_project";
-    private static String KEY_FRAME_EDITOR_SAVING_BACKUP = "frame_editor_saving_backup";
-    private static String EXCEPTION = "%exception%";
-    private static String KEY_FRAME_EDITOR_SAVE_SUCCESS = "frame_editor_save_success";
-    private static String KEY_FRAME_EDITOR_SAVE_FAIL_CONFIG = "frame_editor_save_fail_config";
-    private static String CONFIG_FILE = "%configFile%";
-    private static String KEY_FRAME_EDITOR_SAVE_FAIL_BACKUP = "frame_editor_save_fail_backup";
-    private static String BACKUP_FILE = "%backupFile%";
-    private static String KEY_MENU_FILE = "menu_file";
-    private static String KEY_MENU_FILE_NEW_PROJECT = "menu_file_new_project";
-    private static String KEY_MENU_FILE_IMPORT_MAP = "menu_file_import_map";
-    private static String KEY_MENU_FILE_OPEN_PROJECT = "menu_file_open_project";
-    private static String KEY_MENU_FILE_SAVE_PROJECT = "menu_file_save_project";
-    private static String KEY_MENU_FILE_RELOAD_PROJECT = "menu_file_reload_project";
-    private static String KEY_MENU_FILE_EXPORT_PROJECT = "menu_file_export_project";
-    private static String KEY_MENU_EDIT = "menu_edit";
-    private static String KEY_MENU_EDIT_UNDO = "menu_edit_undo";
-    private static String KEY_MENU_EDIT_REDO = "menu_edit_redo";
-    private static String KEY_MENU_EDIT_CUT = "menu_edit_cut";
-    private static String KEY_MENU_EDIT_COPY = "menu_edit_copy";
-    private static String KEY_MENU_EDIT_PASTE = "menu_edit_paste";
-    private static String KEY_MENU_EDIT_DELETE = "menu_edit_delete";
-    private static String KEY_MENU_EDIT_SELECT_ALL = "menu_edit_select_all";
-    private static String KEY_MENU_CONTROLS = "menu_controls";
-    private static String KEY_MENU_CONTROLS_TOGGLE_PLAY = "menu_controls_toggle_play";
-    private static String KEY_MENU_CONTROLS_POSITION_BACK = "menu_controls_position_back";
-    private static String KEY_MENU_CONTROLS_POSITION_FWD = "menu_controls_position_fwd";
-    private static String KEY_MENU_CONTROLS_EVT_BACK = "menu_controls_evt_back";
-    private static String KEY_MENU_CONTROLS_EVT_FWD = "menu_controls_evt_fwd";
-    private static String KEY_MENU_HELP = "menu_help";
-    private static String KEY_MENU_HELP_ABOUT = "menu_help_about";
-    private static String KEY_MENU_HELP_PREFERENCES = "menu_help_preferences";
-    private static String KEY_FRAME_EDITOR_EXIT_TITLE = "frame_editor_exit_title";
-    private static String KEY_FRAME_EDITOR_EXIT_CONFIRM = "frame_editor_exit_confirm";
-    private static String KEY_FRAME_EDITOR_EXIT_OPTION_SAVE = "frame_editor_exit_option_save";
-    private static String KEY_FRAME_EDITOR_EXIT_OPTION_LEAVE = "frame_editor_exit_option_leave";
-    private static String KEY_FRAME_EDITOR_EXIT_OPTION_CANCEL = "frame_editor_exit_option_cancel";
-    private static String KEY_FRAME_EDITOR_RELOAD_TITLE = "frame_editor_reload_title";
-    private static String KEY_FRAME_EDITOR_RELOAD_CONFIRM = "frame_editor_reload_confirm";
-    private static String KEY_FRAME_EDITOR_RELOAD_OPTION_LEAVE = "frame_editor_reload_option_leave";
-    private static String KEY_FRAME_EDITOR_RELOAD_OPTION_CANCEL = "frame_editor_reload_option_cancel";
-    private static String KEY_FRAME_EDITOR_EXPORT_TITLE = "frame_editor_export_title";
-    private static String KEY_FRAME_EDITOR_EXPORT_OPTION_CONFIRM = "frame_editor_export_option_confirm";
-    private static String KEY_FRAME_EDITOR_EXPORT_OPTION_CANCEL = "frame_editor_export_option_cancel";
-    private static String KEY_FRAME_EDITOR_EXPORT_EDITOR_DIRECTORY = "frame_editor_export_editor_directory";
-    private static String KEY_FRAME_EDITOR_EXPORT_EDITOR_DIRECTORY_SELECT = "frame_editor_export_editor_directory_select";
-    private static String KEY_FRAME_EDITOR_EXPORT_FOLDER_NAME = "frame_editor_export_folder_name";
-    private static String KEY_FRAME_EDITOR_EXPORT_FAIL_NO_EDITOR_DIRECTORY = "frame_editor_export_fail_no_editor_directory";
-    private static String KEY_FRAME_EDITOR_EXPORT_FAIL_NO_FOLDER_NAME = "frame_editor_export_fail_no_folder_name";
-    private static String KEY_FRAME_EDITOR_EXPORT_FAIL_TARGET_IS_FILE = "frame_editor_export_fail_target_is_file";
-    private static String TARGET_DIRECTORY = "%targetDirectory%";
-    private static String KEY_FRAME_EDITOR_EXPORT_FAIL_TARGET_DIRECTORY_CREATION_FAIL = "frame_editor_export_fail_target_directory_creation_fail";
-    private static String KEY_FRAME_EDITOR_EXPORT_PROGRESSING = "frame_editor_export_progressing";
-    private static String EXPORT_PROGRESS = "%exportProgress%";
-    private static String KEY_FRAME_EDITOR_EXPORT_SUCCESS = "frame_editor_export_success";
-    private static String KEY_FRAME_EDITOR_ERROR_EVENT_INVALID_RESOURCE = "frame_editor_error_invalid_resource";
-    private static String EVENT_NAME = "%eventName%";
-    private static String EVENT_TIME = "%eventTime%";
-    private static String EVENT_DATA = "%eventData%";
-    private static String RESOURCE_NAME = "%resourceName%";
-    private static String RESOURCE_NAME_LIST = "%resourceNameList%";
+    private static final String KEY_FRAME_EDITOR_TITLE = "frame_editor_title";
+    private static final String PROJECT_NAME = "%projectName%";
+    private static final String KEY_UI_DIALOG_INFORMATION = "ui_dialog_information";
+    private static final String KEY_UI_DIALOG_ERROR = "ui_dialog_error";
+    private static final String KEY_FRAME_EDITOR_COPYING_ICON = "frame_editor_copying_icon";
+    private static final String KEY_FRAME_EDITOR_SAVING_PROJECT = "frame_editor_saving_project";
+    private static final String KEY_FRAME_EDITOR_SAVING_BACKUP = "frame_editor_saving_backup";
+    private static final String EXCEPTION = "%exception%";
+    private static final String KEY_FRAME_EDITOR_SAVE_SUCCESS = "frame_editor_save_success";
+    private static final String KEY_FRAME_EDITOR_SAVE_FAIL_CONFIG = "frame_editor_save_fail_config";
+    private static final String CONFIG_FILE = "%configFile%";
+    private static final String KEY_FRAME_EDITOR_SAVE_FAIL_BACKUP = "frame_editor_save_fail_backup";
+    private static final String BACKUP_FILE = "%backupFile%";
+    private static final String KEY_MENU_FILE = "menu_file";
+    private static final String KEY_MENU_FILE_NEW_PROJECT = "menu_file_new_project";
+    private static final String KEY_MENU_FILE_IMPORT_MAP = "menu_file_import_map";
+    private static final String KEY_MENU_FILE_OPEN_PROJECT = "menu_file_open_project";
+    private static final String KEY_MENU_FILE_SAVE_PROJECT = "menu_file_save_project";
+    private static final String KEY_MENU_FILE_RELOAD_PROJECT = "menu_file_reload_project";
+    private static final String KEY_MENU_FILE_EXPORT_PROJECT = "menu_file_export_project";
+    private static final String KEY_MENU_EDIT = "menu_edit";
+    private static final String KEY_MENU_EDIT_UNDO = "menu_edit_undo";
+    private static final String KEY_MENU_EDIT_UNDO_OPERATION_EXISTS = "menu_edit_undo_operation_exists";
+    private static final String KEY_MENU_EDIT_REDO = "menu_edit_redo";
+    private static final String KEY_MENU_EDIT_REDO_OPERATION_EXISTS = "menu_edit_redo_operation_exists";
+    private static final String KEY_MENU_EDIT_CUT = "menu_edit_cut";
+    private static final String KEY_MENU_EDIT_COPY = "menu_edit_copy";
+    private static final String KEY_MENU_EDIT_PASTE = "menu_edit_paste";
+    private static final String KEY_MENU_EDIT_DELETE = "menu_edit_delete";
+    private static final String KEY_MENU_EDIT_SELECT_ALL = "menu_edit_select_all";
+    private static final String KEY_MENU_CONTROLS = "menu_controls";
+    private static final String KEY_MENU_CONTROLS_TOGGLE_PLAY = "menu_controls_toggle_play";
+    private static final String KEY_MENU_CONTROLS_POSITION_BACK = "menu_controls_position_back";
+    private static final String KEY_MENU_CONTROLS_POSITION_FWD = "menu_controls_position_fwd";
+    private static final String KEY_MENU_CONTROLS_EVT_BACK = "menu_controls_evt_back";
+    private static final String KEY_MENU_CONTROLS_EVT_FWD = "menu_controls_evt_fwd";
+    private static final String KEY_MENU_HELP = "menu_help";
+    private static final String KEY_MENU_HELP_ABOUT = "menu_help_about";
+    private static final String KEY_MENU_HELP_PREFERENCES = "menu_help_preferences";
+    private static final String KEY_FRAME_EDITOR_EXIT_TITLE = "frame_editor_exit_title";
+    private static final String KEY_FRAME_EDITOR_EXIT_CONFIRM = "frame_editor_exit_confirm";
+    private static final String KEY_FRAME_EDITOR_EXIT_OPTION_SAVE = "frame_editor_exit_option_save";
+    private static final String KEY_FRAME_EDITOR_EXIT_OPTION_LEAVE = "frame_editor_exit_option_leave";
+    private static final String KEY_FRAME_EDITOR_EXIT_OPTION_CANCEL = "frame_editor_exit_option_cancel";
+    private static final String KEY_FRAME_EDITOR_RELOAD_TITLE = "frame_editor_reload_title";
+    private static final String KEY_FRAME_EDITOR_RELOAD_CONFIRM = "frame_editor_reload_confirm";
+    private static final String KEY_FRAME_EDITOR_RELOAD_OPTION_LEAVE = "frame_editor_reload_option_leave";
+    private static final String KEY_FRAME_EDITOR_RELOAD_OPTION_CANCEL = "frame_editor_reload_option_cancel";
+    private static final String KEY_FRAME_EDITOR_EXPORT_TITLE = "frame_editor_export_title";
+    private static final String KEY_FRAME_EDITOR_EXPORT_OPTION_CONFIRM = "frame_editor_export_option_confirm";
+    private static final String KEY_FRAME_EDITOR_EXPORT_OPTION_CANCEL = "frame_editor_export_option_cancel";
+    private static final String KEY_FRAME_EDITOR_EXPORT_EDITOR_DIRECTORY = "frame_editor_export_editor_directory";
+    private static final String KEY_FRAME_EDITOR_EXPORT_EDITOR_DIRECTORY_SELECT = "frame_editor_export_editor_directory_select";
+    private static final String KEY_FRAME_EDITOR_EXPORT_FOLDER_NAME = "frame_editor_export_folder_name";
+    private static final String KEY_FRAME_EDITOR_EXPORT_FAIL_NO_EDITOR_DIRECTORY = "frame_editor_export_fail_no_editor_directory";
+    private static final String KEY_FRAME_EDITOR_EXPORT_FAIL_NO_FOLDER_NAME = "frame_editor_export_fail_no_folder_name";
+    private static final String KEY_FRAME_EDITOR_EXPORT_FAIL_TARGET_IS_FILE = "frame_editor_export_fail_target_is_file";
+    private static final String TARGET_DIRECTORY = "%targetDirectory%";
+    private static final String KEY_FRAME_EDITOR_EXPORT_FAIL_TARGET_DIRECTORY_CREATION_FAIL = "frame_editor_export_fail_target_directory_creation_fail";
+    private static final String KEY_FRAME_EDITOR_EXPORT_PROGRESSING = "frame_editor_export_progressing";
+    private static final String EXPORT_PROGRESS = "%exportProgress%";
+    private static final String KEY_FRAME_EDITOR_EXPORT_SUCCESS = "frame_editor_export_success";
+    private static final String KEY_FRAME_EDITOR_ERROR_EVENT_INVALID_RESOURCE = "frame_editor_error_invalid_resource";
+    private static final String EVENT_NAME = "%eventName%";
+    private static final String EVENT_TIME = "%eventTime%";
+    private static final String EVENT_DATA = "%eventData%";
+    private static final String RESOURCE_NAME = "%resourceName%";
+    private static final String RESOURCE_NAME_LIST = "%resourceNameList%";
+    private static String OPERATION = "%operation%";
     private IRiina parent;
     private ControlReferenceFrame controlReferenceFrame;
     private EventDisplayPanel eventDisplayPanel;
@@ -443,7 +446,9 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
         realSelection = new ArrayList<>();
         manipTarget = new ManipTarget();
         operations.clear();
-        opPoint = operations.size() - 1;
+        opPoint = -1;
+        undoItem.setEnabled(false);
+        redoItem.setEnabled(false);
 
         mapInfoDataPanel.setName(mapData.getName());
         mapInfoDataPanel.setDescription(mapData.getInfo());
@@ -490,11 +495,7 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
             mapData.addNewEvent(evtC);
             theCreated.add(evtC);
         }
-        if (opPoint != -1)
-            while (operations.size() > opPoint + 1)
-                operations.remove(operations.size() - 1);
-        operations.add(ReversibleOperation.createEventGroupCreateOperation(theCreated));
-        opPoint = operations.size() - 1;
+        addOperation(ReversibleOperation.createEventGroupCreateOperation(theCreated));
     }
 
 
@@ -520,41 +521,25 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
     }
 
     public void addOperationForResourceAdd(MapResource res) {
-        if (opPoint != -1)
-            while (operations.size() > opPoint + 1)
-                operations.remove(operations.size() - 1);
-        operations.add(ReversibleOperation.createResourceAddOperation(res));
-        opPoint = operations.size() - 1;
+        addOperation(ReversibleOperation.createResourceAddOperation(res));
         eventModContainerPanel.updateEventTargets();
         eventModContainerPanel.reevaluateTargets();
     }
 
     public void addOperationForResourceMod(MapResource oldRes, MapResource newRes) {
-        if (opPoint != -1)
-            while (operations.size() > opPoint + 1)
-                operations.remove(operations.size() - 1);
-        operations.add(ReversibleOperation.createResourceModOperation(oldRes, newRes));
-        opPoint = operations.size() - 1;
+        addOperation(ReversibleOperation.createResourceModOperation(oldRes, newRes));
         eventModContainerPanel.updateEventTargets();
         eventModContainerPanel.reevaluateTargets();
     }
 
     public void addOperationForResourceRemove(MapResource res) {
-        if (opPoint != -1)
-            while (operations.size() > opPoint + 1)
-                operations.remove(operations.size() - 1);
-        operations.add(ReversibleOperation.createResourceDeleteOperation(res));
-        opPoint = operations.size() - 1;
+        addOperation(ReversibleOperation.createResourceDeleteOperation(res));
         eventModContainerPanel.updateEventTargets();
         eventModContainerPanel.reevaluateTargets();
     }
 
     public void subAddOperationForEventDataMod(MapEvent event, String oldData, String oldExtraData, float oldTime, String data, String extraData, float time) {
-        if (opPoint != -1)
-            while (operations.size() > opPoint + 1)
-                operations.remove(operations.size() - 1);
-        operations.add(ReversibleOperation.createEventDataModOperation(event, oldData, oldExtraData, oldTime, data, extraData, time));
-        opPoint = operations.size() - 1;
+        addOperation(ReversibleOperation.createEventDataModOperation(event, oldData, oldExtraData, oldTime, data, extraData, time));
     }
 
     public void addOperationForEventDataMod(MapEvent event, String oldData, String oldExtraData, float oldTime, String data, String extraData, float time) {
@@ -564,13 +549,62 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
     }
 
     public void addOperationForEventGroupDataMod(List<MapEvent> eventList, List<String> oldDataList, List<String> oldExtraDataList, List<Float> oldTimeList, List<String> dataList, List<String> extraDataList, List<Float> timeList) {
+        addOperation(ReversibleOperation.createEventGroupDataModOperation(eventList, oldDataList, oldExtraDataList, oldTimeList, dataList, extraDataList, timeList));
+        eventModContainerPanel.updateEventTargets();
+        eventModContainerPanel.reevaluateTargets();
+    }
+
+    public void addOperationForEventAdd(MapEvent event) {
+        addOperation(ReversibleOperation.createEventCreateOperation(event));
+        eventModContainerPanel.updateEventTargets();
+        eventModContainerPanel.reevaluateTargets();
+    }
+
+    public void addOperationForCheckpointAdd(Checkpoint checkpoint) {
+        addOperation(ReversibleOperation.createCheckpointCreateOperation(checkpoint));
+    }
+
+    public void deleteClosest(float time, MapEvent.Type type) {
+        MapEvent event = mapData.getClosestEvent(time, type);
+        if (event != null && Math.abs(event.getTime() - time) < getConfig().getMaxManipGrabDistanceSec()) {
+            addOperation(ReversibleOperation.createEventDeleteOperation(event));
+            mapData.removeEvent(event);
+        }
+        eventModContainerPanel.updateEventTargets();
+        eventModContainerPanel.reevaluateTargets();
+    }
+
+    public void deleteClosestCheckpoint(float time) {
+        Checkpoint checkpoint = mapData.getClosestCheckpoint(time);
+        if (checkpoint != null && Math.abs(checkpoint.getTime() - time) < getConfig().getMaxManipGrabDistanceSec()) {
+            addOperation(ReversibleOperation.createCheckpointDeleteOperation(checkpoint));
+            mapData.removeCheckpoint(checkpoint);
+        }
+    }
+
+    private void deleteSelection() {
+        selection.clear();
+        prevSelection.clear();
+        for (MapEvent evt : realSelection)
+            mapData.removeEvent(evt);
+        addOperation(ReversibleOperation.createEventGroupDeleteOperation(new ArrayList<>(realSelection)));
+        eventDisplayPanel.pretendLikeIWasntSelectingAnything();
+        realSelection.clear();
+        eventModContainerPanel.updateEventTargets();
+        eventModContainerPanel.reevaluateTargets();
+    }
+
+    private void addOperation(ReversibleOperation operation) {
         if (opPoint != -1)
             while (operations.size() > opPoint + 1)
                 operations.remove(operations.size() - 1);
-        operations.add(ReversibleOperation.createEventGroupDataModOperation(eventList, oldDataList, oldExtraDataList, oldTimeList, dataList, extraDataList, timeList));
+        operations.add(operation);
         opPoint = operations.size() - 1;
-        eventModContainerPanel.updateEventTargets();
-        eventModContainerPanel.reevaluateTargets();
+        Locale l = parent.getLocale();
+        undoItem.setText(l.getKey(KEY_MENU_EDIT_UNDO_OPERATION_EXISTS).replaceAll(OPERATION, l.getKey(operations.get(opPoint).getOperationKey())));
+        redoItem.setText(l.getKey(KEY_MENU_EDIT_REDO));
+        undoItem.setEnabled(true);
+        redoItem.setEnabled(false);
     }
 
     private void reloadProject() {
@@ -864,6 +898,11 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
                 break;
             case TIMING_EVENT_LENGTH_DRAG:
                 manipTarget.getTarget().getTimingProperty().setLength(manipTarget.getTarget().getTimingProperty().getLength() + deltaTime);
+                tp = manipTarget.getTarget().getTimingProperty();
+                if (tp != null) {
+                    eset = new TreeSet<>(tp.setRootTimeLight(tp.getRootTime()));
+                    mapData.repositionEventsFinalize(new ArrayList<>(eset));
+                }
                 break;
             case TIMING_EVENT_ROOT_TIME_DRAG:
                 tp = manipTarget.getTarget().getTimingProperty();
@@ -884,11 +923,21 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
                 float closeH = closestHandle.getTime() + closestHandle.getTimingProperty().getLength();
                 float closeR = closestRoot.getTimingProperty().getRootTime();
                 if (Math.abs(closeT - initTarget) < Math.abs(closeH - initTarget) && Math.abs(closeT - initTarget) < Math.abs(closeR - initTarget)) {
-                    if (Math.abs(closeT - initTarget) < getConfig().getMaxManipGrabDistanceSec()) {
+                    if (Math.abs(closeT - initTarget) < getConfig().getMaxManipGrabDistanceSec() && !realSelection.contains(closest)) {
                         clearSelection();
                         closest.concreteTime();
+                        closest.concreteTimedMetaId();
                         closest.getTimingProperty().concreteRootTime();
                         manipTarget = new ManipTarget(ManipTarget.Type.EVENT_TIME_DRAG, closest);
+                    } else if (realSelection.size() != 0) {
+                        for (MapEvent evt : realSelection) {
+                            evt.concreteTime();
+                            evt.concreteTimedMetaId();
+                            TimingProperty tp = evt.getTimingProperty();
+                            if (tp != null)
+                                tp.concreteRootTime();
+                        }
+                        manipTarget = new ManipTarget(ManipTarget.Type.SELECTION_DRAG, null);
                     }
                 } else {
                     if (Math.abs(closeH - initTarget) < Math.abs(closeR - initTarget)) {
@@ -977,62 +1026,25 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
                     times.add(evt.getTime());
                     timedMetaIds.add(evt.getTimedMetaId());
                 }
-                if (opPoint != -1)
-                    while (operations.size() > opPoint + 1)
-                        operations.remove(operations.size() - 1);
-                operations.add(ReversibleOperation.createEventGroupMoveOperation(realSelection, timedMetaIds, times));
-                opPoint = operations.size() - 1;
+                addOperation(ReversibleOperation.createEventGroupMoveOperation(realSelection, timedMetaIds, times));
                 break;
             case EVENT_TIME_DRAG:
-                if (opPoint != -1)
-                    while (operations.size() > opPoint + 1)
-                        operations.remove(operations.size() - 1);
-                operations.add(ReversibleOperation.createEventMoveOperation(manipTarget.getTarget(), manipTarget.getTarget().getTimedMetaId(), manipTarget.getTarget().getTime()));
-                opPoint = operations.size() - 1;
+                MapEvent target = manipTarget.getTarget();
+                addOperation(ReversibleOperation.createEventMoveOperation(target, target.getTimedMetaId(), target.getTime()));
                 break;
             case CHECKPOINT_DRAG:
-                if (opPoint != -1)
-                    while (operations.size() > opPoint + 1)
-                        operations.remove(operations.size() - 1);
-                operations.add(ReversibleOperation.createCheckpointMoveOperation(manipTarget.getCheckpointTarget(), manipTarget.getCheckpointTarget().getTime()));
-                opPoint = operations.size() - 1;
+                addOperation(ReversibleOperation.createCheckpointMoveOperation(manipTarget.getCheckpointTarget(), manipTarget.getCheckpointTarget().getTime()));
                 break;
             case TIMING_EVENT_LENGTH_DRAG:
-                if (opPoint != -1)
-                    while (operations.size() > opPoint + 1)
-                        operations.remove(operations.size() - 1);
-                operations.add(ReversibleOperation.createTimingEventLengthModOperation(manipTarget.getTarget(), manipTarget.getTarget().getTimingProperty().getLength()));
-                opPoint = operations.size() - 1;
+                addOperation(ReversibleOperation.createTimingEventLengthModOperation(manipTarget.getTarget(), manipTarget.getTarget().getTimingProperty().getLength()));
                 break;
             case TIMING_EVENT_ROOT_TIME_DRAG:
-                if (opPoint != -1)
-                    while (operations.size() > opPoint + 1)
-                        operations.remove(operations.size() - 1);
-                operations.add(ReversibleOperation.createTimingEventRootTimeModOperation(manipTarget.getTarget(), manipTarget.getTarget().getTimingProperty().getRootTime()));
-                opPoint = operations.size() - 1;
+                addOperation(ReversibleOperation.createTimingEventRootTimeModOperation(manipTarget.getTarget(), manipTarget.getTarget().getTimingProperty().getRootTime()));
                 break;
         }
         eventModContainerPanel.updateEventTargets();
         eventModContainerPanel.reevaluateTargets();
         manipTarget = new ManipTarget();
-    }
-
-    public void addOperationForEventAdd(MapEvent event) {
-        if (opPoint != -1)
-            while (operations.size() > opPoint + 1)
-                operations.remove(operations.size() - 1);
-        operations.add(ReversibleOperation.createEventCreateOperation(event));
-        opPoint = operations.size() - 1;
-        eventModContainerPanel.updateEventTargets();
-        eventModContainerPanel.reevaluateTargets();
-    }
-
-    public void addOperationForCheckpointAdd(Checkpoint checkpoint) {
-        if (opPoint != -1)
-            while (operations.size() > opPoint + 1)
-                operations.remove(operations.size() - 1);
-        operations.add(ReversibleOperation.createCheckpointCreateOperation(checkpoint));
-        opPoint = operations.size() - 1;
     }
 
     public float getPlayHeadPercent() {
@@ -1130,48 +1142,6 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
         selection.clear();
     }
 
-    public void deleteClosest(float time, MapEvent.Type type) {
-        MapEvent event = mapData.getClosestEvent(time, type);
-        if (event != null && Math.abs(event.getTime() - time) < getConfig().getMaxManipGrabDistanceSec()) {
-            if (opPoint != -1)
-                while (operations.size() > opPoint + 1)
-                    operations.remove(operations.size() - 1);
-            operations.add(ReversibleOperation.createEventDeleteOperation(event));
-            opPoint = operations.size() - 1;
-            mapData.removeEvent(event);
-        }
-        eventModContainerPanel.updateEventTargets();
-        eventModContainerPanel.reevaluateTargets();
-    }
-
-    public void deleteClosestCheckpoint(float time) {
-        Checkpoint checkpoint = mapData.getClosestCheckpoint(time);
-        if (checkpoint != null && Math.abs(checkpoint.getTime() - time) < getConfig().getMaxManipGrabDistanceSec()) {
-            if (opPoint != -1)
-                while (operations.size() > opPoint + 1)
-                    operations.remove(operations.size() - 1);
-            operations.add(ReversibleOperation.createCheckpointDeleteOperation(checkpoint));
-            opPoint = operations.size() - 1;
-            mapData.removeCheckpoint(checkpoint);
-        }
-    }
-
-    private void deleteSelection() {
-        selection.clear();
-        prevSelection.clear();
-        for (MapEvent evt : realSelection)
-            mapData.removeEvent(evt);
-        if (opPoint != -1)
-            while (operations.size() > opPoint + 1)
-                operations.remove(operations.size() - 1);
-        operations.add(ReversibleOperation.createEventGroupDeleteOperation(new ArrayList<>(realSelection)));
-        opPoint = operations.size() - 1;
-        eventDisplayPanel.pretendLikeIWasntSelectingAnything();
-        realSelection.clear();
-        eventModContainerPanel.updateEventTargets();
-        eventModContainerPanel.reevaluateTargets();
-    }
-
     private void selectAll() {
         clearDrag();
         clearSelection();
@@ -1225,14 +1195,17 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
                     mapData.addLoadedEvent(op.getEvent());
                     break;
                 case EVENT_MOVE:
-                    op.getEvent().revertTime();
-                    op.getEvent().revertTimedMetaId();
-                    TimingProperty tp = op.getEvent().getTimingProperty();
+                    MapEvent event = op.getEvent();
+                    event.revertTime();
+                    event.revertTimedMetaId();
+                    TimingProperty tp = event.getTimingProperty();
                     if (tp != null)
                         tp.revertRootTime();
                     break;
                 case TIMING_EVENT_LENGTH_MOD:
-                    op.getEvent().getTimingProperty().revertLength();
+                    tp = op.getEvent().getTimingProperty();
+                    tp.revertLength();
+                    tp.revertRootTime();
                     break;
                 case TIMING_EVENT_ROOT_TIME_MOD:
                     op.getEvent().getTimingProperty().revertRootTime();
@@ -1265,22 +1238,36 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
                     op.getCheckpoint().revertTime();
                     break;
                 case EVENT_DATA_MOD:
-                    op.getEvent().setEventData(op.getOldData());
-                    op.getEvent().setEventExtraData(op.getOldExtraData());
-                    op.getEvent().setTimeRaw(op.getOldTime());
+                    event = op.getEvent();
+                    event.setEventData(op.getOldData());
+                    event.setEventExtraData(op.getOldExtraData());
+                    event.setTimeRaw(op.getOldTime());
                     break;
                 case EVENT_GROUP_DATA_MOD:
                     List<MapEvent> events = op.getEventList();
                     for (int i = 0; i < events.size(); i++) {
-                        MapEvent event = events.get(i);
-                        event.setEventData(op.getOldDataList().get(i));
-                        event.setEventExtraData(op.getOldExtraDataList().get(i));
-                        event.setTimeRaw(op.getOldTimeList().get(i));
+                        MapEvent evt = events.get(i);
+                        evt.setEventData(op.getOldDataList().get(i));
+                        evt.setEventExtraData(op.getOldExtraDataList().get(i));
+                        evt.setTimeRaw(op.getOldTimeList().get(i));
                     }
                     break;
             }
             opPoint = Math.max(opPoint - 1, -1);
         }
+        Locale l = parent.getLocale();
+        boolean enableUndo = operations.size() != 0 && opPoint != -1;
+        if (enableUndo)
+            undoItem.setText(l.getKey(KEY_MENU_EDIT_UNDO_OPERATION_EXISTS).replaceAll(OPERATION, l.getKey(operations.get(opPoint).getOperationKey())));
+        else
+            undoItem.setText(l.getKey(KEY_MENU_EDIT_UNDO));
+        undoItem.setEnabled(enableUndo);
+        boolean enableRedo = opPoint + 1 < operations.size();
+        if (enableRedo)
+            redoItem.setText(l.getKey(KEY_MENU_EDIT_REDO_OPERATION_EXISTS).replaceAll(OPERATION, l.getKey(operations.get(opPoint + 1).getOperationKey())));
+        else
+            redoItem.setText(l.getKey(KEY_MENU_EDIT_REDO));
+        redoItem.setEnabled(enableRedo);
         eventModContainerPanel.updateEventTargets();
         eventModContainerPanel.reevaluateTargets();
     }
@@ -1307,20 +1294,25 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
                     mapData.removeEvent(op.getEvent());
                     break;
                 case EVENT_MOVE:
-                    op.getEvent().concreteTime();
-                    op.getEvent().setTime(op.getTime());
-                    op.getEvent().setTimedMetaId(op.getTimedMetaId());
+                    MapEvent event = op.getEvent();
+                    event.concreteTimedMetaId();
+                    event.concreteTime();
+                    event.setTime(op.getTime());
+                    event.setTimedMetaId(op.getTimedMetaId());
                     TimingProperty tp = op.getEvent().getTimingProperty();
                     if (tp != null)
                         tp.setRootTime(tp.getRootTime());
                     break;
                 case TIMING_EVENT_LENGTH_MOD:
-                    op.getEvent().getTimingProperty().concreteLength();
-                    op.getEvent().getTimingProperty().setLength(op.getLength());
+                    tp = op.getEvent().getTimingProperty();
+                    tp.concreteLength();
+                    tp.setLength(op.getLength());
+                    tp.setRootTime(tp.getRootTime());
                     break;
                 case TIMING_EVENT_ROOT_TIME_MOD:
-                    op.getEvent().getTimingProperty().concreteRootTime();
-                    op.getEvent().getTimingProperty().setRootTime(op.getRootTime());
+                    tp = op.getEvent().getTimingProperty();
+                    tp.concreteRootTime();
+                    tp.setRootTime(op.getRootTime());
                 case EVENT_GROUP_CREATE:
                     for (MapEvent evt : op.getEventList())
                         mapData.addLoadedEvent(evt);
@@ -1332,6 +1324,7 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
                 case EVENT_GROUP_MOVE:
                     for (int i = 0; i < op.getEventList().size(); i++) {
                         MapEvent evt = op.getEventList().get(i);
+                        evt.concreteTimedMetaId();
                         evt.concreteTime();
                         evt.setTime(op.getTimeList().get(i));
                         evt.setTimedMetaId(op.getTimedMetaIds().get(i));
@@ -1353,22 +1346,36 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
                     op.getCheckpoint().setTime(op.getTime());
                     break;
                 case EVENT_DATA_MOD:
-                    op.getEvent().setEventData(op.getData());
-                    op.getEvent().setEventExtraData(op.getExtraData());
-                    op.getEvent().setTimeRaw(op.getTime());
+                    event = op.getEvent();
+                    event.setEventData(op.getData());
+                    event.setEventExtraData(op.getExtraData());
+                    event.setTimeRaw(op.getTime());
                     break;
                 case EVENT_GROUP_DATA_MOD:
                     List<MapEvent> events = op.getEventList();
                     for (int i = 0; i < events.size(); i++) {
-                        MapEvent event = events.get(i);
-                        event.setEventData(op.getDataList().get(i));
-                        event.setEventExtraData(op.getExtraDataList().get(i));
-                        event.setTimeRaw(op.getTimeList().get(i));
+                        MapEvent evt = events.get(i);
+                        evt.setEventData(op.getDataList().get(i));
+                        evt.setEventExtraData(op.getExtraDataList().get(i));
+                        evt.setTimeRaw(op.getTimeList().get(i));
                     }
                     break;
             }
             opPoint++;
         }
+        Locale l = parent.getLocale();
+        boolean enableUndo = operations.size() != 0 && opPoint != -1;
+        if (enableUndo)
+            undoItem.setText(l.getKey(KEY_MENU_EDIT_UNDO_OPERATION_EXISTS).replaceAll(OPERATION, l.getKey(operations.get(opPoint).getOperationKey())));
+        else
+            undoItem.setText(l.getKey(KEY_MENU_EDIT_UNDO));
+        undoItem.setEnabled(enableUndo);
+        boolean enableRedo = opPoint + 1 < operations.size();
+        if (enableRedo)
+            redoItem.setText(l.getKey(KEY_MENU_EDIT_REDO_OPERATION_EXISTS).replaceAll(OPERATION, l.getKey(operations.get(opPoint + 1).getOperationKey())));
+        else
+            redoItem.setText(l.getKey(KEY_MENU_EDIT_REDO));
+        redoItem.setEnabled(enableRedo);
         eventModContainerPanel.updateEventTargets();
         eventModContainerPanel.reevaluateTargets();
     }
@@ -1526,8 +1533,16 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
         exportMapItem.setText(l.getKey(KEY_MENU_FILE_EXPORT_PROJECT));
         reloadProjectItem.setText(l.getKey(KEY_MENU_FILE_RELOAD_PROJECT));
         editMenu.setText(l.getKey(KEY_MENU_EDIT));
-        undoItem.setText(l.getKey(KEY_MENU_EDIT_UNDO));
-        redoItem.setText(l.getKey(KEY_MENU_EDIT_REDO));
+
+        if (operations.size() != 0 && opPoint != -1)
+            undoItem.setText(l.getKey(KEY_MENU_EDIT_UNDO_OPERATION_EXISTS).replaceAll(OPERATION, l.getKey(operations.get(opPoint).getOperationKey())));
+        else
+            undoItem.setText(l.getKey(KEY_MENU_EDIT_UNDO));
+        if (opPoint + 1 < operations.size())
+            redoItem.setText(l.getKey(KEY_MENU_EDIT_REDO_OPERATION_EXISTS).replaceAll(OPERATION, l.getKey(operations.get(opPoint).getOperationKey())));
+        else
+            redoItem.setText(l.getKey(KEY_MENU_EDIT_REDO));
+
         cutItem.setText(l.getKey(KEY_MENU_EDIT_CUT));
         copyItem.setText(l.getKey(KEY_MENU_EDIT_COPY));
         pasteItem.setText(l.getKey(KEY_MENU_EDIT_PASTE));
@@ -1588,8 +1603,6 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
             cutItem.setEnabled(realSelection.size() != 0);
             copyItem.setEnabled(realSelection.size() != 0);
             pasteItem.setEnabled(clipboard.size() != 0);
-            undoItem.setEnabled(operations.size() != 0 && opPoint != -1);
-            redoItem.setEnabled(opPoint + 1 < operations.size());
             eventModContainerPanel.updateEventTargets();
             contentPane.repaint();
         }

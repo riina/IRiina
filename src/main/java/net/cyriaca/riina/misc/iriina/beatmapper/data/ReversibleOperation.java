@@ -10,6 +10,23 @@ import java.util.List;
 
 public class ReversibleOperation {
 
+    private static final String KEY_REVERSIBLE_OPERATION_RESOURCE_MOD = "reversible_operation_resource_mod";
+    private static final String KEY_REVERSIBLE_OPERATION_RESOURCE_ADD = "reversible_operation_resource_add";
+    private static final String KEY_REVERSIBLE_OPERATION_RESOURCE_DELETE = "reversible_operation_resource_delete";
+    private static final String KEY_REVERSIBLE_OPERATION_EVENT_CREATE = "reversible_operation_event_create";
+    private static final String KEY_REVERSIBLE_OPERATION_EVENT_DELETE = "reversible_operation_event_delete";
+    private static final String KEY_REVERSIBLE_OPERATION_EVENT_MOVE = "reversible_operation_event_move";
+    private static final String KEY_REVERSIBLE_OPERATION_TIMING_EVENT_LENGTH_MOD = "reversible_operation_timing_event_length_mod";
+    private static final String KEY_REVERSIBLE_OPERATION_TIMING_EVENT_ROOT_TIME_MOD = "reversible_operation_timing_event_root_time_mod";
+    private static final String KEY_REVERSIBLE_OPERATION_EVENT_GROUP_CREATE = "reversible_operation_event_group_create";
+    private static final String KEY_REVERSIBLE_OPERATION_EVENT_GROUP_DELETE = "reversible_operation_event_group_delete";
+    private static final String KEY_REVERSIBLE_OPERATION_EVENT_GROUP_MOVE = "reversible_operation_event_group_move";
+    private static final String KEY_REVERSIBLE_OPERATION_CHECKPOINT_CREATE = "reversible_operation_checkpoint_create";
+    private static final String KEY_REVERSIBLE_OPERATION_CHECKPOINT_DELETE = "reversible_operation_checkpoint_delete";
+    private static final String KEY_REVERSIBLE_OPERATION_CHECKPOINT_MOVE = "reversible_operation_checkpoint_move";
+    private static final String KEY_REVERSIBLE_OPERATION_EVENT_DATA_MOD = "reversible_operation_event_data_mod";
+    private static final String KEY_REVERSIBLE_OPERATION_EVENT_GROUP_DATA_MOD = "reversible_operation_event_group_data_mod";
+
     private Type type = Type.EVENT_MOVE;
     private MapResource oldRes = null;
     private MapResource res = null;
@@ -32,11 +49,11 @@ public class ReversibleOperation {
     private List<Float> oldTimeList = null;
     private List<Integer> timedMetaIds = null;
     private int timedMetaId = -1;
-    private long timestamp = -1L;
+    private long timestamp;
     private String operationKey = null;
 
-    public ReversibleOperation(){
-    	timestamp = Instant.now().toEpochMilli();
+    public ReversibleOperation() {
+        timestamp = Instant.now().toEpochMilli();
     }
 
     public static ReversibleOperation createResourceModOperation(MapResource oldRes, MapResource res) {
@@ -44,6 +61,7 @@ public class ReversibleOperation {
         out.type = Type.RESOURCE_MOD;
         out.oldRes = oldRes;
         out.res = res;
+        out.operationKey = KEY_REVERSIBLE_OPERATION_RESOURCE_MOD;
         return out;
     }
 
@@ -51,6 +69,7 @@ public class ReversibleOperation {
         ReversibleOperation out = new ReversibleOperation();
         out.type = Type.RESOURCE_ADD;
         out.res = res;
+        out.operationKey = KEY_REVERSIBLE_OPERATION_RESOURCE_ADD;
         return out;
     }
 
@@ -58,6 +77,7 @@ public class ReversibleOperation {
         ReversibleOperation out = new ReversibleOperation();
         out.type = Type.RESOURCE_DELETE;
         out.res = res;
+        out.operationKey = KEY_REVERSIBLE_OPERATION_RESOURCE_DELETE;
         return out;
     }
 
@@ -65,6 +85,7 @@ public class ReversibleOperation {
         ReversibleOperation out = new ReversibleOperation();
         out.type = Type.EVENT_CREATE;
         out.event = event;
+        out.operationKey = KEY_REVERSIBLE_OPERATION_EVENT_CREATE;
         return out;
     }
 
@@ -72,6 +93,7 @@ public class ReversibleOperation {
         ReversibleOperation out = new ReversibleOperation();
         out.type = Type.EVENT_DELETE;
         out.event = event;
+        out.operationKey = KEY_REVERSIBLE_OPERATION_EVENT_DELETE;
         return out;
     }
 
@@ -81,6 +103,7 @@ public class ReversibleOperation {
         out.timedMetaId = timedMetaId;
         out.event = event;
         out.time = time;
+        out.operationKey = KEY_REVERSIBLE_OPERATION_EVENT_MOVE;
         return out;
     }
 
@@ -89,6 +112,7 @@ public class ReversibleOperation {
         out.type = Type.TIMING_EVENT_LENGTH_MOD;
         out.event = event;
         out.length = length;
+        out.operationKey = KEY_REVERSIBLE_OPERATION_TIMING_EVENT_LENGTH_MOD;
         return out;
     }
 
@@ -97,6 +121,7 @@ public class ReversibleOperation {
         out.type = Type.TIMING_EVENT_ROOT_TIME_MOD;
         out.event = event;
         out.rootTime = rootTime;
+        out.operationKey = KEY_REVERSIBLE_OPERATION_TIMING_EVENT_ROOT_TIME_MOD;
         return out;
     }
 
@@ -104,6 +129,7 @@ public class ReversibleOperation {
         ReversibleOperation out = new ReversibleOperation();
         out.type = Type.EVENT_GROUP_CREATE;
         out.eventList = new ArrayList<>(eventList);
+        out.operationKey = KEY_REVERSIBLE_OPERATION_EVENT_GROUP_CREATE;
         return out;
     }
 
@@ -111,6 +137,7 @@ public class ReversibleOperation {
         ReversibleOperation out = new ReversibleOperation();
         out.type = Type.EVENT_GROUP_DELETE;
         out.eventList = new ArrayList<>(eventList);
+        out.operationKey = KEY_REVERSIBLE_OPERATION_EVENT_GROUP_DELETE;
         return out;
     }
 
@@ -120,6 +147,7 @@ public class ReversibleOperation {
         out.timedMetaIds = new ArrayList<>(timedMetaIds);
         out.eventList = new ArrayList<>(eventList);
         out.timeList = new ArrayList<>(timeList);
+        out.operationKey = KEY_REVERSIBLE_OPERATION_EVENT_GROUP_MOVE;
         return out;
     }
 
@@ -127,6 +155,7 @@ public class ReversibleOperation {
         ReversibleOperation out = new ReversibleOperation();
         out.type = Type.CHECKPOINT_CREATE;
         out.checkpoint = checkpoint;
+        out.operationKey = KEY_REVERSIBLE_OPERATION_CHECKPOINT_CREATE;
         return out;
     }
 
@@ -134,6 +163,7 @@ public class ReversibleOperation {
         ReversibleOperation out = new ReversibleOperation();
         out.type = Type.CHECKPOINT_DELETE;
         out.checkpoint = checkpoint;
+        out.operationKey = KEY_REVERSIBLE_OPERATION_CHECKPOINT_DELETE;
         return out;
     }
 
@@ -142,6 +172,7 @@ public class ReversibleOperation {
         out.type = Type.CHECKPOINT_MOVE;
         out.checkpoint = checkpoint;
         out.time = time;
+        out.operationKey = KEY_REVERSIBLE_OPERATION_CHECKPOINT_MOVE;
         return out;
     }
 
@@ -155,6 +186,7 @@ public class ReversibleOperation {
         out.data = data;
         out.extraData = extraData;
         out.time = time;
+        out.operationKey = KEY_REVERSIBLE_OPERATION_EVENT_DATA_MOD;
         return out;
     }
 
@@ -168,6 +200,7 @@ public class ReversibleOperation {
         out.dataList = new ArrayList<>(dataList);
         out.extraDataList = new ArrayList<>(extraDataList);
         out.timeList = new ArrayList<>(timeList);
+        out.operationKey = KEY_REVERSIBLE_OPERATION_EVENT_GROUP_DATA_MOD;
         return out;
     }
 
@@ -259,6 +292,14 @@ public class ReversibleOperation {
         return oldTime;
     }
 
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public String getOperationKey() {
+        return operationKey;
+    }
+
     public enum Type {
         RESOURCE_MOD,
         RESOURCE_ADD,
@@ -276,13 +317,5 @@ public class ReversibleOperation {
         CHECKPOINT_MOVE,
         EVENT_DATA_MOD,
         EVENT_GROUP_DATA_MOD
-    }
-    
-    public long getTimestamp(){
-    	return timestamp;
-    }
-    
-    public String getOperationKey(){
-    	return operationKey;
     }
 }

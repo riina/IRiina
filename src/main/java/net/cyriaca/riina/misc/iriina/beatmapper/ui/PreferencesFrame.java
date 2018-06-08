@@ -21,19 +21,19 @@ import java.util.Iterator;
 
 public class PreferencesFrame extends JFrame implements IViewFrame, LocaleChangeListener, ActionListener {
 
-    private static String KEY_UI_DIALOG_INFORMATION = "ui_dialog_information";
-    private static String KEY_UI_DIALOG_ERROR = "ui_dialog_error";
+    private static final String KEY_UI_DIALOG_INFORMATION = "ui_dialog_information";
+    private static final String KEY_UI_DIALOG_ERROR = "ui_dialog_error";
 
-    private static String KEY_FRAME_PREFERENCES_SAVE_FAIL_WORKSPACE_DIRECTORY_USE_FAILED = "frame_preferences_save_fail_workspace_directory_use_failed";
+    private static final String KEY_FRAME_PREFERENCES_SAVE_FAIL_WORKSPACE_DIRECTORY_USE_FAILED = "frame_preferences_save_fail_workspace_directory_use_failed";
 
-    private static String KEY_FRAME_PREFERENCES_SAVE_SUCCESS = "frame_preferences_save_success";
+    private static final String KEY_FRAME_PREFERENCES_SAVE_SUCCESS = "frame_preferences_save_success";
 
-    private static String KEY_FRAME_PREFERENCES_TITLE = "frame_preferences_title";
-    private static String KEY_FRAME_PREFERENCES_TEXT_LANGUAGE = "frame_preferences_text_language";
-    private static String KEY_FRAME_PREFERENCES_TEXT_WORKSPACE_DIRECTORY = "frame_preferences_text_workspace_directory";
-    private static String KEY_FRAME_PREFERENCES_TEXT_WORKSPACE_DIRECTORY_SELECT = "frame_preferences_text_workspace_directory_select";
-    private static String KEY_FRAME_PREFERENCES_TEXT_SHOW_PRE_WELCOME_ON_START = "frame_preferences_text_show_pre_welcome_on_start";
-    private static String KEY_FRAME_PREFERENCES_TEXT_SAVE_PREFERENCES = "frame_preferences_text_save_preferences";
+    private static final String KEY_FRAME_PREFERENCES_TITLE = "frame_preferences_title";
+    private static final String KEY_FRAME_PREFERENCES_TEXT_LANGUAGE = "frame_preferences_text_language";
+    private static final String KEY_FRAME_PREFERENCES_TEXT_WORKSPACE_DIRECTORY = "frame_preferences_text_workspace_directory";
+    private static final String KEY_FRAME_PREFERENCES_TEXT_WORKSPACE_DIRECTORY_SELECT = "frame_preferences_text_workspace_directory_select";
+    private static final String KEY_FRAME_PREFERENCES_TEXT_SHOW_PRE_WELCOME_ON_START = "frame_preferences_text_show_pre_welcome_on_start";
+    private static final String KEY_FRAME_PREFERENCES_TEXT_SAVE_PREFERENCES = "frame_preferences_text_save_preferences";
     private IRiina parent;
     private ArxTitledComboBoxItem<LocaleDefinition> localeSelect;
     private ArxTitledFolderSelectorItem workspaceSelector;

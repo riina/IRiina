@@ -328,8 +328,8 @@ public class MapManager {
                 String eventExtraData = evt.getEventExtraData();
                 if (eventExtraData != null)
                     eventBuilder.add("extraData", eventExtraData);
-                eventsBuilder.add(eventBuilder);
             }
+            eventsBuilder.add(eventBuilder);
         }
     }
 

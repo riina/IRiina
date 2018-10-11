@@ -463,7 +463,6 @@ public class EventDisplayPanel extends JPanel implements MouseMotionListener, Mo
         int w = getWidth();
         int h = getHeight();
         if (message != null) {
-            System.out.println("Mess: " + message);
             super.setBackground(Color.BLACK);
             super.paintComponent(g);
             g.setColor(Color.CYAN);

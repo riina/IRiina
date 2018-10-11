@@ -5,6 +5,9 @@ import net.cyriaca.riina.misc.iriina.beatmapper.ui.editor.event.properties.Prope
 import java.util.HashSet;
 import java.util.Set;
 
+/*
+ * Base class for all properties of MapEvents
+ */
 public class Property {
 
     private MapEvent parent;

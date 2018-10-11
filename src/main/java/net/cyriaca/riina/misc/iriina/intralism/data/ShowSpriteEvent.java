@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+/*
+ * Event that describes a sprite being displayed on-screen
+ */
 public final class ShowSpriteEvent extends MapEvent {
 
     public static final String KEY_EVENT_SHOW_SPRITE_HR_NAME = "event_show_sprite_hr_name";

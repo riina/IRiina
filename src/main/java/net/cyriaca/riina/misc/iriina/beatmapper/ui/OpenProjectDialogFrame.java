@@ -43,6 +43,7 @@ public class OpenProjectDialogFrame extends JFrame
         add(launch, BorderLayout.SOUTH);
         launch.addActionListener(this);
         addWindowListener(this);
+        IRiina.brandFrameWithGloriousEmblem(this);
     }
 
     public void localeChangePerformed(LocaleChangeEvent event) {

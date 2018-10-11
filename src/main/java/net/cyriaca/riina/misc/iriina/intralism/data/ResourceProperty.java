@@ -1,5 +1,9 @@
 package net.cyriaca.riina.misc.iriina.intralism.data;
 
+/*
+ * Represents a resource used by an event, referenced
+ * by resource name
+ */
 public class ResourceProperty extends Property {
 
     private String resName;

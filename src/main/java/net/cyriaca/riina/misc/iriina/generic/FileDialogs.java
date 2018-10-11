@@ -1,22 +1,15 @@
 package net.cyriaca.riina.misc.iriina.generic;
 
+import net.cyriaca.riina.misc.iriina.beatmapper.IRiina;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 
 public class FileDialogs {
 
-    private static byte OS_STATE = 0;
-
     public static File fileDialog(Frame parent, File initPath, boolean allFiles) {
-        if (OS_STATE == 0) {
-            String os = System.getProperty("os.name");
-            if (os.contains("Mac OS X"))
-                OS_STATE = 2;
-            else
-                OS_STATE = 1;
-        }
-        if (OS_STATE == 1) {
+        if (!IRiina.IS_MACOS) {
             JFileChooser chooser = new JFileChooser();
             chooser.setCurrentDirectory(new File("."));
             chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -44,14 +37,7 @@ public class FileDialogs {
     }
 
     public static File folderDialog(Frame parent, File initPath) {
-        if (OS_STATE == 0) {
-            String os = System.getProperty("os.name");
-            if (os.contains("Mac OS X"))
-                OS_STATE = 2;
-            else
-                OS_STATE = 1;
-        }
-        if (OS_STATE == 1) {
+        if (!IRiina.IS_MACOS) {
             JFileChooser chooser = new JFileChooser();
             chooser.setCurrentDirectory(new File("."));
             chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);

@@ -41,6 +41,7 @@ public class EventModContainerPanel extends JPanel {
         elems.add("ComboAndArcWithTiming");
         elems.add("LeftRightVisual");
         selector.setElements(elems);
+        selector.setSelectedIndex(1);
         add(selector, BorderLayout.NORTH);
 
         pooledPanels = new TreeMap<>();
@@ -237,10 +238,12 @@ public class EventModContainerPanel extends JPanel {
 
     public void localize(Locale l) {
         List<String> elems = new ArrayList<>();
+        int i = selector.getSelectedIndex();
         elems.add(l.getKey(KEY_PANEL_EVENT_MOD_TYPE_LEFT_RIGHT_ARC_AND_COMBO));
         elems.add(l.getKey(KEY_PANEL_EVENT_MOD_TYPE_COMBO_AND_ARC_WITH_TIMING));
         elems.add(l.getKey(KEY_PANEL_EVENT_MOD_TYPE_LEFT_RIGHT_VISUAL));
         selector.setElements(elems);
+        selector.setSelectedIndex(i);
         topPanel.setLocale(l);
         botPanel.setLocale(l);
     }

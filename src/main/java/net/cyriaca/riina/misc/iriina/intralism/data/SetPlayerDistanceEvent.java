@@ -5,6 +5,9 @@ import net.cyriaca.riina.misc.iriina.generic.IntBounds;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ * Event that defines camera distance
+ */
 public final class SetPlayerDistanceEvent extends MapEvent {
 
     public static final String KEY_EVENT_SET_PLAYER_DISTANCE_HR_NAME = "event_set_player_distance_hr_name";

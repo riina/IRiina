@@ -88,7 +88,6 @@ public class ArxTitledComboBoxItem<E> extends ArxTitledGenericItem implements Ac
         if (index >= 0 && index < combobox.getItemCount())
             combobox.setSelectedIndex(index);
         combobox.addActionListener(this);
-        combobox.getSelectedIndex();
     }
 
     public E getSelectedItem() {

@@ -4,6 +4,7 @@ import net.cyriaca.riina.misc.iriina.generic.Result;
 import net.cyriaca.riina.misc.iriina.generic.localization.Locale;
 
 import java.io.File;
+import java.util.regex.Matcher;
 
 public class DirectoryCreationResult extends Result {
 
@@ -26,7 +27,7 @@ public class DirectoryCreationResult extends Result {
     }
 
     public String getLocalizedFailureInfo(Locale l) {
-        return l.getKey(KEY_RESULT_DIRECTORY_CREATION_FAIL).replaceAll(DIRECTORY, directory.getAbsolutePath());
+        return l.getKey(KEY_RESULT_DIRECTORY_CREATION_FAIL).replaceAll(DIRECTORY, Matcher.quoteReplacement(directory.getAbsolutePath()));
     }
 
 }

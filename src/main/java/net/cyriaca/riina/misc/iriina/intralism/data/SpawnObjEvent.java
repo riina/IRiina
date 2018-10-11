@@ -2,6 +2,9 @@ package net.cyriaca.riina.misc.iriina.intralism.data;
 
 import java.util.List;
 
+/*
+ * Event that defines an arc pattern to spawn
+ */
 public final class SpawnObjEvent extends MapEvent {
 
     // ORDER (precedence): Up Right Down Left

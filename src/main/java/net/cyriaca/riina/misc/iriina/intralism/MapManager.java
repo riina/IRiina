@@ -6,9 +6,19 @@ import javax.json.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ * Utility managing conversion between JSON and MapData objects
+ */
 public class MapManager {
 
-    public static MapParseResult parseMap(JsonObject json) {
+    /*
+     * Parse a JSON object as an Intralism configuration
+     * @param json JSON object to parse
+     * @param checkpointTimingOffset Offset to use while importing checkpoints
+     * @param eventTimingOffset Offset to use while importing events
+     * @return Result container
+     */
+    public static MapParseResult parseMap(JsonObject json, float checkpointTimingOfset, float eventTimingOffset) {
         if (json == null) {
             return MapParseResult.createFailureResult(MapParseResult.FailureSource.NO_JSON_DATA_PROVIDED);
         }
@@ -64,7 +74,6 @@ public class MapManager {
             mapResources.add(r);
         }
         out.setMapResources(mapResources);
-
         try {
             byte handCount = (byte) json.getInt("handCount");
             if (handCount != 1)
@@ -160,7 +169,7 @@ public class MapManager {
             } catch (ClassCastException e) {
                 return MapParseResult.createInvalidValueResult("checkpoints[" + i + "]", MapParseResult.ValueType.NUMBER);
             }
-            checkpoints.add(new Checkpoint((float) num.doubleValue(), out));
+            checkpoints.add(new Checkpoint((float) num.doubleValue() + checkpointTimingOfset, out));
         }
         out.setCheckpoints(checkpoints);
         JsonArray eventsArr = json.getJsonArray("events");
@@ -190,7 +199,7 @@ public class MapManager {
             }
             float time;
             try {
-                time = (float) evtJson.getJsonNumber("time").doubleValue();
+                time = (float) evtJson.getJsonNumber("time").doubleValue() + eventTimingOffset;
             } catch (NullPointerException e) {
                 return MapParseResult.createMissingValueResult("events[" + i + "]>time");
             } catch (ClassCastException e) {
@@ -255,7 +264,17 @@ public class MapManager {
         return MapParseResult.createSuccessResult(out);
     }
 
-    public static JsonObject exportMap(MapData mapData) {
+    /*
+     * Export a MapData instance as either an editor-project-type JSON object
+     * (stores editor-specific metadata) or an intralism-pure-type JSON object
+     * (stripped to Intralism engine content)
+     * @param mapData Map configuration to export
+     * @param checkpointTimingOffset Offset to use while exporting checkpoints
+     * @param eventTimingOffset Offset to use while exporting events
+     * @param pure Export as a pure Intralism config
+     * @return JSON representation of configuration
+     */
+    public static JsonObject exportMap(MapData mapData, float checkpointTimingOfset, float eventTimingOffset, boolean pure) {
         JsonBuilderFactory f = Json.createBuilderFactory(null);
         JsonArrayBuilder levelResourcesBuilder = f.createArrayBuilder();
         List<MapResource> mapResources = mapData.getMapResources();
@@ -271,36 +290,17 @@ public class MapManager {
         JsonArrayBuilder checkpointsBuilder = f.createArrayBuilder();
         List<Checkpoint> checkpoints = mapData.getCheckpoints();
         for (Checkpoint checkpoint : checkpoints) {
-            checkpointsBuilder.add((double) checkpoint.getTime());
+            checkpointsBuilder.add((double) checkpoint.getTime() + checkpointTimingOfset);
         }
         JsonArrayBuilder eventsBuilder = f.createArrayBuilder();
         List<MapEvent> events = mapData.getEventList();
+
         for (MapEvent evt : events) {
-            JsonArrayBuilder eventDataBuilder = f.createArrayBuilder();
-            String eventData = evt.getEventData();
-            if (eventData == null)
-                eventData = "";
-            eventDataBuilder.add(evt.getEventName()).add(eventData);
-            JsonObjectBuilder eventBuilder = f.createObjectBuilder().add("time", evt.getTime())
-                    .add("data", eventDataBuilder.build()).add("metaId", evt.getMetaId());
-            String eventExtraData = evt.getEventExtraData();
-            if (eventExtraData != null)
-                eventBuilder.add("extraData", eventExtraData);
-            eventsBuilder.add(eventBuilder);
+            _exportMap_EvaluateEvent(f, eventsBuilder, evt, pure, eventTimingOffset);
             List<MapEvent> metaChildren = evt.getMetaChildren();
             if (metaChildren != null) {
                 for (MapEvent metaEvt : metaChildren) {
-                    JsonArrayBuilder metaEventDataBuilder = f.createArrayBuilder();
-                    String metaEventData = metaEvt.getEventData();
-                    if (metaEventData == null)
-                        metaEventData = "";
-                    metaEventDataBuilder.add(metaEvt.getEventName()).add(metaEventData);
-                    JsonObjectBuilder metaEventBuilder = f.createObjectBuilder().add("time", metaEvt.getTime())
-                            .add("data", metaEventDataBuilder.build()).add("metaId", metaEvt.getMetaId());
-                    String metaEventExtraData = metaEvt.getEventExtraData();
-                    if (metaEventExtraData != null)
-                        metaEventBuilder.add("extraData", metaEventExtraData);
-                    eventsBuilder.add(metaEventBuilder);
+                    _exportMap_EvaluateEvent(f, eventsBuilder, metaEvt, pure, eventTimingOffset);
                 }
             }
         }
@@ -314,63 +314,23 @@ public class MapManager {
                 .add("events", eventsBuilder.build()).build();
     }
 
-    public static JsonObject exportPureMap(MapData mapData) {
-        JsonBuilderFactory f = Json.createBuilderFactory(null);
-        JsonArrayBuilder levelResourcesBuilder = f.createArrayBuilder();
-        List<MapResource> mapResources = mapData.getMapResources();
-        for (MapResource r : mapResources) {
-            levelResourcesBuilder.add(f.createObjectBuilder().add("name", r.getName()).add("type", "Sprite")
-                    .add("path", r.getPath()).build());
-        }
-        JsonArrayBuilder tagsBuilder = f.createArrayBuilder();
-        List<String> tags = mapData.getTags();
-        for (String tag : tags) {
-            tagsBuilder.add(tag);
-        }
-        JsonArrayBuilder checkpointsBuilder = f.createArrayBuilder();
-        List<Checkpoint> checkpoints = mapData.getCheckpoints();
-        for (Checkpoint checkpoint : checkpoints) {
-            checkpointsBuilder.add((double) checkpoint.getTime());
-        }
-        JsonArrayBuilder eventsBuilder = f.createArrayBuilder();
-        List<MapEvent> events = mapData.getEventList();
-        for (MapEvent evt : events) {
-            if (evt.isCoreEvent()) {
-                JsonArrayBuilder eventDataBuilder = f.createArrayBuilder();
-                String eventData = evt.getEventData();
-                if (eventData == null)
-                    eventData = "";
-                eventDataBuilder.add(evt.getEventName()).add(eventData);
-                JsonObjectBuilder eventBuilder = f.createObjectBuilder().add("time", evt.getTime()).add("data",
-                        eventDataBuilder.build());
+    private static void _exportMap_EvaluateEvent(JsonBuilderFactory f, JsonArrayBuilder eventsBuilder, MapEvent evt, boolean pure, float eventTimingOffset) {
+        if (evt.isCoreEvent() || !pure) {
+            JsonArrayBuilder eventDataBuilder = f.createArrayBuilder();
+            String eventData = evt.getEventData();
+            if (eventData == null)
+                eventData = "";
+            eventDataBuilder.add(evt.getEventName()).add(eventData);
+            JsonObjectBuilder eventBuilder = f.createObjectBuilder().add("time", evt.getTime() + eventTimingOffset)
+                    .add("data", eventDataBuilder.build());
+            if (!pure) {
+                eventBuilder.add("metaId", evt.getMetaId());
+                String eventExtraData = evt.getEventExtraData();
+                if (eventExtraData != null)
+                    eventBuilder.add("extraData", eventExtraData);
                 eventsBuilder.add(eventBuilder);
             }
-            List<MapEvent> metaChildren = evt.getMetaChildren();
-            if (metaChildren != null) {
-                for (MapEvent metaEvt : metaChildren) {
-                    if (metaEvt.isCoreEvent()) {
-                        JsonArrayBuilder metaEventDataBuilder = f.createArrayBuilder();
-                        String metaEventData = metaEvt.getEventData();
-                        if (metaEventData == null)
-                            metaEventData = "";
-                        metaEventDataBuilder.add(metaEvt.getEventName()).add(metaEventData);
-                        JsonObjectBuilder metaEventBuilder = f.createObjectBuilder().add("time", metaEvt.getTime())
-                                .add("data", metaEventDataBuilder.build()).add("metaId", metaEvt.getMetaId());
-                        String metaEventExtraData = metaEvt.getEventExtraData();
-                        if (metaEventExtraData != null)
-                            metaEventBuilder.add("extraData", metaEventExtraData);
-                        eventsBuilder.add(metaEventBuilder);
-                    }
-                }
-            }
         }
-        return f.createObjectBuilder().add("id", mapData.getId()).add("name", mapData.getName())
-                .add("info", mapData.getInfo()).add("levelResources", levelResourcesBuilder.build())
-                .add("tags", tagsBuilder.build()).add("handCount", 1).add("moreInfoURL", mapData.getMoreInfoURL())
-                .add("speed", mapData.getSpeed()).add("lives", mapData.getLives()).add("maxLives", mapData.getLives())
-                .add("musicFile", mapData.getMusicFile()).add("musicTime", mapData.getMusicTime())
-                .add("iconFile", mapData.getIconFile()).add("generationType", mapData.getGenerationType())
-                .add("environmentType", mapData.getEnvironmentType()).add("checkpoints", checkpointsBuilder.build())
-                .add("events", eventsBuilder.build()).build();
     }
+
 }

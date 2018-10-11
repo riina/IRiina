@@ -3,6 +3,10 @@ package net.cyriaca.riina.misc.iriina.intralism.data;
 import net.cyriaca.riina.misc.iriina.generic.Result;
 import net.cyriaca.riina.misc.iriina.generic.localization.Locale;
 
+/*
+ * Represents the result of an attempt to parse a map from
+ * an arbitrary source
+ */
 public class MapParseResult extends Result {
 
     private static final String KEY_RESULT_MAP_PARSE_FAIL_UNDEFINED = "result_map_parse_fail_undefined";

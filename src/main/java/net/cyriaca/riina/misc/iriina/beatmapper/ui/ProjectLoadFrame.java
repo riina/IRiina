@@ -17,6 +17,7 @@ import java.io.FileNotFoundException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
 
 public class ProjectLoadFrame extends JFrame implements IViewFrame, LocaleChangeListener {
 
@@ -62,6 +63,7 @@ public class ProjectLoadFrame extends JFrame implements IViewFrame, LocaleChange
         progressBar = new JProgressBar(0, 100);
         progressBarPanel.add(progressBar, BorderLayout.CENTER);
         contentPane.add(progressBarPanel);
+        IRiina.brandFrameWithGloriousEmblem(this);
     }
 
     public void localeChangePerformed(LocaleChangeEvent event) {
@@ -94,16 +96,16 @@ public class ProjectLoadFrame extends JFrame implements IViewFrame, LocaleChange
             if (data == null) {
                 File dataFile = new File(projectDirectory, "config.txt");
                 progressLabel.setText(l.getKey(KEY_FRAME_PROJECT_LOAD_STAGE_LOADING_MAP_DATA).replaceAll(MAP_DATA_FILE,
-                        dataFile.getAbsolutePath()));
+                        Matcher.quoteReplacement(dataFile.getAbsolutePath())));
                 contentPane.paintImmediately(contentPane.getVisibleRect());
                 MapParseResult mapParseResult;
                 try {
-                    mapParseResult = DataManager.parseMap(dataFile.getAbsolutePath());
+                    mapParseResult = DataManager.parseMap(dataFile.getAbsolutePath(), 0.0f, 0.0f);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                     JOptionPane.showMessageDialog(this,
                             l.getKey(KEY_FRAME_PROJECT_LOAD_FAILURE_CONFIG_NOT_FOUND).replaceAll(MAP_DATA_FILE,
-                                    dataFile.getAbsolutePath()),
+                                    Matcher.quoteReplacement(dataFile.getAbsolutePath())),
                             l.getKey(KEY_UI_DIALOG_ERROR), JOptionPane.ERROR_MESSAGE);
                     progressBar.setValue(0);
                     progressLabel.setText(" ");
@@ -126,16 +128,16 @@ public class ProjectLoadFrame extends JFrame implements IViewFrame, LocaleChange
             }
         } else {
             progressLabel.setText(l.getKey(KEY_FRAME_PROJECT_LOAD_STAGE_LOADING_BACKUP_MAP_DATA)
-                    .replaceAll(BACKUP_MAP_DATA_FILE, backupFile.getAbsolutePath()));
+                    .replaceAll(BACKUP_MAP_DATA_FILE, Matcher.quoteReplacement(backupFile.getAbsolutePath())));
             contentPane.paintImmediately(contentPane.getVisibleRect());
             MapParseResult mapParseResult;
             try {
-                mapParseResult = DataManager.parseMap(backupFile.getAbsolutePath());
+                mapParseResult = DataManager.parseMap(backupFile.getAbsolutePath(), 0.0f, 0.0f);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(this,
                         l.getKey(KEY_FRAME_PROJECT_LOAD_FAILURE_BACKUP_NOT_FOUND).replaceAll(MAP_DATA_FILE,
-                                backupFile.getAbsolutePath()),
+                                Matcher.quoteReplacement(backupFile.getAbsolutePath())),
                         l.getKey(KEY_UI_DIALOG_ERROR), JOptionPane.ERROR_MESSAGE);
                 progressBar.setValue(0);
                 progressLabel.setText(" ");
@@ -162,7 +164,7 @@ public class ProjectLoadFrame extends JFrame implements IViewFrame, LocaleChange
             File musicFile = new File(projectDirectory, data.getMusicFile());
             progressBar.setValue(25);
             progressLabel.setText(l.getKey(KEY_FRAME_PROJECT_LOAD_STAGE_LOADING_CLIP).replaceAll(AUDIO_FILE,
-                    musicFile.getAbsolutePath()));
+                    Matcher.quoteReplacement(musicFile.getAbsolutePath())));
             contentPane.paintImmediately(contentPane.getVisibleRect());
             ClipLoadResult clipLoadResult = DataManager.loadClip(musicFile.getAbsolutePath());
             if (clipLoadResult.failed()) {
@@ -180,7 +182,7 @@ public class ProjectLoadFrame extends JFrame implements IViewFrame, LocaleChange
         String imgPath = Paths.get(projectDirectory.getAbsolutePath(), IRiinaConstants.PROJECT_DIR_RESOURCES, data.getIconFile()).toAbsolutePath().toString();
         progressBar.setValue(50);
         progressLabel
-                .setText(l.getKey(KEY_FRAME_PROJECT_LOAD_STAGE_LOADING_ICON).replaceAll(MAP_ICON_FILE, imgPath));
+                .setText(l.getKey(KEY_FRAME_PROJECT_LOAD_STAGE_LOADING_ICON).replaceAll(MAP_ICON_FILE, Matcher.quoteReplacement(imgPath)));
         contentPane.paintImmediately(contentPane.getVisibleRect());
         Image image = DataManager.getImage(imgPath);
         data.setIconImage(image);

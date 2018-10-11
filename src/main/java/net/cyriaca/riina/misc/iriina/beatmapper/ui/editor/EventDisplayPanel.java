@@ -16,12 +16,16 @@ public class EventDisplayPanel extends JPanel implements MouseMotionListener, Mo
 
     private static final String KEY_PANEL_EVENT_DISPLAY_STATE_RECORDING = "panel_event_display_state_recording";
     private static final String KEY_PANEL_EVENT_DISPLAY_STATE_WAITING = "panel_event_display_state_waiting";
+    private static final String KEY_PANEL_EVENT_DISPLAY_STATE_RECORDING_REMAP = "panel_event_display_state_recording_remap";
+    private static final String KEY_PANEL_EVENT_DISPLAY_STATE_WAITING_REMAP = "panel_event_display_state_waiting_remap";
     private static final String KEY_PANEL_EVENT_DISPLAY_TYPE_TITLE = "panel_event_display_type_title";
     private static final String TYPE = "%type%";
     private static final String SELCOUNT = "%selCount%";
     private EditorFrame parent;
     private String recording = null;
     private String waiting = null;
+    private String recordingRemap = null;
+    private String waitingRemap = null;
     private String typeTitle = null;
 
     private ArcRenderItem arcRenderItem;
@@ -47,6 +51,8 @@ public class EventDisplayPanel extends JPanel implements MouseMotionListener, Mo
     private float time = -1.0f;
     private SelectionState selectionState;
 
+    private int menuMask;
+
     public EventDisplayPanel(EditorFrame parent) {
         tempImg = parent.getIRiina().getTempImg();
 
@@ -63,6 +69,8 @@ public class EventDisplayPanel extends JPanel implements MouseMotionListener, Mo
 
         this.initSelectionType = MapEvent.Type.VISUAL;
         this.selectionState = SelectionState.NONE;
+
+        menuMask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx();
 
         addMouseListener(this);
         addMouseMotionListener(this);
@@ -82,151 +90,351 @@ public class EventDisplayPanel extends JPanel implements MouseMotionListener, Mo
 
     public void keyPressed(KeyEvent e) {
         MapData data = parent.getMapData();
-        int menuMask;
-        switch (Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) {
-            case Event.ALT_MASK:
-                menuMask = KeyEvent.ALT_DOWN_MASK;
-                break;
-            case Event.CTRL_MASK:
-                menuMask = KeyEvent.CTRL_DOWN_MASK;
-                break;
-            case Event.META_MASK:
-                menuMask = KeyEvent.META_DOWN_MASK;
-                break;
-            case Event.SHIFT_MASK:
-                menuMask = KeyEvent.VK_SHIFT;
-                break;
-            default:
-                menuMask = 0;
-        }
         if ((e.getModifiersEx() & (menuMask)) == (menuMask))
             return;
         if ((e.getModifiersEx() & (KeyEvent.SHIFT_DOWN_MASK)) == (KeyEvent.SHIFT_DOWN_MASK)) {
             if (e.getKeyCode() == KeyEvent.VK_W || e.getKeyCode() == KeyEvent.VK_I) {
-                MapEvent evt = new SpawnObjEvent(parent.getPlayHeadPos());
-                evt.getArcProperty().setMask((byte) (ArcProperty.MASK_UP + ArcProperty.MASK_LEFT + ArcProperty.MASK_RIGHT));
-                data.addNewEvent(evt);
-                parent.addOperationForEventAdd(evt);
-            }
-            if (e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_J) {
-                MapEvent evt = new SpawnObjEvent(parent.getPlayHeadPos());
-                evt.getArcProperty().setMask((byte) (ArcProperty.MASK_UP + ArcProperty.MASK_DOWN + ArcProperty.MASK_LEFT));
-                data.addNewEvent(evt);
-                parent.addOperationForEventAdd(evt);
-            }
-            if (e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_K) {
-                MapEvent evt = new SpawnObjEvent(parent.getPlayHeadPos());
-                evt.getArcProperty().setMask((byte) (ArcProperty.MASK_UP + ArcProperty.MASK_RIGHT + ArcProperty.MASK_LEFT + ArcProperty.MASK_DOWN));
-                data.addNewEvent(evt);
-                parent.addOperationForEventAdd(evt);
-            }
-            if (e.getKeyCode() == KeyEvent.VK_D || e.getKeyCode() == KeyEvent.VK_L) {
-                MapEvent evt = new SpawnObjEvent(parent.getPlayHeadPos());
-                evt.getArcProperty().setMask((byte) (ArcProperty.MASK_UP + ArcProperty.MASK_RIGHT + ArcProperty.MASK_DOWN));
-                data.addNewEvent(evt);
-                parent.addOperationForEventAdd(evt);
-            }
-            if (e.getKeyCode() == KeyEvent.VK_Q || e.getKeyCode() == KeyEvent.VK_U) {
-                MapEvent evt = new SpawnObjEvent(parent.getPlayHeadPos());
-                evt.getArcProperty().setMask((byte) (ArcProperty.MASK_UP + ArcProperty.MASK_LEFT));
-                data.addNewEvent(evt);
-                parent.addOperationForEventAdd(evt);
-            }
-            if (e.getKeyCode() == KeyEvent.VK_E || e.getKeyCode() == KeyEvent.VK_O) {
-                MapEvent evt = new SpawnObjEvent(parent.getPlayHeadPos());
-                evt.getArcProperty().setMask((byte) (ArcProperty.MASK_UP + ArcProperty.MASK_RIGHT));
-                data.addNewEvent(evt);
-                parent.addOperationForEventAdd(evt);
-            }
-            if (e.getKeyCode() == KeyEvent.VK_Z || e.getKeyCode() == KeyEvent.VK_M) {
-                MapEvent evt = new SpawnObjEvent(parent.getPlayHeadPos());
-                evt.getArcProperty().setMask((byte) (ArcProperty.MASK_DOWN + ArcProperty.MASK_LEFT));
-                data.addNewEvent(evt);
-                parent.addOperationForEventAdd(evt);
-            }
-            if (e.getKeyCode() == KeyEvent.VK_X || e.getKeyCode() == KeyEvent.VK_COMMA) {
-                MapEvent evt = new SpawnObjEvent(parent.getPlayHeadPos());
-                evt.getArcProperty().setMask((byte) (ArcProperty.MASK_DOWN + ArcProperty.MASK_LEFT + ArcProperty.MASK_RIGHT));
-                data.addNewEvent(evt);
-                parent.addOperationForEventAdd(evt);
-            }
-            if (e.getKeyCode() == KeyEvent.VK_C || e.getKeyCode() == KeyEvent.VK_PERIOD) {
-                MapEvent evt = new SpawnObjEvent(parent.getPlayHeadPos());
-                evt.getArcProperty().setMask((byte) (ArcProperty.MASK_DOWN + ArcProperty.MASK_RIGHT));
-                data.addNewEvent(evt);
-                parent.addOperationForEventAdd(evt);
-            }
-            if (e.getKeyCode() == KeyEvent.VK_R || e.getKeyCode() == KeyEvent.VK_P) {
-                MapEvent evt = new SpawnObjEvent(parent.getPlayHeadPos());
-                evt.getArcProperty().setMask((byte) (ArcProperty.MASK_DOWN + ArcProperty.MASK_UP));
-                data.addNewEvent(evt);
-                parent.addOperationForEventAdd(evt);
-            }
-            if (e.getKeyCode() == KeyEvent.VK_F || e.getKeyCode() == KeyEvent.VK_SEMICOLON) {
-                MapEvent evt = new SpawnObjEvent(parent.getPlayHeadPos());
-                evt.getArcProperty().setMask((byte) (ArcProperty.MASK_LEFT + ArcProperty.MASK_RIGHT));
-                data.addNewEvent(evt);
-                parent.addOperationForEventAdd(evt);
+                if (parent.isRemapMode()) {
+                    List<MapEvent> evtList = parent.getEventTargets();
+                    if (evtList.size() != 0) {
+                        MapEvent evt = evtList.get(0);
+                        ArcProperty arcProperty = evt.getArcProperty();
+                        String d = evt.getEventData();
+                        String ed = evt.getEventExtraData();
+                        if (arcProperty != null)
+                            arcProperty.setMask((byte) (ArcProperty.MASK_UP + ArcProperty.MASK_LEFT + ArcProperty.MASK_RIGHT));
+                        parent.evtFwd();
+                        parent.addOperationForEventDataMod(evt, d, ed, evt.getTime(), evt.getEventData(), evt.getEventExtraData(), evt.getTime());
+                    }
+                } else {
+                    MapEvent evt = new SpawnObjEvent(parent.getPlayHeadPos());
+                    evt.getArcProperty().setMask((byte) (ArcProperty.MASK_UP + ArcProperty.MASK_LEFT + ArcProperty.MASK_RIGHT));
+                    data.addNewEvent(evt);
+                    parent.addOperationForEventAdd(evt);
+                }
+            } else if (e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_J) {
+                if (parent.isRemapMode()) {
+                    List<MapEvent> evtList = parent.getEventTargets();
+                    if (evtList.size() != 0) {
+                        MapEvent evt = evtList.get(0);
+                        String d = evt.getEventData();
+                        String ed = evt.getEventExtraData();
+                        ArcProperty arcProperty = evt.getArcProperty();
+                        if (arcProperty != null)
+                            arcProperty.setMask((byte) (ArcProperty.MASK_UP + ArcProperty.MASK_DOWN + ArcProperty.MASK_LEFT));
+                        parent.evtFwd();
+                        parent.addOperationForEventDataMod(evt, d, ed, evt.getTime(), evt.getEventData(), evt.getEventExtraData(), evt.getTime());
+                    }
+                } else {
+                    MapEvent evt = new SpawnObjEvent(parent.getPlayHeadPos());
+                    evt.getArcProperty().setMask((byte) (ArcProperty.MASK_UP + ArcProperty.MASK_DOWN + ArcProperty.MASK_LEFT));
+                    data.addNewEvent(evt);
+                    parent.addOperationForEventAdd(evt);
+                }
+            } else if (e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_K) {
+                if (parent.isRemapMode()) {
+                    List<MapEvent> evtList = parent.getEventTargets();
+                    if (evtList.size() != 0) {
+                        MapEvent evt = evtList.get(0);
+                        String d = evt.getEventData();
+                        String ed = evt.getEventExtraData();
+                        ArcProperty arcProperty = evt.getArcProperty();
+                        if (arcProperty != null)
+                            arcProperty.setMask((byte) (ArcProperty.MASK_UP + ArcProperty.MASK_RIGHT + ArcProperty.MASK_LEFT + ArcProperty.MASK_DOWN));
+                        parent.evtFwd();
+                        parent.addOperationForEventDataMod(evt, d, ed, evt.getTime(), evt.getEventData(), evt.getEventExtraData(), evt.getTime());
+                    }
+                } else {
+                    MapEvent evt = new SpawnObjEvent(parent.getPlayHeadPos());
+                    evt.getArcProperty().setMask((byte) (ArcProperty.MASK_UP + ArcProperty.MASK_RIGHT + ArcProperty.MASK_LEFT + ArcProperty.MASK_DOWN));
+                    data.addNewEvent(evt);
+                    parent.addOperationForEventAdd(evt);
+                }
+            } else if (e.getKeyCode() == KeyEvent.VK_D || e.getKeyCode() == KeyEvent.VK_L) {
+                if (parent.isRemapMode()) {
+                    List<MapEvent> evtList = parent.getEventTargets();
+                    if (evtList.size() != 0) {
+                        MapEvent evt = evtList.get(0);
+                        String d = evt.getEventData();
+                        String ed = evt.getEventExtraData();
+                        ArcProperty arcProperty = evt.getArcProperty();
+                        if (arcProperty != null)
+                            arcProperty.setMask((byte) (ArcProperty.MASK_UP + ArcProperty.MASK_RIGHT + ArcProperty.MASK_DOWN));
+                        parent.evtFwd();
+                        parent.addOperationForEventDataMod(evt, d, ed, evt.getTime(), evt.getEventData(), evt.getEventExtraData(), evt.getTime());
+                    }
+                } else {
+                    MapEvent evt = new SpawnObjEvent(parent.getPlayHeadPos());
+                    evt.getArcProperty().setMask((byte) (ArcProperty.MASK_UP + ArcProperty.MASK_RIGHT + ArcProperty.MASK_DOWN));
+                    data.addNewEvent(evt);
+                    parent.addOperationForEventAdd(evt);
+                }
+            } else if (e.getKeyCode() == KeyEvent.VK_Q || e.getKeyCode() == KeyEvent.VK_U) {
+                if (parent.isRemapMode()) {
+                    List<MapEvent> evtList = parent.getEventTargets();
+                    if (evtList.size() != 0) {
+                        MapEvent evt = evtList.get(0);
+                        String d = evt.getEventData();
+                        String ed = evt.getEventExtraData();
+                        ArcProperty arcProperty = evt.getArcProperty();
+                        if (arcProperty != null)
+                            arcProperty.setMask((byte) (ArcProperty.MASK_UP + ArcProperty.MASK_LEFT));
+                        parent.evtFwd();
+                        parent.addOperationForEventDataMod(evt, d, ed, evt.getTime(), evt.getEventData(), evt.getEventExtraData(), evt.getTime());
+                    }
+                } else {
+                    MapEvent evt = new SpawnObjEvent(parent.getPlayHeadPos());
+                    evt.getArcProperty().setMask((byte) (ArcProperty.MASK_UP + ArcProperty.MASK_LEFT));
+                    data.addNewEvent(evt);
+                    parent.addOperationForEventAdd(evt);
+                }
+            } else if (e.getKeyCode() == KeyEvent.VK_E || e.getKeyCode() == KeyEvent.VK_O) {
+                if (parent.isRemapMode()) {
+                    List<MapEvent> evtList = parent.getEventTargets();
+                    if (evtList.size() != 0) {
+                        MapEvent evt = evtList.get(0);
+                        String d = evt.getEventData();
+                        String ed = evt.getEventExtraData();
+                        ArcProperty arcProperty = evt.getArcProperty();
+                        if (arcProperty != null)
+                            arcProperty.setMask((byte) (ArcProperty.MASK_UP + ArcProperty.MASK_RIGHT));
+                        parent.evtFwd();
+                        parent.addOperationForEventDataMod(evt, d, ed, evt.getTime(), evt.getEventData(), evt.getEventExtraData(), evt.getTime());
+                    }
+                } else {
+                    MapEvent evt = new SpawnObjEvent(parent.getPlayHeadPos());
+                    evt.getArcProperty().setMask((byte) (ArcProperty.MASK_UP + ArcProperty.MASK_RIGHT));
+                    data.addNewEvent(evt);
+                    parent.addOperationForEventAdd(evt);
+                }
+            } else if (e.getKeyCode() == KeyEvent.VK_Z || e.getKeyCode() == KeyEvent.VK_M) {
+                if (parent.isRemapMode()) {
+                    List<MapEvent> evtList = parent.getEventTargets();
+                    if (evtList.size() != 0) {
+                        MapEvent evt = evtList.get(0);
+                        String d = evt.getEventData();
+                        String ed = evt.getEventExtraData();
+                        ArcProperty arcProperty = evt.getArcProperty();
+                        if (arcProperty != null)
+                            arcProperty.setMask((byte) (ArcProperty.MASK_DOWN + ArcProperty.MASK_LEFT));
+                        parent.evtFwd();
+                        parent.addOperationForEventDataMod(evt, d, ed, evt.getTime(), evt.getEventData(), evt.getEventExtraData(), evt.getTime());
+                    }
+                } else {
+                    MapEvent evt = new SpawnObjEvent(parent.getPlayHeadPos());
+                    evt.getArcProperty().setMask((byte) (ArcProperty.MASK_DOWN + ArcProperty.MASK_LEFT));
+                    data.addNewEvent(evt);
+                    parent.addOperationForEventAdd(evt);
+                }
+            } else if (e.getKeyCode() == KeyEvent.VK_X || e.getKeyCode() == KeyEvent.VK_COMMA) {
+                if (parent.isRemapMode()) {
+                    List<MapEvent> evtList = parent.getEventTargets();
+                    if (evtList.size() != 0) {
+                        MapEvent evt = evtList.get(0);
+                        String d = evt.getEventData();
+                        String ed = evt.getEventExtraData();
+                        ArcProperty arcProperty = evt.getArcProperty();
+                        if (arcProperty != null)
+                            arcProperty.setMask((byte) (ArcProperty.MASK_DOWN + ArcProperty.MASK_LEFT + ArcProperty.MASK_RIGHT));
+                        parent.evtFwd();
+                        parent.addOperationForEventDataMod(evt, d, ed, evt.getTime(), evt.getEventData(), evt.getEventExtraData(), evt.getTime());
+                    }
+                } else {
+                    MapEvent evt = new SpawnObjEvent(parent.getPlayHeadPos());
+                    evt.getArcProperty().setMask((byte) (ArcProperty.MASK_DOWN + ArcProperty.MASK_LEFT + ArcProperty.MASK_RIGHT));
+                    data.addNewEvent(evt);
+                    parent.addOperationForEventAdd(evt);
+                }
+            } else if (e.getKeyCode() == KeyEvent.VK_C || e.getKeyCode() == KeyEvent.VK_PERIOD) {
+                if (parent.isRemapMode()) {
+                    List<MapEvent> evtList = parent.getEventTargets();
+                    if (evtList.size() != 0) {
+                        MapEvent evt = evtList.get(0);
+                        String d = evt.getEventData();
+                        String ed = evt.getEventExtraData();
+                        ArcProperty arcProperty = evt.getArcProperty();
+                        if (arcProperty != null)
+                            arcProperty.setMask((byte) (ArcProperty.MASK_DOWN + ArcProperty.MASK_RIGHT));
+                        parent.evtFwd();
+                        parent.addOperationForEventDataMod(evt, d, ed, evt.getTime(), evt.getEventData(), evt.getEventExtraData(), evt.getTime());
+                    }
+                } else {
+                    MapEvent evt = new SpawnObjEvent(parent.getPlayHeadPos());
+                    evt.getArcProperty().setMask((byte) (ArcProperty.MASK_DOWN + ArcProperty.MASK_RIGHT));
+                    data.addNewEvent(evt);
+                    parent.addOperationForEventAdd(evt);
+                }
+            } else if (e.getKeyCode() == KeyEvent.VK_R || e.getKeyCode() == KeyEvent.VK_P) {
+                if (parent.isRemapMode()) {
+                    List<MapEvent> evtList = parent.getEventTargets();
+                    if (evtList.size() != 0) {
+                        MapEvent evt = evtList.get(0);
+                        String d = evt.getEventData();
+                        String ed = evt.getEventExtraData();
+                        ArcProperty arcProperty = evt.getArcProperty();
+                        if (arcProperty != null)
+                            arcProperty.setMask((byte) (ArcProperty.MASK_DOWN + ArcProperty.MASK_UP));
+                        parent.evtFwd();
+                        parent.addOperationForEventDataMod(evt, d, ed, evt.getTime(), evt.getEventData(), evt.getEventExtraData(), evt.getTime());
+                    }
+                } else {
+                    MapEvent evt = new SpawnObjEvent(parent.getPlayHeadPos());
+                    evt.getArcProperty().setMask((byte) (ArcProperty.MASK_DOWN + ArcProperty.MASK_UP));
+                    data.addNewEvent(evt);
+                    parent.addOperationForEventAdd(evt);
+                }
+            } else if (e.getKeyCode() == KeyEvent.VK_F || e.getKeyCode() == KeyEvent.VK_SEMICOLON) {
+                if (parent.isRemapMode()) {
+                    List<MapEvent> evtList = parent.getEventTargets();
+                    if (evtList.size() != 0) {
+                        MapEvent evt = evtList.get(0);
+                        String d = evt.getEventData();
+                        String ed = evt.getEventExtraData();
+                        ArcProperty arcProperty = evt.getArcProperty();
+                        if (arcProperty != null)
+                            arcProperty.setMask((byte) (ArcProperty.MASK_LEFT + ArcProperty.MASK_RIGHT));
+                        parent.evtFwd();
+                        parent.addOperationForEventDataMod(evt, d, ed, evt.getTime(), evt.getEventData(), evt.getEventExtraData(), evt.getTime());
+                    }
+                } else {
+                    MapEvent evt = new SpawnObjEvent(parent.getPlayHeadPos());
+                    evt.getArcProperty().setMask((byte) (ArcProperty.MASK_LEFT + ArcProperty.MASK_RIGHT));
+                    data.addNewEvent(evt);
+                    parent.addOperationForEventAdd(evt);
+                }
             }
         } else {
-            if (e.getKeyCode() == KeyEvent.VK_W || e.getKeyCode() == KeyEvent.VK_I) {
-                MapEvent evt = new SpawnObjEvent(parent.getPlayHeadPos());
-                evt.getArcProperty().setMask(ArcProperty.MASK_UP);
-                data.addNewEvent(evt);
-                parent.addOperationForEventAdd(evt);
+            if (e.getKeyCode() == KeyEvent.VK_G) {
+                if (parent.isRemapMode()) {
+                    List<MapEvent> evtList = parent.getEventTargets();
+                    if (evtList.size() != 0) {
+                        MapEvent evt = evtList.get(0);
+                        String d = evt.getEventData();
+                        String ed = evt.getEventExtraData();
+                        ArcProperty arcProperty = evt.getArcProperty();
+                        if (arcProperty != null)
+                            arcProperty.setMask(ArcProperty.MASK_POWER_UP);
+                        parent.evtFwd();
+                        parent.addOperationForEventDataMod(evt, d, ed, evt.getTime(), evt.getEventData(), evt.getEventExtraData(), evt.getTime());
+                    }
+                } else {
+                    MapEvent evt = new SpawnObjEvent(parent.getPlayHeadPos());
+                    evt.getArcProperty().setMask(ArcProperty.MASK_POWER_UP);
+                    data.addNewEvent(evt);
+                    parent.addOperationForEventAdd(evt);
+                }
+            } else if (e.getKeyCode() == KeyEvent.VK_W || e.getKeyCode() == KeyEvent.VK_I) {
+                if (parent.isRemapMode()) {
+                    List<MapEvent> evtList = parent.getEventTargets();
+                    if (evtList.size() != 0) {
+                        MapEvent evt = evtList.get(0);
+                        String d = evt.getEventData();
+                        String ed = evt.getEventExtraData();
+                        ArcProperty arcProperty = evt.getArcProperty();
+                        if (arcProperty != null)
+                            arcProperty.setMask(ArcProperty.MASK_UP);
+                        parent.evtFwd();
+                        parent.addOperationForEventDataMod(evt, d, ed, evt.getTime(), evt.getEventData(), evt.getEventExtraData(), evt.getTime());
+                    }
+                } else {
+                    MapEvent evt = new SpawnObjEvent(parent.getPlayHeadPos());
+                    evt.getArcProperty().setMask(ArcProperty.MASK_UP);
+                    data.addNewEvent(evt);
+                    parent.addOperationForEventAdd(evt);
+                }
+            } else if (e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_J) {
+                if (parent.isRemapMode()) {
+                    List<MapEvent> evtList = parent.getEventTargets();
+                    if (evtList.size() != 0) {
+                        MapEvent evt = evtList.get(0);
+                        String d = evt.getEventData();
+                        String ed = evt.getEventExtraData();
+                        ArcProperty arcProperty = evt.getArcProperty();
+                        if (arcProperty != null)
+                            arcProperty.setMask(ArcProperty.MASK_LEFT);
+                        parent.evtFwd();
+                        parent.addOperationForEventDataMod(evt, d, ed, evt.getTime(), evt.getEventData(), evt.getEventExtraData(), evt.getTime());
+                    }
+                } else {
+                    MapEvent evt = new SpawnObjEvent(parent.getPlayHeadPos());
+                    evt.getArcProperty().setMask(ArcProperty.MASK_LEFT);
+                    data.addNewEvent(evt);
+                    parent.addOperationForEventAdd(evt);
+                }
+            } else if (e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_K) {
+                if (parent.isRemapMode()) {
+                    List<MapEvent> evtList = parent.getEventTargets();
+                    if (evtList.size() != 0) {
+                        MapEvent evt = evtList.get(0);
+                        String d = evt.getEventData();
+                        String ed = evt.getEventExtraData();
+                        ArcProperty arcProperty = evt.getArcProperty();
+                        if (arcProperty != null)
+                            arcProperty.setMask(ArcProperty.MASK_DOWN);
+                        parent.evtFwd();
+                        parent.addOperationForEventDataMod(evt, d, ed, evt.getTime(), evt.getEventData(), evt.getEventExtraData(), evt.getTime());
+                    }
+                } else {
+                    MapEvent evt = new SpawnObjEvent(parent.getPlayHeadPos());
+                    evt.getArcProperty().setMask(ArcProperty.MASK_DOWN);
+                    data.addNewEvent(evt);
+                    parent.addOperationForEventAdd(evt);
+                }
+            } else if (e.getKeyCode() == KeyEvent.VK_D || e.getKeyCode() == KeyEvent.VK_L) {
+                if (parent.isRemapMode()) {
+                    List<MapEvent> evtList = parent.getEventTargets();
+                    if (evtList.size() != 0) {
+                        MapEvent evt = evtList.get(0);
+                        String d = evt.getEventData();
+                        String ed = evt.getEventExtraData();
+                        ArcProperty arcProperty = evt.getArcProperty();
+                        if (arcProperty != null)
+                            arcProperty.setMask(ArcProperty.MASK_RIGHT);
+                        parent.evtFwd();
+                        parent.addOperationForEventDataMod(evt, d, ed, evt.getTime(), evt.getEventData(), evt.getEventExtraData(), evt.getTime());
+                    }
+                } else {
+                    MapEvent evt = new SpawnObjEvent(parent.getPlayHeadPos());
+                    evt.getArcProperty().setMask(ArcProperty.MASK_RIGHT);
+                    data.addNewEvent(evt);
+                    parent.addOperationForEventAdd(evt);
+                }
             }
-            if (e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_J) {
-                MapEvent evt = new SpawnObjEvent(parent.getPlayHeadPos());
-                evt.getArcProperty().setMask(ArcProperty.MASK_LEFT);
-                data.addNewEvent(evt);
-                parent.addOperationForEventAdd(evt);
-            }
-            if (e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_K) {
-                MapEvent evt = new SpawnObjEvent(parent.getPlayHeadPos());
-                evt.getArcProperty().setMask(ArcProperty.MASK_DOWN);
-                data.addNewEvent(evt);
-                parent.addOperationForEventAdd(evt);
-            }
-            if (e.getKeyCode() == KeyEvent.VK_D || e.getKeyCode() == KeyEvent.VK_L) {
-                MapEvent evt = new SpawnObjEvent(parent.getPlayHeadPos());
-                evt.getArcProperty().setMask(ArcProperty.MASK_RIGHT);
-                data.addNewEvent(evt);
-                parent.addOperationForEventAdd(evt);
-            }
-            if (e.getKeyCode() == KeyEvent.VK_Q || e.getKeyCode() == KeyEvent.VK_U) {
-                MapEvent evt = new TimingEvent(parent.getPlayHeadPos());
-                data.addNewEvent(evt);
-                parent.addOperationForEventAdd(evt);
-            }
-            if (e.getKeyCode() == KeyEvent.VK_E || e.getKeyCode() == KeyEvent.VK_O) {
-                MapEvent evt = new ShowTitleEvent(parent.getPlayHeadPos());
-                data.addNewEvent(evt);
-                parent.addOperationForEventAdd(evt);
-            }
-            if (e.getKeyCode() == KeyEvent.VK_Z || e.getKeyCode() == KeyEvent.VK_M) {
-                MapEvent evt = new ShowSpriteEvent(parent.getPlayHeadPos());
-                data.addNewEvent(evt);
-                parent.addOperationForEventAdd(evt);
-            }
-            if (e.getKeyCode() == KeyEvent.VK_X || e.getKeyCode() == KeyEvent.VK_COMMA) {
-                MapEvent evt = new SetPlayerDistanceEvent(parent.getPlayHeadPos());
-                data.addNewEvent(evt);
-                parent.addOperationForEventAdd(evt);
-            }
-            if (e.getKeyCode() == KeyEvent.VK_C || e.getKeyCode() == KeyEvent.VK_PERIOD) {
-                MapEvent evt = new SetBGColorEvent(parent.getPlayHeadPos());
-                data.addNewEvent(evt);
-                parent.addOperationForEventAdd(evt);
-            }
-            if (e.getKeyCode() == KeyEvent.VK_R || e.getKeyCode() == KeyEvent.VK_P) {
-                MapEvent evt = new ComboEvent(parent.getPlayHeadPos());
-                data.addNewEvent(evt);
-                parent.addOperationForEventAdd(evt);
-            }
-            if (e.getKeyCode() == KeyEvent.VK_F || e.getKeyCode() == KeyEvent.VK_SEMICOLON) {
-                Checkpoint checkpoint = new Checkpoint(parent.getPlayHeadPos(), parent.getMapData());
-                data.addCheckpoint(checkpoint);
-                parent.addOperationForCheckpointAdd(checkpoint);
+            if (!parent.isRemapMode()) {
+                if (e.getKeyCode() == KeyEvent.VK_Q || e.getKeyCode() == KeyEvent.VK_U) {
+                    MapEvent evt = new TimingEvent(parent.getPlayHeadPos());
+                    data.addNewEvent(evt);
+                    parent.addOperationForEventAdd(evt);
+                } else if (e.getKeyCode() == KeyEvent.VK_E || e.getKeyCode() == KeyEvent.VK_O) {
+                    MapEvent evt = new ShowTitleEvent(parent.getPlayHeadPos());
+                    data.addNewEvent(evt);
+                    parent.addOperationForEventAdd(evt);
+                } else if (e.getKeyCode() == KeyEvent.VK_Z || e.getKeyCode() == KeyEvent.VK_M) {
+                    MapEvent evt = new ShowSpriteEvent(parent.getPlayHeadPos());
+                    data.addNewEvent(evt);
+                    parent.addOperationForEventAdd(evt);
+                } else if (e.getKeyCode() == KeyEvent.VK_X || e.getKeyCode() == KeyEvent.VK_COMMA) {
+                    MapEvent evt = new SetPlayerDistanceEvent(parent.getPlayHeadPos());
+                    data.addNewEvent(evt);
+                    parent.addOperationForEventAdd(evt);
+                } else if (e.getKeyCode() == KeyEvent.VK_C || e.getKeyCode() == KeyEvent.VK_PERIOD) {
+                    MapEvent evt = new SetBGColorEvent(parent.getPlayHeadPos());
+                    data.addNewEvent(evt);
+                    parent.addOperationForEventAdd(evt);
+                } else if (e.getKeyCode() == KeyEvent.VK_R || e.getKeyCode() == KeyEvent.VK_P) {
+                    MapEvent evt = new ComboEvent(parent.getPlayHeadPos());
+                    data.addNewEvent(evt);
+                    parent.addOperationForEventAdd(evt);
+                } else if (e.getKeyCode() == KeyEvent.VK_F || e.getKeyCode() == KeyEvent.VK_SEMICOLON) {
+                    Checkpoint checkpoint = new Checkpoint(parent.getPlayHeadPos(), parent.getMapData());
+                    data.addCheckpoint(checkpoint);
+                    parent.addOperationForCheckpointAdd(checkpoint);
+                }
+            } else {
+                if (e.getKeyCode() == KeyEvent.VK_OPEN_BRACKET)
+                    parent.evtBack();
+                else if (e.getKeyCode() == KeyEvent.VK_CLOSE_BRACKET)
+                    parent.evtFwd();
             }
         }
 
@@ -450,8 +658,8 @@ public class EventDisplayPanel extends JPanel implements MouseMotionListener, Mo
         if (curHover != -1) {
             Color col = new Color(Color.BLUE.getRed(), Color.BLUE.getGreen(), Color.BLUE.getBlue(), 100);
             g.setColor(col);
-            g.fillRect(0, (curHover * h / 4), w, h);
-            g.drawLine((int) ((curTimeHover - t1) / (t2 - t1) * (float) w), 0, (int) ((curTimeHover - t1) / (t2 - t1) * (float) w), (int) (float) h);
+            g.fillRect(0, (curHover * h / 4), w, h / 4);
+            g.drawLine((int) ((curTimeHover - t1) / (t2 - t1) * (float) w), 0, (int) ((curTimeHover - t1) / (t2 - t1) * (float) w), h);
         }
         if (selectionState == SelectionState.SELECT) {
             Color col = new Color(Color.RED.getRed(), Color.RED.getGreen(), Color.RED.getBlue(), 100);
@@ -460,9 +668,9 @@ public class EventDisplayPanel extends JPanel implements MouseMotionListener, Mo
         }
         g.setColor(Color.WHITE);
         if (KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner() == this)
-            g.drawString(recording, 0, getHeight());
+            g.drawString(parent.isRemapMode() ? recordingRemap : recording, 0, getHeight());
         else
-            g.drawString(waiting, 0, getHeight());
+            g.drawString(parent.isRemapMode() ? waitingRemap : waiting, 0, getHeight());
         g.setColor(Color.WHITE);
         g.drawString(Float.toString(time), getWidth() / 2, getHeight());
     }
@@ -554,7 +762,6 @@ public class EventDisplayPanel extends JPanel implements MouseMotionListener, Mo
                 parent.setSelectionDown(selMode, initSelectionType, Math.min(selT1, selT2), Math.max(selT1, selT2), true);
                 parent.setSelectionUp();
             }
-
         }
     }
 
@@ -574,7 +781,7 @@ public class EventDisplayPanel extends JPanel implements MouseMotionListener, Mo
         float width = getWidth();
         curHover = Math.max(0, Math.min(3, (int) (4.0f * ((float) e.getY()) / ((float) getHeight()))));
         curTimeHover = ((float) e.getX()) / width * (t2 - t1) + t1;
-        if (e.getButton() == MouseEvent.BUTTON1) {
+        if ((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) == MouseEvent.BUTTON1_DOWN_MASK) {
             switch (e.getModifiersEx() & (MouseEvent.SHIFT_DOWN_MASK | MouseEvent.CTRL_DOWN_MASK)) {
                 case MouseEvent.SHIFT_DOWN_MASK:
                     parent.deleteClosest(((float) e.getX()) / width * (t2 - t1) + t1, MapEvent.Type.values()[Math.max(0, Math.min(3, (int) (4.0f * ((float) e.getY()) / ((float) getHeight()))))]);
@@ -608,7 +815,7 @@ public class EventDisplayPanel extends JPanel implements MouseMotionListener, Mo
                     }
                     break;
             }
-        } else if (e.getButton() == MouseEvent.BUTTON3) {
+        } else if ((e.getModifiersEx() & MouseEvent.BUTTON3_DOWN_MASK) == MouseEvent.BUTTON3_DOWN_MASK) {
             if (selectionState == SelectionState.NONE) {
                 selectionState = SelectionState.SELECT;
                 initSelectionType = MapEvent.Type.values()[Math.max(0, Math.min(3, (int) (4.0f * ((float) e.getY()) / ((float) getHeight()))))];
@@ -647,6 +854,8 @@ public class EventDisplayPanel extends JPanel implements MouseMotionListener, Mo
     public void localize(Locale l) {
         recording = l.getKey(KEY_PANEL_EVENT_DISPLAY_STATE_RECORDING);
         waiting = l.getKey(KEY_PANEL_EVENT_DISPLAY_STATE_WAITING);
+        recordingRemap = l.getKey(KEY_PANEL_EVENT_DISPLAY_STATE_RECORDING_REMAP);
+        waitingRemap = l.getKey(KEY_PANEL_EVENT_DISPLAY_STATE_WAITING_REMAP);
         typeTitle = l.getKey(KEY_PANEL_EVENT_DISPLAY_TYPE_TITLE);
     }
 

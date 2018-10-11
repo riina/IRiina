@@ -8,6 +8,9 @@ import java.util.*;
 import java.util.List;
 import java.util.function.Function;
 
+/*
+ * Represents a map configuration
+ */
 public class MapData {
 
     public static final float SPEED_MODIFIER_MIN = 5.0f;
@@ -25,14 +28,14 @@ public class MapData {
     private List<MapResource> mapResources;
     private List<String> tags;
     private String moreInfoURL;
-    private float speed; // def 15
-    private int lives; // def. 5
+    private float speed;
+    private int lives;
     private String musicFile;
     private float musicTime;
     private String iconFile;
     private Image iconImage;
     private int generationType;
-    private int environmentType; // def. 0
+    private int environmentType;
 
     private Map<Float, Checkpoint> checkpoints;
     private Set<MapEvent> eventSet;
@@ -622,8 +625,6 @@ public class MapData {
         Set<MapEvent> evtSet = new TreeSet<>();
         int off1 = searchEventsByOffset(eventList, t1, 1, MapEvent::getTime, true);
         int off2 = searchEventsByOffset(eventList, t2, -1, MapEvent::getTime, true);
-        if (off2 < off1 || off1 == -1 || off2 == -1)
-            return new ArrayList<>();
         if (includeTimingLength) {
             List<MapEvent> timingList = eventListByType.get(MapEvent.Type.TIMING);
             if (timingList != null)
@@ -633,6 +634,8 @@ public class MapData {
                         evtSet.add(evt);
                 }
         }
+        if (off2 < off1 || off1 == -1 || off2 == -1)
+            return new ArrayList<>(evtSet);
         for (int i = off1; i <= off2; i++) {
             evtSet.add(eventList.get(i));
         }

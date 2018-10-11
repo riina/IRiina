@@ -12,12 +12,55 @@ import net.cyriaca.riina.misc.iriina.generic.localization.LocaleSystem;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 public class IRiina {
+
+    public static final boolean IS_MACOS;
+    public static final boolean IS_WINDOWS;
+    public static final boolean IS_LINUX;
+    public static final String OS_ID;
+    private static final Image[] EMBLEMS = new Image[4];
+    private static final ImageIcon EMBLEM64_ICON;
+
+    static {
+        Module m = IRiina.class.getModule();
+        String osId = null;
+        try {
+            osId = System.getProperty("os.name");
+        } catch (SecurityException ignored) {
+        }
+        OS_ID = osId == null ? "" : osId;
+        IS_MACOS = OS_ID.startsWith("Mac OS X");
+        IS_LINUX = OS_ID.toLowerCase().startsWith("linux");
+        IS_WINDOWS = OS_ID.startsWith("Windows");
+        try {
+            EMBLEMS[0] = ImageIO.read(m.getResourceAsStream("img/iriina_16.png"));
+        } catch (IOException e) {
+            EMBLEMS[0] = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+        }
+        try {
+            EMBLEMS[1] = ImageIO.read(m.getResourceAsStream("img/iriina_32.png"));
+        } catch (IOException e) {
+            EMBLEMS[1] = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
+        }
+        try {
+            EMBLEMS[2] = ImageIO.read(m.getResourceAsStream("img/iriina_64.png"));
+        } catch (IOException e) {
+            EMBLEMS[2] = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
+        }
+        try {
+            EMBLEMS[3] = ImageIO.read(m.getResourceAsStream("img/iriina_128.png"));
+        } catch (IOException e) {
+            EMBLEMS[3] = new BufferedImage(128, 128, BufferedImage.TYPE_INT_ARGB);
+        }
+        EMBLEM64_ICON = new ImageIcon(EMBLEMS[2]);
+    }
 
     private Locale locale = null;
     private IRiinaPreferences prefs;
@@ -38,7 +81,7 @@ public class IRiina {
 
     public IRiina() {
         try {
-            tempImg = ImageIO.read(Objects.requireNonNull(EditorFrame.class.getClassLoader().getResource("img/iriina.png")));
+            tempImg = ImageIO.read(Objects.requireNonNull(IRiina.class.getModule().getResourceAsStream("img/iriina.png")));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -67,8 +110,7 @@ public class IRiina {
     }
 
     public static void main(String[] args) {
-        String os = System.getProperty("os.name");
-        if (os.contains("Mac OS X"))
+        if (IS_MACOS)
             System.setProperty("apple.laf.useScreenMenuBar", "true");
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -77,6 +119,15 @@ public class IRiina {
         }
         IRiina editor = new IRiina();
         editor.execute();
+    }
+
+    public static void brandFrameWithGloriousEmblem(Frame frame) {
+        if (IS_WINDOWS)
+            frame.setIconImages(Arrays.asList(EMBLEMS));
+    }
+
+    public static ImageIcon getIcon64() {
+        return EMBLEM64_ICON;
     }
 
     public Image getTempImg() {

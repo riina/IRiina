@@ -17,6 +17,7 @@ public class EventDisplayControlPanel extends JPanel implements ChangeListener, 
     private static final String KEY_PANEL_EVENT_DISPLAY_RENDER_BEATS = "panel_event_display_render_beats";
     private static final String KEY_PANEL_EVENT_DISPLAY_RENDER_EVENTS = "panel_event_display_render_events";
     private static final String KEY_PANEL_EVENT_DISPLAY_SCALE = "panel_event_display_scale";
+    private static final String KEY_PANEL_EVENT_DISPLAY_REMAP_MODE = "panel_event_display_remap_mode";
 
     private static final String KEY_PANEL_EVENT_DISPLAY_TOGGLE_MAP_INFO_AND_RESOURCE_INFO = "panel_event_display_toggle_map_info_and_resource_info";
     private static final String KEY_PANEL_EVENT_DISPLAY_TOGGLE_EVENT_MOD = "panel_event_display_toggle_event_mod";
@@ -30,6 +31,8 @@ public class EventDisplayControlPanel extends JPanel implements ChangeListener, 
     private JLabel renderEventLabel;
     private JSlider scaleSlider;
     private JLabel scaleLabel;
+    private JCheckBox remapButton;
+    private JLabel remapLabel;
 
     private JButton toggleMapInfoAndResourceInfo;
     private JButton toggleEventMod;
@@ -59,6 +62,9 @@ public class EventDisplayControlPanel extends JPanel implements ChangeListener, 
         scaleSlider.setMaximum(4000);
         scaleSlider.setValue((int) (parent.getConfig().getDisplayXScale() * 100000.0f));
         scaleLabel = new JLabel("Scale");
+        remapButton = new JCheckBox();
+        remapButton.setSelected(parent.isRemapMode());
+        remapLabel = new JLabel("Remap mode");
         holder.add(showControlsButton);
         holder.add(renderArcBox);
         holder.add(renderArcLabel);
@@ -68,6 +74,8 @@ public class EventDisplayControlPanel extends JPanel implements ChangeListener, 
         holder.add(renderEventLabel);
         holder.add(scaleSlider);
         holder.add(scaleLabel);
+        holder.add(remapButton);
+        holder.add(remapLabel);
 
         add(holder, BorderLayout.CENTER);
 
@@ -82,6 +90,7 @@ public class EventDisplayControlPanel extends JPanel implements ChangeListener, 
         renderArcBox.addActionListener(this);
         renderBeatBox.addActionListener(this);
         renderEventBox.addActionListener(this);
+        remapButton.addActionListener(this);
 
         toggleMapInfoAndResourceInfo.addActionListener(this);
         toggleEventMod.addActionListener(this);
@@ -106,6 +115,8 @@ public class EventDisplayControlPanel extends JPanel implements ChangeListener, 
             parent.toggleMapInfoAndResourceInfo();
         if (e.getSource() == toggleEventMod)
             parent.toggleEventMod();
+        if (e.getSource() == remapButton)
+            parent.setRemapMode(remapButton.isSelected());
     }
 
     public void localize(Locale l) {
@@ -116,5 +127,6 @@ public class EventDisplayControlPanel extends JPanel implements ChangeListener, 
         scaleLabel.setText(l.getKey(KEY_PANEL_EVENT_DISPLAY_SCALE));
         toggleMapInfoAndResourceInfo.setText(l.getKey(KEY_PANEL_EVENT_DISPLAY_TOGGLE_MAP_INFO_AND_RESOURCE_INFO));
         toggleEventMod.setText(l.getKey(KEY_PANEL_EVENT_DISPLAY_TOGGLE_EVENT_MOD));
+        remapLabel.setText(l.getKey(KEY_PANEL_EVENT_DISPLAY_REMAP_MODE));
     }
 }

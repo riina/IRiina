@@ -2,6 +2,10 @@ package net.cyriaca.riina.misc.iriina.intralism.data;
 
 import java.util.List;
 
+/*
+ * Event that marks the end of a level prior to the
+ * audio ending
+ */
 public class MapEndEvent extends MapEvent {
 
     private static final String KEY_EVENT_MAP_END_HR_NAME = "event_map_end_hr_name";

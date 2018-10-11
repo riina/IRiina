@@ -4,6 +4,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+/*
+ * Represents an image used in a map
+ */
 public class MapResource {
     private String name;
     private String path;

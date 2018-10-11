@@ -5,6 +5,9 @@ import net.cyriaca.riina.misc.iriina.generic.FloatBounds;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ * Event that defines background color
+ */
 public class SetBGColorEvent extends MapEvent {
 
     public static final String KEY_EVENT_SET_B_G_COLOR_HR_NAME = "event_set_b_g_color_hr_name";

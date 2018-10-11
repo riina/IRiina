@@ -31,6 +31,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
 
 public class MapImportFrame extends JFrame implements IViewFrame, LocaleChangeListener, WindowListener, ActionListener {
 
@@ -116,6 +117,7 @@ public class MapImportFrame extends JFrame implements IViewFrame, LocaleChangeLi
         add(progressBar, BorderLayout.SOUTH);
         addWindowListener(this);
         importButton.addActionListener(this);
+        IRiina.brandFrameWithGloriousEmblem(this);
     }
 
     public void localeChangePerformed(LocaleChangeEvent event) {
@@ -190,7 +192,7 @@ public class MapImportFrame extends JFrame implements IViewFrame, LocaleChangeLi
             File projDir = new File(parent.getPreferences().getWorkspaceDirectory(), projDirStr);
             if (projDir.exists()) {
                 JOptionPane.showMessageDialog(this, l.getKey(KEY_FRAME_MAP_IMPORT_ERR_PROJ_DIR_EXISTS).replaceAll(
-                        PROJ_DIR, projDir.getAbsolutePath()), l.getKey(KEY_UI_DIALOG_ERROR), JOptionPane.ERROR_MESSAGE);
+                        PROJ_DIR, Matcher.quoteReplacement(projDir.getAbsolutePath())), l.getKey(KEY_UI_DIALOG_ERROR), JOptionPane.ERROR_MESSAGE);
                 progressBar.setValue(0);
                 contentPane.paintImmediately(contentPane.getVisibleRect());
                 return;
@@ -199,14 +201,14 @@ public class MapImportFrame extends JFrame implements IViewFrame, LocaleChangeLi
             File mapDir = new File(mapDirStr);
             if (!mapDir.exists()) {
                 JOptionPane.showMessageDialog(this,
-                        l.getKey(KEY_FRAME_MAP_IMPORT_ERR_MAP_DIR_DNE).replaceAll(MAP_DIR, mapDir.getAbsolutePath()),
+                        l.getKey(KEY_FRAME_MAP_IMPORT_ERR_MAP_DIR_DNE).replaceAll(MAP_DIR, Matcher.quoteReplacement(mapDir.getAbsolutePath())),
                         l.getKey(KEY_UI_DIALOG_ERROR), JOptionPane.ERROR_MESSAGE);
                 progressBar.setValue(0);
                 contentPane.paintImmediately(contentPane.getVisibleRect());
                 return;
             } else if (!mapDir.isDirectory()) {
                 JOptionPane.showMessageDialog(this, l.getKey(KEY_FRAME_MAP_IMPORT_ERR_MAP_DIR_IS_FILE).replaceAll(
-                        MAP_DIR, mapDir.getAbsolutePath()), l.getKey(KEY_UI_DIALOG_ERROR), JOptionPane.ERROR_MESSAGE);
+                        MAP_DIR, Matcher.quoteReplacement(mapDir.getAbsolutePath())), l.getKey(KEY_UI_DIALOG_ERROR), JOptionPane.ERROR_MESSAGE);
                 progressBar.setValue(0);
                 contentPane.paintImmediately(contentPane.getVisibleRect());
                 return;
@@ -218,7 +220,7 @@ public class MapImportFrame extends JFrame implements IViewFrame, LocaleChangeLi
             if (!configFile.exists()) {
                 JOptionPane.showMessageDialog(this,
                         l.getKey(KEY_FRAME_MAP_IMPORT_ERR_CONFIG_FILE_DNE).replaceAll(CONFIG_FILE,
-                                configFile.getAbsolutePath()),
+                                Matcher.quoteReplacement(configFile.getAbsolutePath())),
                         l.getKey(KEY_UI_DIALOG_ERROR), JOptionPane.ERROR_MESSAGE);
                 progressBar.setValue(0);
                 contentPane.paintImmediately(contentPane.getVisibleRect());
@@ -226,7 +228,7 @@ public class MapImportFrame extends JFrame implements IViewFrame, LocaleChangeLi
             } else if (!configFile.isFile()) {
                 JOptionPane.showMessageDialog(this,
                         l.getKey(KEY_FRAME_MAP_IMPORT_ERR_CONFIG_FILE_IS_DIRECTORY).replaceAll(CONFIG_FILE,
-                                configFile.getAbsolutePath()),
+                                Matcher.quoteReplacement(configFile.getAbsolutePath())),
                         l.getKey(KEY_UI_DIALOG_ERROR), JOptionPane.ERROR_MESSAGE);
                 progressBar.setValue(0);
                 contentPane.paintImmediately(contentPane.getVisibleRect());
@@ -236,7 +238,7 @@ public class MapImportFrame extends JFrame implements IViewFrame, LocaleChangeLi
             MapData data;
             MapParseResult parseResult = null;
             try {
-                parseResult = DataManager.parseMap(configFile.getAbsolutePath());
+                parseResult = DataManager.parseMap(configFile.getAbsolutePath(), 0.0f, 0.0f);
             } catch (FileNotFoundException e1) {
                 e1.printStackTrace();
                 System.exit(3044);
@@ -255,7 +257,7 @@ public class MapImportFrame extends JFrame implements IViewFrame, LocaleChangeLi
                 JOptionPane
                         .showMessageDialog(this,
                                 l.getKey(KEY_FRAME_MAP_IMPORT_ERR_MUSIC_FILE_DNE).replaceAll(MUSIC_FILE,
-                                        musicFile.getAbsolutePath()),
+                                        Matcher.quoteReplacement(musicFile.getAbsolutePath())),
                                 l.getKey(KEY_UI_DIALOG_ERROR), JOptionPane.ERROR_MESSAGE);
                 progressBar.setValue(0);
                 contentPane.paintImmediately(contentPane.getVisibleRect());
@@ -264,7 +266,7 @@ public class MapImportFrame extends JFrame implements IViewFrame, LocaleChangeLi
                 JOptionPane
                         .showMessageDialog(this,
                                 l.getKey(KEY_FRAME_MAP_IMPORT_ERR_MUSIC_FILE_IS_DIRECTORY).replaceAll(MUSIC_FILE,
-                                        musicFile.getAbsolutePath()),
+                                        Matcher.quoteReplacement(musicFile.getAbsolutePath())),
                                 l.getKey(KEY_UI_DIALOG_ERROR), JOptionPane.ERROR_MESSAGE);
                 progressBar.setValue(0);
                 contentPane.paintImmediately(contentPane.getVisibleRect());
@@ -279,7 +281,7 @@ public class MapImportFrame extends JFrame implements IViewFrame, LocaleChangeLi
                 JOptionPane
                         .showMessageDialog(this,
                                 l.getKey(KEY_FRAME_MAP_IMPORT_ERR_ICON_FILE_DNE).replaceAll(ICON_FILE,
-                                        iconFile.getAbsolutePath()),
+                                        Matcher.quoteReplacement(iconFile.getAbsolutePath())),
                                 l.getKey(KEY_UI_DIALOG_ERROR), JOptionPane.ERROR_MESSAGE);
                 progressBar.setValue(0);
                 contentPane.paintImmediately(contentPane.getVisibleRect());
@@ -288,7 +290,7 @@ public class MapImportFrame extends JFrame implements IViewFrame, LocaleChangeLi
                 JOptionPane
                         .showMessageDialog(this,
                                 l.getKey(KEY_FRAME_MAP_IMPORT_ERR_ICON_FILE_IS_DIRECTORY).replaceAll(ICON_FILE,
-                                        iconFile.getAbsolutePath()),
+                                        Matcher.quoteReplacement(iconFile.getAbsolutePath())),
                                 l.getKey(KEY_UI_DIALOG_ERROR), JOptionPane.ERROR_MESSAGE);
                 progressBar.setValue(0);
                 contentPane.paintImmediately(contentPane.getVisibleRect());
@@ -298,7 +300,7 @@ public class MapImportFrame extends JFrame implements IViewFrame, LocaleChangeLi
                 JOptionPane
                         .showMessageDialog(this,
                                 l.getKey(KEY_FRAME_MAP_IMPORT_ERR_ICON_FILE_TYPE_ERR).replaceAll(ICON_FILE,
-                                        iconFile.getAbsolutePath()),
+                                        Matcher.quoteReplacement(iconFile.getAbsolutePath())),
                                 l.getKey(KEY_UI_DIALOG_ERROR), JOptionPane.ERROR_MESSAGE);
                 progressBar.setValue(0);
                 contentPane.paintImmediately(contentPane.getVisibleRect());
@@ -317,7 +319,7 @@ public class MapImportFrame extends JFrame implements IViewFrame, LocaleChangeLi
                 if (!resFile.exists()) {
                     JOptionPane.showMessageDialog(this,
                             l.getKey(KEY_FRAME_MAP_IMPORT_ERR_RESOURCE_FILE_DNE).replaceAll(RESOURCE_FILE,
-                                    resFile.getAbsolutePath()),
+                                    Matcher.quoteReplacement(resFile.getAbsolutePath())),
                             l.getKey(KEY_UI_DIALOG_ERROR), JOptionPane.ERROR_MESSAGE);
                     progressBar.setValue(0);
                     contentPane.paintImmediately(contentPane.getVisibleRect());
@@ -325,7 +327,7 @@ public class MapImportFrame extends JFrame implements IViewFrame, LocaleChangeLi
                 } else if (!resFile.isFile()) {
                     JOptionPane.showMessageDialog(this,
                             l.getKey(KEY_FRAME_MAP_IMPORT_ERR_RESOURCE_FILE_IS_DIRECTORY).replaceAll(RESOURCE_FILE,
-                                    resFile.getAbsolutePath()),
+                                    Matcher.quoteReplacement(resFile.getAbsolutePath())),
                             l.getKey(KEY_UI_DIALOG_ERROR), JOptionPane.ERROR_MESSAGE);
                     progressBar.setValue(0);
                     contentPane.paintImmediately(contentPane.getVisibleRect());
@@ -334,7 +336,7 @@ public class MapImportFrame extends JFrame implements IViewFrame, LocaleChangeLi
                 if (!DataManager.isIntralismSupportedImage(resFile)) {
                     JOptionPane.showMessageDialog(this,
                             l.getKey(KEY_FRAME_MAP_IMPORT_ERR_RESOURCE_FILE_TYPE_ERR).replaceAll(RESOURCE_FILE,
-                                    resFile.getAbsolutePath()),
+                                    Matcher.quoteReplacement(resFile.getAbsolutePath())),
                             l.getKey(KEY_UI_DIALOG_ERROR), JOptionPane.ERROR_MESSAGE);
                     progressBar.setValue(0);
                     contentPane.paintImmediately(contentPane.getVisibleRect());
@@ -361,7 +363,7 @@ public class MapImportFrame extends JFrame implements IViewFrame, LocaleChangeLi
             if (resourcesDirectoryCreationResult.failed()) {
                 JOptionPane.showMessageDialog(this,
                         l.getKey(KEY_FRAME_MAP_IMPORT_ERR_RESOURCE_DIR_CREATION_FAILED).replaceAll(RESOURCE_DIR,
-                                resourcesDir.getAbsolutePath()),
+                                Matcher.quoteReplacement(resourcesDir.getAbsolutePath())),
                         l.getKey(KEY_UI_DIALOG_ERROR), JOptionPane.ERROR_MESSAGE);
                 progressBar.setValue(0);
                 contentPane.paintImmediately(contentPane.getVisibleRect());
@@ -381,10 +383,10 @@ public class MapImportFrame extends JFrame implements IViewFrame, LocaleChangeLi
             contentPane.paintImmediately(contentPane.getVisibleRect());
             File configOut = new File(projDir, IRiinaConstants.CONFIG_FILE);
             try {
-                DataManager.exportMap(data, configOut);
+                DataManager.exportMap(data, configOut, 0.0f, 0.0f, false);
             } catch (IOException e1) {
                 JOptionPane.showMessageDialog(this, l.getKey(KEY_FRAME_MAP_IMPORT_ERR_WRITE_CONFIG_ERR).replaceAll(
-                        CP_OUT, configOut.getAbsolutePath()), l.getKey(KEY_UI_DIALOG_ERROR), JOptionPane.ERROR_MESSAGE);
+                        CP_OUT, Matcher.quoteReplacement(configOut.getAbsolutePath())), l.getKey(KEY_UI_DIALOG_ERROR), JOptionPane.ERROR_MESSAGE);
                 progressBar.setValue(0);
                 contentPane.paintImmediately(contentPane.getVisibleRect());
                 return;
@@ -415,23 +417,12 @@ public class MapImportFrame extends JFrame implements IViewFrame, LocaleChangeLi
             AudioFile af;
             try {
                 af = AudioFileIO.read(copiedMusicFile);
-            } catch (CannotReadException | IOException | TagException | ReadOnlyFileException | InvalidAudioFrameException e1) {
-                JOptionPane
-                        .showMessageDialog(this,
-                                l.getKey(KEY_FRAME_MAP_IMPORT_ERR_STRIPPING_METADATA_FAILED).replaceAll(EXCEPTION,
-                                        e1.getMessage()),
-                                l.getKey(KEY_UI_DIALOG_ERROR), JOptionPane.ERROR_MESSAGE);
-                progressBar.setValue(0);
-                contentPane.paintImmediately(contentPane.getVisibleRect());
-                return;
-            }
-            VorbisCommentTag ovtag = (VorbisCommentTag) af.getTag();
-            ovtag.deleteField(VorbisCommentFieldKey.METADATA_BLOCK_PICTURE);
-            ovtag.deleteField(VorbisCommentFieldKey.COVERART);
-            ovtag.deleteField(VorbisCommentFieldKey.COVERARTMIME);
-            try {
+                VorbisCommentTag ovtag = (VorbisCommentTag) af.getTag();
+                ovtag.deleteField(VorbisCommentFieldKey.METADATA_BLOCK_PICTURE);
+                ovtag.deleteField(VorbisCommentFieldKey.COVERART);
+                ovtag.deleteField(VorbisCommentFieldKey.COVERARTMIME);
                 af.commit();
-            } catch (CannotWriteException e1) {
+            } catch (CannotReadException | IOException | TagException | ReadOnlyFileException | InvalidAudioFrameException | CannotWriteException e1) {
                 JOptionPane
                         .showMessageDialog(this,
                                 l.getKey(KEY_FRAME_MAP_IMPORT_ERR_STRIPPING_METADATA_FAILED).replaceAll(EXCEPTION,
@@ -441,7 +432,6 @@ public class MapImportFrame extends JFrame implements IViewFrame, LocaleChangeLi
                 contentPane.paintImmediately(contentPane.getVisibleRect());
                 return;
             }
-
             // STEP 9 - load music
             progressBar.setValue(80);
             contentPane.paintImmediately(contentPane.getVisibleRect());

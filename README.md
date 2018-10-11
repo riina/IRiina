@@ -1,13 +1,31 @@
 # IRiina
 
-*Intralism* map editor written in ***Java (SE 8)***
+#### *Intralism* map editor written in ***Java (SE 10)***
 
-Versions **0.0.1**-**0.0.7** by ***CorruptTurret***
+[Releases](https://github.com/cyriaca-technologies/IRiina/releases)
 
-Version **0.0.8** by ***Riina***
+## Building native images
 
-No documentation as of 6/5/18 (but it is planned).
+Compile `src/main/java` to `build/modules/net.cyriaca.riina.misc.iriina`
+
+Copy dependency jars to `build/modules`
+
+Run `build-win.bat` or `build-mac.sh`
+
+## Dependencies
+
+[Jaudiotagger](https://mvnrepository.com/artifact/org/jaudiotagger)
+
+[JSR 374 (JSON Processing) Default Provider](https://mvnrepository.com/artifact/org.glassfish/javax.json)
+
+* [JSR 374 (JSON Processing) API](https://mvnrepository.com/artifact/javax.json/javax.json-api)
+
+[VorbisSPI](https://mvnrepository.com/artifact/com.googlecode.soundlibs/vorbisspi)
+
+* [Jorbis](https://mvnrepository.com/artifact/com.googlecode.soundlibs/jorbis)
+
+* [Tritonus Share](https://mvnrepository.com/artifact/com.googlecode.soundlibs/tritonus-share)
+
+##
 
 **[Intralism on Steam](https://store.steampowered.com/app/513510/Intralism/)**
-
-**[Program Discord Guild](https://discord.gg/HmQfaRV)**

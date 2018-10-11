@@ -5,6 +5,10 @@ import net.cyriaca.riina.misc.iriina.generic.FloatBounds;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ * Event that defines text to be displayed in
+ * an in-game banner
+ */
 public final class ShowTitleEvent extends MapEvent {
 
     public static final String KEY_EVENT_SHOW_TITLE_HR_NAME = "event_show_title_hr_name";

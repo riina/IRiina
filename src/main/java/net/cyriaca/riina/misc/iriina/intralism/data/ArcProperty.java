@@ -3,6 +3,9 @@ package net.cyriaca.riina.misc.iriina.intralism.data;
 import java.util.Arrays;
 import java.util.List;
 
+/*
+ * Represents an arc stored in an event
+ */
 public class ArcProperty extends Property {
 
     public static final int ARR_LENGTH = 5;
@@ -16,7 +19,7 @@ public class ArcProperty extends Property {
     private static final String STRING_RIGHT = "Right";
     private static final String STRING_DOWN = "Down";
     private static final String STRING_LEFT = "Left";
-    private byte value = MASK_UP;
+    private byte value;
 
     public ArcProperty() {
         this(MASK_UP);

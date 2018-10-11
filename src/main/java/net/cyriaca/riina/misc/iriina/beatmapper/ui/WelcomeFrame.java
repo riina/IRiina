@@ -87,12 +87,12 @@ public class WelcomeFrame extends JFrame implements IViewFrame, LocaleChangeList
         fileMenu = new JMenu();
         menuBar.add(fileMenu);
         JMenuItem menuItem = new JMenuItem();
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
         fileMenu.add(menuItem);
         menuItem.addActionListener(this);
         newProjectItem = menuItem;
         menuItem = new JMenuItem();
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
         fileMenu.add(menuItem);
         menuItem.addActionListener(this);
         openProjectItem = menuItem;
@@ -108,13 +108,14 @@ public class WelcomeFrame extends JFrame implements IViewFrame, LocaleChangeList
         menuItem.addActionListener(this);
         aboutItem = menuItem;
         menuItem = new JMenuItem();
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
         helpMenu.add(menuItem);
         menuItem.addActionListener(this);
         preferencesItem = menuItem;
         setJMenuBar(menuBar);
 
         setResizable(false);
+        IRiina.brandFrameWithGloriousEmblem(this);
     }
 
     public void setupAndShowFrame() {

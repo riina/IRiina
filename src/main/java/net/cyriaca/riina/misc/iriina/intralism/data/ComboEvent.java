@@ -8,6 +8,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+/*
+ * A convenience MapEvent that synthesizes up to one of
+ * every kind of pure MapEvent (two sprite events, foreground
+ * and background) upon export
+ */
 public class ComboEvent extends MapEvent {
 
     private static final String KEY_EVENT_COMBO_HR_NAME = "event_combo_hr_name";

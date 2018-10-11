@@ -10,22 +10,26 @@ import java.awt.color.ColorSpace;
 import java.util.*;
 import java.util.List;
 
+/*
+ * A container with fields for required elements
+ * of a UI-displayable property in an event
+ */
 public class EventProperty extends Property {
 
     private static final ColorSpace COLOR_SPACE = ColorSpace.getInstance(ColorSpace.CS_LINEAR_RGB);
     private Type type;
     private String hrNameKey;
-    private String stringProperty = null;
-    private FloatBoundedValue floatProperty = null;
-    private IntBoundedValue intProperty = null;
-    private boolean booleanProperty = false;
-    private String selectorPropertyKey = null;
-    private String selectorPropertyValue = null;
-    private Map<String, String> selectorPropertyMap = null;
-    private List<String> selectorPropertyKeys = null;
-    private List<String> selectorPropertyValues = null;
-    private Color colorProperty = null;
-    private float[] colorVals = null;
+    private String stringProperty;
+    private FloatBoundedValue floatProperty;
+    private IntBoundedValue intProperty;
+    private boolean booleanProperty;
+    private String selectorPropertyKey;
+    private String selectorPropertyValue;
+    private Map<String, String> selectorPropertyMap;
+    private List<String> selectorPropertyKeys;
+    private List<String> selectorPropertyValues;
+    private Color colorProperty;
+    private float[] colorVals;
 
     private EventProperty() {
         this.type = Type.STRING;
@@ -36,9 +40,9 @@ public class EventProperty extends Property {
         this.booleanProperty = false;
         this.selectorPropertyKey = null;
         this.selectorPropertyValue = null;
-        this.selectorPropertyMap = Collections.unmodifiableMap(new TreeMap<String, String>());
-        this.selectorPropertyKeys = Collections.unmodifiableList(new ArrayList<String>());
-        this.selectorPropertyValues = Collections.unmodifiableList(new ArrayList<String>());
+        this.selectorPropertyMap = Collections.unmodifiableMap(new TreeMap<>());
+        this.selectorPropertyKeys = Collections.unmodifiableList(new ArrayList<>());
+        this.selectorPropertyValues = Collections.unmodifiableList(new ArrayList<>());
         this.colorProperty = Color.CYAN;
         this.colorVals = colorProperty.getRGBColorComponents(null);
     }

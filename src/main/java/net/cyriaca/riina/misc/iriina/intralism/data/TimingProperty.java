@@ -4,18 +4,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/*
+ * Represents the timing scheme for a TimingEvent
+ */
 public class TimingProperty extends Property {
 
     private static final float LENGTH_MIN = 1.0f;
 
-    private float rootTime = -1.0f;
-    private float ticksPerSecond = -1.0f;
-    private int measureBeats = -1;
-    private int beatTicks = -1;
-    private TimingMode timingMode = TimingMode.MEASURE;
-    private float length = 1.0f;
-    private List<Float> pastLengths = null;
-    private List<Float> pastRootTimes = null;
+    private float rootTime;
+    private float ticksPerSecond;
+    private int measureBeats;
+    private int beatTicks;
+    private TimingMode timingMode;
+    private float length;
+    private List<Float> pastLengths;
+    private List<Float> pastRootTimes;
 
     public TimingProperty() {
         rootTime = 1.0f;

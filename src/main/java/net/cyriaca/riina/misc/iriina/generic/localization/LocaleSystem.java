@@ -6,6 +6,7 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.Map;
@@ -43,7 +44,12 @@ public class LocaleSystem {
         String file = ld.getResourcePath();
         if (file == null)
             throw new InvalidLocaleException(localeId);
-        InputStream stream = LocaleSystem.class.getClassLoader().getResourceAsStream(file);
+        InputStream stream = null;
+        try {
+            stream = LocaleSystem.class.getModule().getResourceAsStream(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         if (stream == null)
             throw new MissingResourceException(localeId);
         JsonReader reader = Json.createReader(stream);
@@ -60,7 +66,12 @@ public class LocaleSystem {
     public static Map<String, LocaleDefinition> getLocales() {
         if (localeDefinitions == null) {
             localeDefinitions = new TreeMap<>();
-            InputStream stream = LocaleSystem.class.getClassLoader().getResourceAsStream(LIST_LOC);
+            InputStream stream = null;
+            try {
+                stream = LocaleSystem.class.getModule().getResourceAsStream(LIST_LOC);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             if (stream == null) {
                 System.err.println("Fatal error: valid locale list resource " + LIST_LOC + " could not be found!");
                 System.exit(1131);

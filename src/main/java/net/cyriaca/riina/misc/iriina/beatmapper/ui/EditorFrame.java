@@ -10,7 +10,9 @@ import net.cyriaca.riina.misc.iriina.beatmapper.data.editor.EditorConfig;
 import net.cyriaca.riina.misc.iriina.beatmapper.data.editor.EventRenderItem;
 import net.cyriaca.riina.misc.iriina.beatmapper.data.editor.ManipTarget;
 import net.cyriaca.riina.misc.iriina.beatmapper.ui.editor.*;
+import net.cyriaca.riina.misc.iriina.generic.FloatBounds;
 import net.cyriaca.riina.misc.iriina.generic.localization.Locale;
+import net.cyriaca.riina.misc.iriina.generic.ui.item.ArxTitledFloatItem;
 import net.cyriaca.riina.misc.iriina.generic.ui.item.ArxTitledFolderSelectorItem;
 import net.cyriaca.riina.misc.iriina.generic.ui.item.ArxTitledStringItem;
 import net.cyriaca.riina.misc.iriina.intralism.data.*;
@@ -29,6 +31,7 @@ import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
+import java.util.regex.Matcher;
 
 public class EditorFrame extends JFrame implements IViewFrame, WindowListener, LocaleChangeListener, ActionListener, LineListener {
 
@@ -92,6 +95,8 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
     private static final String KEY_FRAME_EDITOR_EXPORT_EDITOR_DIRECTORY = "frame_editor_export_editor_directory";
     private static final String KEY_FRAME_EDITOR_EXPORT_EDITOR_DIRECTORY_SELECT = "frame_editor_export_editor_directory_select";
     private static final String KEY_FRAME_EDITOR_EXPORT_FOLDER_NAME = "frame_editor_export_folder_name";
+    private static final String KEY_FRAME_EDITOR_EXPORT_CHECKPOINT_TIMING_OFFSET = "frame_editor_export_checkpoint_timing_offset";
+    private static final String KEY_FRAME_EDITOR_EXPORT_EVENT_TIMING_OFFSET = "frame_editor_export_event_timing_offset";
     private static final String KEY_FRAME_EDITOR_EXPORT_FAIL_NO_EDITOR_DIRECTORY = "frame_editor_export_fail_no_editor_directory";
     private static final String KEY_FRAME_EDITOR_EXPORT_FAIL_NO_FOLDER_NAME = "frame_editor_export_fail_no_folder_name";
     private static final String KEY_FRAME_EDITOR_EXPORT_FAIL_TARGET_IS_FILE = "frame_editor_export_fail_target_is_file";
@@ -106,7 +111,7 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
     private static final String EVENT_DATA = "%eventData%";
     private static final String RESOURCE_NAME = "%resourceName%";
     private static final String RESOURCE_NAME_LIST = "%resourceNameList%";
-    private static String OPERATION = "%operation%";
+    private static final String OPERATION = "%operation%";
     private IRiina parent;
     private ControlReferenceFrame controlReferenceFrame;
     private EventDisplayPanel eventDisplayPanel;
@@ -118,16 +123,16 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
     private EventDisplayControlPanel eventDisplayControlPanel;
     private JPanel contentPane;
     private BorderLayout contentLayout;
-    private File projectDirectory = null;
-    private boolean isBackup = false;
-    private File backupFile = null;
-    private Clip clip = null;
-    private MapData mapData = null;
-    private boolean play = false;
-    private List<MapEvent> prevSelection = null;
-    private List<MapEvent> selection = null;
-    private List<MapEvent> realSelection = null;
-    private ManipTarget manipTarget = null;
+    private File projectDirectory;
+    private boolean isBackup;
+    private File backupFile;
+    private Clip clip;
+    private MapData mapData;
+    private boolean play;
+    private List<MapEvent> prevSelection;
+    private List<MapEvent> selection;
+    private List<MapEvent> realSelection;
+    private ManipTarget manipTarget;
     private Timer timer;
     private JMenuBar menuBar;
     private JMenu fileMenu;
@@ -163,20 +168,23 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
     private String[] reloadOptions;
     private String exportTitle;
     private String[] exportOptions;
-    private String exportEditorDirectory = null;
-    private String exportEditorDirectorySelect = null;
-    private String exportFolderName = null;
+    private String exportEditorDirectory;
+    private String exportEditorDirectorySelect;
+    private String exportFolderName;
+    private String exportCheckpointTimingOffset;
+    private String exportEventTimingOffset;
     private List<ReversibleOperation> operations;
     private int opPoint;
     private List<MapEvent> clipboard;
     private float clipboardGrabPos;
-    private int evtTarg = -1;
-    private boolean renderArcs = false;
-    private boolean renderEvents = false;
-    private boolean renderBeats = false;
+    private int evtTarg;
+    private boolean renderArcs;
+    private boolean renderEvents;
+    private boolean renderBeats;
     private boolean storedTimeThisFrame;
     private float storedTime;
     private float length;
+    private boolean remapMode;
 
     public EditorFrame(IRiina parent) {
         super();
@@ -233,12 +241,12 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
         fileMenu = new JMenu();
         menuBar.add(fileMenu);
         JMenuItem menuItem = new JMenuItem();
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
         fileMenu.add(menuItem);
         menuItem.addActionListener(this);
         newProjectItem = menuItem;
         menuItem = new JMenuItem();
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
         fileMenu.add(menuItem);
         menuItem.addActionListener(this);
         openProjectItem = menuItem;
@@ -248,13 +256,13 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
         menuItem.addActionListener(this);
         importMapItem = menuItem;
         menuItem = new JMenuItem();
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
         fileMenu.add(menuItem);
         menuItem.addActionListener(this);
         exportMapItem = menuItem;
         fileMenu.addSeparator();
         menuItem = new JMenuItem();
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
         fileMenu.add(menuItem);
         menuItem.addActionListener(this);
         saveProjectItem = menuItem;
@@ -266,39 +274,39 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
         editMenu = new JMenu();
         menuBar.add(editMenu);
         menuItem = new JMenuItem();
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
         editMenu.add(menuItem);
         menuItem.addActionListener(this);
         undoItem = menuItem;
         menuItem = new JMenuItem();
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | KeyEvent.SHIFT_DOWN_MASK));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx() | KeyEvent.SHIFT_DOWN_MASK));
         editMenu.add(menuItem);
         menuItem.addActionListener(this);
         redoItem = menuItem;
         editMenu.addSeparator();
         menuItem = new JMenuItem();
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
         editMenu.add(menuItem);
         menuItem.addActionListener(this);
         cutItem = menuItem;
         menuItem = new JMenuItem();
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
         editMenu.add(menuItem);
         menuItem.addActionListener(this);
         copyItem = menuItem;
         menuItem = new JMenuItem();
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
         editMenu.add(menuItem);
         menuItem.addActionListener(this);
         pasteItem = menuItem;
         editMenu.addSeparator();
         menuItem = new JMenuItem();
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
         editMenu.add(menuItem);
         menuItem.addActionListener(this);
         selectAllItem = menuItem;
         menuItem = new JMenuItem();
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
         editMenu.add(menuItem);
         menuItem.addActionListener(this);
         deleteItem = menuItem;
@@ -327,12 +335,12 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
         menuItem.addActionListener(this);
         positionFwd = menuItem;
         menuItem = new JMenuItem();
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_OPEN_BRACKET, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_OPEN_BRACKET, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
         controlsMenu.add(menuItem);
         menuItem.addActionListener(this);
         evtBack = menuItem;
         menuItem = new JMenuItem();
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_CLOSE_BRACKET, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_CLOSE_BRACKET, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
         controlsMenu.add(menuItem);
         menuItem.addActionListener(this);
         evtFwd = menuItem;
@@ -344,7 +352,7 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
         menuItem.addActionListener(this);
         aboutItem = menuItem;
         menuItem = new JMenuItem();
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
         helpMenu.add(menuItem);
         menuItem.addActionListener(this);
         preferencesItem = menuItem;
@@ -353,6 +361,39 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
         addWindowListener(this);
 
         setIgnoreRepaint(true);
+        exportEditorDirectory = null;
+        exportEditorDirectorySelect = null;
+        exportFolderName = null;
+        exportCheckpointTimingOffset = null;
+        exportEventTimingOffset = null;
+        evtTarg = -1;
+        renderArcs = false;
+        renderEvents = true;
+        renderBeats = false;
+        projectDirectory = null;
+        isBackup = false;
+        backupFile = null;
+        clip = null;
+        mapData = null;
+        play = false;
+        prevSelection = null;
+        selection = null;
+        realSelection = null;
+        manipTarget = null;
+        remapMode = false;
+        IRiina.brandFrameWithGloriousEmblem(this);
+    }
+
+    public boolean isRemapMode() {
+        return remapMode;
+    }
+
+    public void setRemapMode(boolean value) {
+        remapMode = value;
+    }
+
+    public List<MapEvent> getEventTargets() {
+        return eventModContainerPanel.getTargets();
     }
 
     public File getResPath() {
@@ -387,7 +428,7 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
         return parent;
     }
 
-    private void evtBack() {
+    public void evtBack() {
         int evtCount = mapData.getEventCount();
         if (evtCount == 0)
             setPlayHeadPos(0.0f);
@@ -405,7 +446,7 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
         }
     }
 
-    private void evtFwd() {
+    public void evtFwd() {
         int evtCount = mapData.getEventCount();
         if (evtCount == 0)
             setPlayHeadPos(0.0f);
@@ -676,11 +717,11 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
         eventDisplayPanel.setMessage(l.getKey(KEY_FRAME_EDITOR_SAVING_PROJECT));
         eventDisplayPanel.paintImmediately(eventDisplayPanel.getVisibleRect());
         try {
-            DataManager.exportMap(mapData, configTarget);
+            DataManager.exportMap(mapData, configTarget, 0.0f, 0.0f, false);
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this,
-                    l.getKey(KEY_FRAME_EDITOR_SAVE_FAIL_CONFIG).replaceAll(CONFIG_FILE, configTarget.getAbsolutePath()).replaceAll(EXCEPTION, e.toString()),
+                    l.getKey(KEY_FRAME_EDITOR_SAVE_FAIL_CONFIG).replaceAll(CONFIG_FILE, Matcher.quoteReplacement(configTarget.getAbsolutePath())).replaceAll(EXCEPTION, e.toString()),
                     l.getKey(KEY_UI_DIALOG_ERROR), JOptionPane.ERROR_MESSAGE);
         }
         eventDisplayPanel.setMessage(l.getKey(KEY_FRAME_EDITOR_SAVING_BACKUP));
@@ -688,17 +729,17 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
         String odt = OffsetDateTime.now().format(DateTimeFormatter.ofPattern("yyyy MM dd kk mm ss SSSS"));
         File backupTarget = Paths.get(projectDirectory.getAbsolutePath(), IRiinaConstants.PROJECT_DIR_BACKUP, (odt) + ".ibm").toFile();
         try {
-            DataManager.exportMap(mapData, backupTarget);
+            DataManager.exportMap(mapData, backupTarget, 0.0f, 0.0f, false);
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this,
-                    l.getKey(KEY_FRAME_EDITOR_SAVE_FAIL_BACKUP).replaceAll(BACKUP_FILE, backupTarget.getAbsolutePath()).replaceAll(EXCEPTION, e.toString()),
+                    l.getKey(KEY_FRAME_EDITOR_SAVE_FAIL_BACKUP).replaceAll(BACKUP_FILE, Matcher.quoteReplacement(backupTarget.getAbsolutePath())).replaceAll(EXCEPTION, e.toString()),
                     l.getKey(KEY_UI_DIALOG_ERROR), JOptionPane.ERROR_MESSAGE);
         }
         isBackup = false;
         eventDisplayPanel.setMessage(null);
-        JOptionPane.showMessageDialog(this, l.getKey(KEY_FRAME_EDITOR_SAVE_SUCCESS).replaceAll(CONFIG_FILE, configTarget.getAbsolutePath()).replaceAll(BACKUP_FILE, backupTarget.getAbsolutePath()),
-                l.getKey(KEY_UI_DIALOG_INFORMATION), JOptionPane.PLAIN_MESSAGE);
+        JOptionPane.showMessageDialog(this, l.getKey(KEY_FRAME_EDITOR_SAVE_SUCCESS).replaceAll(CONFIG_FILE, Matcher.quoteReplacement(configTarget.getAbsolutePath())).replaceAll(BACKUP_FILE, Matcher.quoteReplacement(backupTarget.getAbsolutePath())),
+                l.getKey(KEY_UI_DIALOG_INFORMATION), JOptionPane.PLAIN_MESSAGE, IRiina.getIcon64());
     }
 
     private void showError(String title, String err) {
@@ -708,13 +749,12 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
     }
 
     private void showMessage(String title, String mess) {
-        JOptionPane.showMessageDialog(this, mess, title, JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, mess, title, JOptionPane.INFORMATION_MESSAGE, IRiina.getIcon64());
     }
 
     private void exportProject() {
         ArxTitledFolderSelectorItem folderSelector = new ArxTitledFolderSelectorItem();
-        String os = System.getProperty("os.name");
-        if (os.contains("Mac OS X"))
+        if (IRiina.IS_MACOS)
             folderSelector.setDirectory(Paths.get(System.getProperty("user.home"), IRiinaConstants.INTRALISM_MAC_EDITOR_DIRECTORY).toFile().getAbsolutePath());
         else
             folderSelector.setDirectory(Paths.get(IRiinaConstants.INTRALISM_WIN_EDITOR_DIRECTORY).toFile().getAbsolutePath());
@@ -727,13 +767,19 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
         if (mapName == null || mapName.length() == 0)
             mapName = "SetMapNameHere";
         folderNameSelector.setValue(mapName);
+        ArxTitledFloatItem checkpointTimingOffsetSelector = new ArxTitledFloatItem(new FloatBounds(-1.0f, true, 1.0f, true), 0.0f);
+        checkpointTimingOffsetSelector.setTitle(exportCheckpointTimingOffset);
+        ArxTitledFloatItem eventTimingOffsetSelector = new ArxTitledFloatItem(new FloatBounds(-1.0f, true, 1.0f, true), 0.0f);
+        eventTimingOffsetSelector.setTitle(exportEventTimingOffset);
         JComponent[] options = new JComponent[]{
                 folderSelector,
-                folderNameSelector
+                folderNameSelector,
+                checkpointTimingOffsetSelector,
+                eventTimingOffsetSelector
         };
 
         Locale l = parent.getLocale();
-        int x = JOptionPane.showOptionDialog(this, options, exportTitle, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, exportOptions, exportOptions[0]);
+        int x = JOptionPane.showOptionDialog(this, options, exportTitle, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, IRiina.getIcon64(), exportOptions, exportOptions[0]);
         if (x == 1 || x == JOptionPane.CLOSED_OPTION)
             return;
         String editorDirectory = folderSelector.getDirectory();
@@ -748,11 +794,11 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
         File targetDirectory = Paths.get(editorDirectory, folderName).toFile();
         if (targetDirectory.exists()) {
             if (targetDirectory.isFile()) {
-                showError(l.getKey(KEY_UI_DIALOG_ERROR), l.getKey(KEY_FRAME_EDITOR_EXPORT_FAIL_TARGET_IS_FILE).replaceAll(TARGET_DIRECTORY, targetDirectory.getAbsolutePath()));
+                showError(l.getKey(KEY_UI_DIALOG_ERROR), l.getKey(KEY_FRAME_EDITOR_EXPORT_FAIL_TARGET_IS_FILE).replaceAll(TARGET_DIRECTORY, Matcher.quoteReplacement(targetDirectory.getAbsolutePath())));
             }
         } else {
             if (!targetDirectory.mkdirs())
-                showError(l.getKey(KEY_UI_DIALOG_ERROR), l.getKey(KEY_FRAME_EDITOR_EXPORT_FAIL_TARGET_DIRECTORY_CREATION_FAIL.replaceAll(TARGET_DIRECTORY, targetDirectory.getAbsolutePath())));
+                showError(l.getKey(KEY_UI_DIALOG_ERROR), l.getKey(KEY_FRAME_EDITOR_EXPORT_FAIL_TARGET_DIRECTORY_CREATION_FAIL.replaceAll(TARGET_DIRECTORY, Matcher.quoteReplacement(targetDirectory.getAbsolutePath()))));
         }
         setPlaying(false);
         mapData.setName(mapInfoDataPanel.getName());
@@ -811,10 +857,10 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
         eventDisplayPanel.paintImmediately(eventDisplayPanel.getVisibleRect());
         File configTarget = Paths.get(targetDirectory.getAbsolutePath(), IRiinaConstants.CONFIG_FILE).toFile();
         try {
-            DataManager.exportPureMap(mapData, configTarget);
+            DataManager.exportMap(mapData, configTarget, checkpointTimingOffsetSelector.getValue(), eventTimingOffsetSelector.getValue(), true);
         } catch (IOException e) {
             e.printStackTrace();
-            showError(l.getKey(KEY_UI_DIALOG_ERROR), l.getKey(KEY_FRAME_EDITOR_SAVE_FAIL_CONFIG).replaceAll(CONFIG_FILE, configTarget.getAbsolutePath()).replaceAll(EXCEPTION, e.toString()));
+            showError(l.getKey(KEY_UI_DIALOG_ERROR), l.getKey(KEY_FRAME_EDITOR_SAVE_FAIL_CONFIG).replaceAll(CONFIG_FILE, Matcher.quoteReplacement(configTarget.getAbsolutePath())).replaceAll(EXCEPTION, e.toString()));
         }
         //step 2 - save icon
         progress = 25;
@@ -851,12 +897,12 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
             }
         }
 
-        showMessage(l.getKey(KEY_UI_DIALOG_INFORMATION), l.getKey(KEY_FRAME_EDITOR_EXPORT_SUCCESS).replaceAll(TARGET_DIRECTORY, targetDirectory.getAbsolutePath()));
+        showMessage(l.getKey(KEY_UI_DIALOG_INFORMATION), l.getKey(KEY_FRAME_EDITOR_EXPORT_SUCCESS).replaceAll(TARGET_DIRECTORY, Matcher.quoteReplacement(targetDirectory.getAbsolutePath())));
         eventDisplayPanel.setMessage(null);
     }
 
     private boolean confirmExitSave() {
-        int x = JOptionPane.showOptionDialog(this, leaveText, leaveTitle, JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, leaveOptions, leaveOptions[2]);
+        int x = JOptionPane.showOptionDialog(this, leaveText, leaveTitle, JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, IRiina.getIcon64(), leaveOptions, leaveOptions[2]);
         if (x == 2 || x == JOptionPane.CLOSED_OPTION)
             return false;
         else if (x == 1)
@@ -866,7 +912,7 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
     }
 
     private boolean confirmReload() {
-        int x = JOptionPane.showOptionDialog(this, reloadText, reloadTitle, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, reloadOptions, reloadOptions[1]);
+        int x = JOptionPane.showOptionDialog(this, reloadText, reloadTitle, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, IRiina.getIcon64(), reloadOptions, reloadOptions[1]);
         return x == 0;
     }
 
@@ -1578,6 +1624,8 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
         exportEditorDirectory = l.getKey(KEY_FRAME_EDITOR_EXPORT_EDITOR_DIRECTORY);
         exportEditorDirectorySelect = l.getKey(KEY_FRAME_EDITOR_EXPORT_EDITOR_DIRECTORY_SELECT);
         exportFolderName = l.getKey(KEY_FRAME_EDITOR_EXPORT_FOLDER_NAME);
+        exportCheckpointTimingOffset = l.getKey(KEY_FRAME_EDITOR_EXPORT_CHECKPOINT_TIMING_OFFSET);
+        exportEventTimingOffset = l.getKey(KEY_FRAME_EDITOR_EXPORT_EVENT_TIMING_OFFSET);
 
         eventDisplayPanel.localize(l);
         controlReferenceFrame.localize(l);

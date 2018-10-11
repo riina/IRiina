@@ -2,6 +2,10 @@ package net.cyriaca.riina.misc.iriina.intralism.data;
 
 import java.util.List;
 
+/*
+ * Convenience class that allows events in its region
+ * to be synced up by ticks or by measure, beat, and subtick
+ */
 public class TimingEvent extends MapEvent {
 
     public static final String KEY_EVENT_TIMING_HR_NAME = "event_timing_hr_name";

@@ -3,6 +3,9 @@ package net.cyriaca.riina.misc.iriina.intralism.data;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ * Represents a checkpoint in a map
+ */
 public class Checkpoint {
 
     private float time;
@@ -21,6 +24,12 @@ public class Checkpoint {
         return time;
     }
 
+    public final void setTime(float time) {
+        this.time = Math.max(0.001f, time);
+        if (parent != null)
+            parent.repositionCheckpoint(this);
+    }
+
     public final void revertTime() {
         if (pastTimes.size() != 0) {
             setTime(pastTimes.remove(pastTimes.size() - 1));
@@ -29,12 +38,6 @@ public class Checkpoint {
 
     public final void concreteTime() {
         pastTimes.add(this.time);
-    }
-
-    public final void setTime(float time) {
-        this.time = Math.max(0.001f, time);
-        if (parent != null)
-            parent.repositionCheckpoint(this);
     }
 
     public void setParent(MapData parent) {

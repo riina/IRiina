@@ -19,3 +19,6 @@ classes/
 .classpath
 .project
 .settings/
+build/mac/
+build/modules/
+build/win/

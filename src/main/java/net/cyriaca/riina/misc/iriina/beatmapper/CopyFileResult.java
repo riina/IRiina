@@ -4,6 +4,7 @@ import net.cyriaca.riina.misc.iriina.generic.Result;
 import net.cyriaca.riina.misc.iriina.generic.localization.Locale;
 
 import java.io.File;
+import java.util.regex.Matcher;
 
 public class CopyFileResult extends Result {
 
@@ -53,7 +54,7 @@ public class CopyFileResult extends Result {
     public String getLocalizedFailureInfo(Locale l) {
         if (getResultType() == ResultType.SUCCESS)
             return "";
-        return l.getKey(KEY_RESULT_COPY_FILE_FAIL).replaceAll(INPUT_FILE, inputFile.getAbsolutePath())
+        return l.getKey(KEY_RESULT_COPY_FILE_FAIL).replaceAll(INPUT_FILE, Matcher.quoteReplacement(inputFile.getAbsolutePath()))
                 .replaceAll(OUTPUT_FILE, outputFile.getAbsolutePath()).replaceAll(EXCEPTION, exception.getMessage());
     }
 

@@ -17,7 +17,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 
 public class PreferencesFrame extends JFrame implements IViewFrame, LocaleChangeListener, ActionListener {
 
@@ -81,6 +80,7 @@ public class PreferencesFrame extends JFrame implements IViewFrame, LocaleChange
         scrollPane = new JScrollPane(minHolder);
         add(scrollPane, BorderLayout.CENTER);
         add(savePreferencesButton, BorderLayout.SOUTH);
+        IRiina.brandFrameWithGloriousEmblem(this);
     }
 
     public void setupAndShowFrame() {
@@ -125,7 +125,7 @@ public class PreferencesFrame extends JFrame implements IViewFrame, LocaleChange
             Locale l = parent.getLocale();
             if (updatePrefsToParent(parent.getPreferences())) {
                 JOptionPane.showMessageDialog(this, l.getKey(KEY_FRAME_PREFERENCES_SAVE_SUCCESS),
-                        l.getKey(KEY_UI_DIALOG_INFORMATION), JOptionPane.PLAIN_MESSAGE);
+                        l.getKey(KEY_UI_DIALOG_INFORMATION), JOptionPane.PLAIN_MESSAGE, IRiina.getIcon64());
             } else {
                 JOptionPane.showMessageDialog(this,
                         l.getKey(KEY_FRAME_PREFERENCES_SAVE_FAIL_WORKSPACE_DIRECTORY_USE_FAILED),

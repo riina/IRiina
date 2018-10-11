@@ -18,7 +18,6 @@ import org.jaudiotagger.tag.TagException;
 import org.jaudiotagger.tag.vorbiscomment.VorbisCommentFieldKey;
 import org.jaudiotagger.tag.vorbiscomment.VorbisCommentTag;
 
-import javax.activation.MimetypesFileTypeMap;
 import javax.sound.sampled.Clip;
 import javax.swing.*;
 import java.awt.*;
@@ -28,8 +27,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
+import java.util.regex.Matcher;
 
 public class NewProjectDialogFrame extends JFrame
         implements IViewFrame, ActionListener, LocaleChangeListener, WindowListener {
@@ -128,6 +126,7 @@ public class NewProjectDialogFrame extends JFrame
         add(progress, BorderLayout.SOUTH);
         addWindowListener(this);
         create.addActionListener(this);
+        IRiina.brandFrameWithGloriousEmblem(this);
     }
 
     public void setupAndShowFrame() {
@@ -175,7 +174,7 @@ public class NewProjectDialogFrame extends JFrame
                 JOptionPane
                         .showMessageDialog(this,
                                 l.getKey(KEY_FRAME_NEW_PROJECT_ERR_ICON_FILE_MISSING).replaceAll(ICON_FILE,
-                                        iconFile.getAbsolutePath()),
+                                        Matcher.quoteReplacement(iconFile.getAbsolutePath())),
                                 l.getKey(KEY_UI_DIALOG_ERROR), JOptionPane.ERROR_MESSAGE);
                 progressBar.setValue(0);
                 progressLabel.setText(" ");
@@ -188,23 +187,7 @@ public class NewProjectDialogFrame extends JFrame
                 JOptionPane
                         .showMessageDialog(this,
                                 l.getKey(KEY_FRAME_NEW_PROJECT_ERR_ICON_FILE_READ_ERROR).replaceAll(ICON_FILE,
-                                        iconFile.getAbsolutePath()),
-                                l.getKey(KEY_UI_DIALOG_ERROR), JOptionPane.ERROR_MESSAGE);
-                progressBar.setValue(0);
-                progressLabel.setText(" ");
-                contentPane.paintImmediately(contentPane.getVisibleRect());
-                return;
-            }
-            MimetypesFileTypeMap map = new MimetypesFileTypeMap();
-            map.addMimeTypes("image png tif jpg jpeg bmp");
-            List<String> types = Arrays.asList(map.getContentType(iconFile).split("/"));
-            if (!(types.contains("image") || types.contains("png") || types.contains("jpeg")
-                    || types.contains("jpg"))) {
-                System.err.println("DETTYPE - " + Arrays.toString(types.toArray()));
-                JOptionPane
-                        .showMessageDialog(this,
-                                l.getKey(KEY_FRAME_NEW_PROJECT_ERR_ICON_FILE_READ_ERROR).replaceAll(ICON_FILE,
-                                        iconFile.getAbsolutePath()),
+                                        Matcher.quoteReplacement(iconFile.getAbsolutePath())),
                                 l.getKey(KEY_UI_DIALOG_ERROR), JOptionPane.ERROR_MESSAGE);
                 progressBar.setValue(0);
                 progressLabel.setText(" ");
@@ -216,7 +199,7 @@ public class NewProjectDialogFrame extends JFrame
                 JOptionPane
                         .showMessageDialog(this,
                                 l.getKey(KEY_FRAME_NEW_PROJECT_ERR_AUDIO_FILE_MISSING).replaceAll(AUDIO_FILE,
-                                        musicFile.getAbsolutePath()),
+                                        Matcher.quoteReplacement(musicFile.getAbsolutePath())),
                                 l.getKey(KEY_UI_DIALOG_ERROR), JOptionPane.ERROR_MESSAGE);
                 progressBar.setValue(0);
                 progressLabel.setText(" ");
@@ -260,8 +243,8 @@ public class NewProjectDialogFrame extends JFrame
             //setup progress bar
             progressBar.setValue(0);
             progressLabel.setText(l.getKey(KEY_FRAME_NEW_PROJECT_PROG_COPY_MUSIC_FILE)
-                    .replaceAll(AUDIO_FILE, musicFile.getAbsolutePath())
-                    .replaceAll(TARGET_DIRECTORY, projectFolder.getAbsolutePath()));
+                    .replaceAll(AUDIO_FILE, Matcher.quoteReplacement(musicFile.getAbsolutePath()))
+                    .replaceAll(TARGET_DIRECTORY, Matcher.quoteReplacement(projectFolder.getAbsolutePath())));
             contentPane.paintImmediately(contentPane.getVisibleRect());
             // COPY AUDIO FILE
             CopyFileResult musicFileCopyFileResult = DataManager.copyFile(musicFile.getName(),
@@ -282,24 +265,12 @@ public class NewProjectDialogFrame extends JFrame
             AudioFile af;
             try {
                 af = AudioFileIO.read(copiedMusicFile);
-            } catch (CannotReadException | IOException | TagException | ReadOnlyFileException | InvalidAudioFrameException e1) {
-                JOptionPane
-                        .showMessageDialog(this,
-                                l.getKey(KEY_FRAME_NEW_PROJECT_ERR_STRIPPING_METADATA_FAILED).replaceAll(EXCEPTION,
-                                        e1.getMessage()),
-                                l.getKey(KEY_UI_DIALOG_ERROR), JOptionPane.ERROR_MESSAGE);
-                progressBar.setValue(0);
-                progressLabel.setText(" ");
-                contentPane.paintImmediately(contentPane.getVisibleRect());
-                return;
-            }
-            VorbisCommentTag ovtag = (VorbisCommentTag) af.getTag();
-            ovtag.deleteField(VorbisCommentFieldKey.METADATA_BLOCK_PICTURE);
-            ovtag.deleteField(VorbisCommentFieldKey.COVERART);
-            ovtag.deleteField(VorbisCommentFieldKey.COVERARTMIME);
-            try {
+                VorbisCommentTag ovtag = (VorbisCommentTag) af.getTag();
+                ovtag.deleteField(VorbisCommentFieldKey.METADATA_BLOCK_PICTURE);
+                ovtag.deleteField(VorbisCommentFieldKey.COVERART);
+                ovtag.deleteField(VorbisCommentFieldKey.COVERARTMIME);
                 af.commit();
-            } catch (CannotWriteException e1) {
+            } catch (CannotReadException | IOException | TagException | ReadOnlyFileException | InvalidAudioFrameException | CannotWriteException e1) {
                 JOptionPane
                         .showMessageDialog(this,
                                 l.getKey(KEY_FRAME_NEW_PROJECT_ERR_STRIPPING_METADATA_FAILED).replaceAll(EXCEPTION,
@@ -312,7 +283,7 @@ public class NewProjectDialogFrame extends JFrame
             }
             progressBar.setValue(40);
             progressLabel.setText(l.getKey(KEY_FRAME_NEW_PROJECT_PROG_LOAD_AUDIO).replaceAll(AUDIO_FILE,
-                    musicFile.getAbsolutePath()));
+                    Matcher.quoteReplacement(musicFile.getAbsolutePath())));
             contentPane.paintImmediately(contentPane.getVisibleRect());
             //LOAD AUDIO FILE
             Clip clip;
@@ -328,8 +299,8 @@ public class NewProjectDialogFrame extends JFrame
             clip = clipLoadResult.getClip();
             progressBar.setValue(60);
             progressLabel.setText(l.getKey(KEY_FRAME_NEW_PROJECT_PROG_COPY_ICON_FILE)
-                    .replaceAll(ICON_FILE, iconFile.getAbsolutePath())
-                    .replaceAll(TARGET_DIRECTORY, projectFolder.getAbsolutePath()));
+                    .replaceAll(ICON_FILE, Matcher.quoteReplacement(iconFile.getAbsolutePath()))
+                    .replaceAll(TARGET_DIRECTORY, Matcher.quoteReplacement(projectFolder.getAbsolutePath())));
             contentPane.paintImmediately(contentPane.getVisibleRect());
             // COPY ICON FILE
             CopyFileResult iconFileCopyFileResult = DataManager.copyFile(iconFile.getName(),
@@ -351,11 +322,11 @@ public class NewProjectDialogFrame extends JFrame
             mapData.setIconImage(img);
             progressBar.setValue(80);
             progressLabel.setText(l.getKey(KEY_FRAME_NEW_PROJECT_PROG_WRITE_LEVEL_DATA).replaceAll(TARGET_DIRECTORY,
-                    projectFolder.getAbsolutePath()));
+                    Matcher.quoteReplacement(projectFolder.getAbsolutePath())));
             contentPane.paintImmediately(contentPane.getVisibleRect());
             // WRITE LEVEL DATA
             try {
-                DataManager.exportMap(mapData, new File(projectFolder, "config.txt").getAbsolutePath());
+                DataManager.exportMap(mapData, new File(projectFolder, "config.txt").getAbsolutePath(), 0.0f, 0.0f, false);
             } catch (IOException e1) {
                 JOptionPane
                         .showMessageDialog(

@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/*
+ * Base class for events, has framework for properties
+ * required of event implementations
+ */
 public abstract class MapEvent implements Comparable<MapEvent> {
 
     public static final int META_ID_DEF = -1;
@@ -50,28 +54,46 @@ public abstract class MapEvent implements Comparable<MapEvent> {
         return time;
     }
 
+    /*
+     * Modify time and remove source timing event if synced
+     * @param time Target time
+     */
     public final void setTime(float time) {
         if (timedEventProperty != null && timedEventProperty.getTimingEventId() != TimedEventProperty.NO_TIMING_EVENT)
             timedEventProperty.setTimingEventId(TimedEventProperty.NO_TIMING_EVENT);
         setTimeRaw(time);
     }
 
+    /*
+     * Modify time and remove source timing event if synced
+     * @param time Target time
+     */
     public final void setTimeLight(float time) {
         if (timedEventProperty != null && timedEventProperty.getTimingEventId() != TimedEventProperty.NO_TIMING_EVENT)
             timedEventProperty.setTimingEventId(TimedEventProperty.NO_TIMING_EVENT);
         setTimeRawPart1(time);
     }
 
+    /*
+     * Change time back to previously concrete time
+     */
     public final void revertTime() {
         if (pastTimes.size() != 0) {
             setTimeRaw(pastTimes.remove(pastTimes.size() - 1));
         }
     }
 
+    /*
+     * Store current time for later reversal
+     * with <pre>revertTime</pre>
+     */
     public final void concreteTime() {
         pastTimes.add(time);
     }
 
+    /*
+     * Change timing event ID to previously concrete ID
+     */
     public final void revertTimedMetaId() {
         if (pastTimedMetaIds.size() != 0) {
             setTimedMetaId(pastTimedMetaIds.remove(pastTimedMetaIds.size() - 1));
@@ -86,18 +108,31 @@ public abstract class MapEvent implements Comparable<MapEvent> {
         }
     }
 
+    /*
+     * Set timing event ID
+     */
     public final void setTimedMetaId(int timedMetaId) {
         if (timedEventProperty != null) {
             timedEventProperty.setTimingEventId(timedMetaId);
         }
     }
 
+    /*
+     * Store current timing event ID for later reversal
+     * with <pre>revertTimedMetaId</pre>
+     */
     public final void concreteTimedMetaId() {
         if (timedEventProperty != null) {
             pastTimedMetaIds.add(timedEventProperty.getTimingEventId());
         }
     }
 
+    /*
+     * Modify time by requesting parent MapData to remove this event,
+     * set its internal time, and re-add it to its sorted collections,
+     * or just set internal time if there is no parent
+     * @param time Target time
+     */
     public final void setTimeRaw(float time) {
         if (parent != null)
             parent.repositionEvent(this, time);
@@ -105,6 +140,12 @@ public abstract class MapEvent implements Comparable<MapEvent> {
             internalSetTime(time);
     }
 
+    /*
+     * Modify time by requesting parent MapData to remove this event and
+     * set its internal time, (without re-adding it to its sorted collections),
+     * or just set internal time if there is no parent
+     * @param time Target time
+     */
     public final void setTimeRawPart1(float time) {
         if (parent != null)
             parent.repositionEventStart(this, time);
@@ -112,6 +153,10 @@ public abstract class MapEvent implements Comparable<MapEvent> {
             internalSetTime(time);
     }
 
+    /*
+     * Set the event time
+     * @param time Target time
+     */
     public final void internalSetTime(float time) {
         this.time = Math.max(0.001f, time);
     }

@@ -1,5 +1,6 @@
 package net.cyriaca.riina.misc.iriina.beatmapper.ui;
 
+import net.cyriaca.riina.misc.iriina.beatmapper.IRiina;
 import net.cyriaca.riina.misc.iriina.generic.localization.Locale;
 
 import javax.swing.*;
@@ -20,6 +21,7 @@ public class ControlReferenceFrame extends JFrame {
         text.setEditable(false);
         scrollPane = new JScrollPane(text);
         add(scrollPane);
+        IRiina.brandFrameWithGloriousEmblem(this);
     }
 
     public void showFrame() {

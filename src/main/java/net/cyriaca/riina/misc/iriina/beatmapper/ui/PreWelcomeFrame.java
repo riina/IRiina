@@ -20,7 +20,6 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 
 public class PreWelcomeFrame extends JFrame
         implements IViewFrame, LocaleChangeListener, WindowListener, ActionListener {
@@ -85,6 +84,7 @@ public class PreWelcomeFrame extends JFrame
 
         add(editorButton, BorderLayout.SOUTH);
         addWindowListener(this);
+        IRiina.brandFrameWithGloriousEmblem(this);
     }
 
     public void setupAndShowFrame() {

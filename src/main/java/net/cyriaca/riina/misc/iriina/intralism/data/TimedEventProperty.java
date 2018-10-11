@@ -48,6 +48,9 @@ public class TimedEventProperty extends Property {
         notifyParentOfChange();
     }
 
+    /*
+     *
+     */
     public void refreshLight() {
         MapEvent event = getParent();
         if (event == null)

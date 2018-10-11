@@ -8,6 +8,7 @@ import net.cyriaca.riina.misc.iriina.generic.localization.Locale;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Scanner;
 
@@ -35,11 +36,16 @@ public class AboutFrame extends JFrame implements IViewFrame, LocaleChangeListen
         setContentPane(contentPane);
         getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
         JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        InputStream stream2 = AboutFrame.class.getClassLoader().getResourceAsStream(IRiinaConstants.VERSION_FILE_LOC);
-        Scanner s2 = new Scanner(stream2);
-        s2.useDelimiter("\\Z");
-        String versionStr = s2.next();
-        s2.close();
+        String versionStr = "unknown";
+        try {
+            InputStream stream2 = AboutFrame.class.getModule().getResourceAsStream(IRiinaConstants.VERSION_FILE_LOC);
+            Scanner s2 = new Scanner(stream2);
+            s2.useDelimiter("\\Z");
+            versionStr = s2.next();
+            s2.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         JLabel header = new JLabel("IRiina " + versionStr);
         header.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 48));
         headerPanel.add(header);
@@ -79,11 +85,16 @@ public class AboutFrame extends JFrame implements IViewFrame, LocaleChangeListen
         licensesTab.setLayout(licensesLayout);
         JTextArea licensesArea = new JTextArea();
         licensesArea.setEditable(false);
-        InputStream stream = AboutFrame.class.getClassLoader().getResourceAsStream(IRiinaConstants.LICENSE_FILE_LOC);
-        Scanner s = new Scanner(stream);
-        s.useDelimiter("\\Z");
-        String licensesStr = s.next();
-        s.close();
+        String licensesStr = "Licenses not loaded";
+        try {
+            InputStream stream = AboutFrame.class.getModule().getResourceAsStream(IRiinaConstants.LICENSE_FILE_LOC);
+            Scanner s = new Scanner(stream);
+            s.useDelimiter("\\Z");
+            licensesStr = s.next();
+            s.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         licensesArea.setText(licensesStr);
         licensesArea.setLineWrap(true);
 
@@ -97,6 +108,7 @@ public class AboutFrame extends JFrame implements IViewFrame, LocaleChangeListen
         tabbedPane.addTab(l.getKey(KEY_FRAME_ABOUT_TEXT_CONTACT_HEADER), contactTab);
         tabbedPane.addTab(l.getKey(KEY_FRAME_ABOUT_TEXT_LICENSES_HEADER), licensesTab);
         add(tabbedPane);
+        IRiina.brandFrameWithGloriousEmblem(this);
     }
 
     public void setupAndShowFrame() {

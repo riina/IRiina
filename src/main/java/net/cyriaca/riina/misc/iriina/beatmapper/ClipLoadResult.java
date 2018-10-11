@@ -5,6 +5,7 @@ import net.cyriaca.riina.misc.iriina.generic.localization.Locale;
 
 import javax.sound.sampled.Clip;
 import java.io.File;
+import java.util.regex.Matcher;
 
 public class ClipLoadResult extends Result {
 
@@ -62,10 +63,10 @@ public class ClipLoadResult extends Result {
             return "";
         switch (failureSource) {
             case IO:
-                return l.getKey(KEY_RESULT_CLIP_LOAD_FAIL_IO).replaceAll(FILE, file.getAbsolutePath()).replaceAll(EXCEPTION,
+                return l.getKey(KEY_RESULT_CLIP_LOAD_FAIL_IO).replaceAll(FILE, Matcher.quoteReplacement(file.getAbsolutePath())).replaceAll(EXCEPTION,
                         exception.getMessage());
             case UNSUPPORTED_AUDIO_FILE:
-                return l.getKey(KEY_RESULT_CLIP_LOAD_FAIL_UNSUPPORTED_AUDIO_FILE).replaceAll(FILE, file.getAbsolutePath())
+                return l.getKey(KEY_RESULT_CLIP_LOAD_FAIL_UNSUPPORTED_AUDIO_FILE).replaceAll(FILE, Matcher.quoteReplacement(file.getAbsolutePath()))
                         .replaceAll(EXCEPTION, exception.getMessage());
             default:
                 break;

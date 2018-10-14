@@ -8,8 +8,8 @@ public class TimedEventProperty extends Property {
 
     public static final int NO_TIMING_EVENT = -1;
 
-    private int timingEventId = -1;
-    private int tick = -1;
+    private int timingEventId;
+    private int tick;
 
     public TimedEventProperty() {
         this(NO_TIMING_EVENT, -1);
@@ -48,9 +48,6 @@ public class TimedEventProperty extends Property {
         notifyParentOfChange();
     }
 
-    /*
-     *
-     */
     public void refreshLight() {
         MapEvent event = getParent();
         if (event == null)

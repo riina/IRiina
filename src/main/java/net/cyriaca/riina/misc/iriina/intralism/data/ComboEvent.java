@@ -121,6 +121,16 @@ public class ComboEvent extends MapEvent {
                 new FloatBounds(ShowSpriteEvent.DURATION_MIN, false, ShowSpriteEvent.DURATION_MAX_DEF, true));
         bgSpriteDurationProperty.setFloat(ShowSpriteEvent.DURATION_DEF);
         showBgSpriteProperties.add(bgSpriteDurationProperty);
+        EventProperty bgSpriteFadeInDurationProperty = new EventProperty(ShowSpriteEvent.KEY_EVENT_SHOW_SPRITE_PROPERTY_FADE_IN_DURATION,
+                EventProperty.Type.FLOAT);
+        bgSpriteFadeInDurationProperty.setFloatBounds(new FloatBounds(ShowSpriteEvent.DURATION_MIN, false, ShowSpriteEvent.DURATION_MAX_DEF, true));
+        bgSpriteFadeInDurationProperty.setFloat(ShowSpriteEvent.DURATION_FADE_DEF);
+        showBgSpriteProperties.add(bgSpriteFadeInDurationProperty);
+        EventProperty bgSpriteFadeOutDurationProperty = new EventProperty(ShowSpriteEvent.KEY_EVENT_SHOW_SPRITE_PROPERTY_FADE_OUT_DURATION,
+                EventProperty.Type.FLOAT);
+        bgSpriteFadeOutDurationProperty.setFloatBounds(new FloatBounds(ShowSpriteEvent.DURATION_MIN, false, ShowSpriteEvent.DURATION_MAX_DEF, true));
+        bgSpriteFadeOutDurationProperty.setFloat(ShowSpriteEvent.DURATION_FADE_DEF);
+        showBgSpriteProperties.add(bgSpriteFadeOutDurationProperty);
 
         showFgSpriteLabel = new EventProperty(ShowSpriteEvent.KEY_EVENT_SHOW_SPRITE_HR_NAME_KEY_FOREGROUND, EventProperty.Type.LABEL);
         showFgSpriteProperties = new ArrayList<>();
@@ -142,6 +152,16 @@ public class ComboEvent extends MapEvent {
                 new FloatBounds(ShowSpriteEvent.DURATION_MIN, false, ShowSpriteEvent.DURATION_MAX_DEF, true));
         fgSpriteDurationProperty.setFloat(ShowSpriteEvent.DURATION_DEF);
         showFgSpriteProperties.add(fgSpriteDurationProperty);
+        EventProperty fpSpriteFadeInDurationProperty = new EventProperty(ShowSpriteEvent.KEY_EVENT_SHOW_SPRITE_PROPERTY_FADE_IN_DURATION,
+                EventProperty.Type.FLOAT);
+        fpSpriteFadeInDurationProperty.setFloatBounds(new FloatBounds(ShowSpriteEvent.DURATION_MIN, false, ShowSpriteEvent.DURATION_MAX_DEF, true));
+        fpSpriteFadeInDurationProperty.setFloat(ShowSpriteEvent.DURATION_FADE_DEF);
+        showFgSpriteProperties.add(fpSpriteFadeInDurationProperty);
+        EventProperty fgSpriteFadeOutDurationProperty = new EventProperty(ShowSpriteEvent.KEY_EVENT_SHOW_SPRITE_PROPERTY_FADE_OUT_DURATION,
+                EventProperty.Type.FLOAT);
+        fgSpriteFadeOutDurationProperty.setFloatBounds(new FloatBounds(ShowSpriteEvent.DURATION_MIN, false, ShowSpriteEvent.DURATION_MAX_DEF, true));
+        fgSpriteFadeOutDurationProperty.setFloat(ShowSpriteEvent.DURATION_FADE_DEF);
+        showFgSpriteProperties.add(fgSpriteFadeOutDurationProperty);
 
         showTitleLabel = new EventProperty(ShowTitleEvent.KEY_EVENT_SHOW_TITLE_HR_NAME, EventProperty.Type.LABEL);
         showTitleProperties = new ArrayList<>();
@@ -243,6 +263,8 @@ public class ComboEvent extends MapEvent {
                 showBgSpriteProperties = new ArrayList<>();
                 showBgSpriteProperties.add(properties.get(1));
                 showBgSpriteProperties.add(properties.get(2));
+                showBgSpriteProperties.add(properties.get(3));
+                showBgSpriteProperties.add(properties.get(4));
                 showBgSpriteToggle.setBoolean(true);
             } else {
                 foregroundResourceProperty = event.getMainResourceProperty();
@@ -251,6 +273,8 @@ public class ComboEvent extends MapEvent {
                 showFgSpriteProperties = new ArrayList<>();
                 showFgSpriteProperties.add(properties.get(1));
                 showFgSpriteProperties.add(properties.get(2));
+                showFgSpriteProperties.add(properties.get(3));
+                showFgSpriteProperties.add(properties.get(4));
                 showFgSpriteToggle.setBoolean(true);
             }
         } else if (event instanceof ShowTitleEvent) {

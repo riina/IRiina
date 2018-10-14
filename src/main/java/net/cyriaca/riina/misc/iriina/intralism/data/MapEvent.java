@@ -41,7 +41,7 @@ public abstract class MapEvent implements Comparable<MapEvent> {
         parent = null;
         this.time = Math.max(0.001f, time);
         metaId = META_ID_DEF;
-        eventProperties = Collections.unmodifiableList(new ArrayList<EventProperty>());
+        eventProperties = Collections.unmodifiableList(new ArrayList<>());
         arcProperty = null;
         timedEventProperty = null;
         timingProperty = null;
@@ -183,9 +183,14 @@ public abstract class MapEvent implements Comparable<MapEvent> {
     protected final void cloneEventProperties(List<EventProperty> eventProperties) {
         if (eventProperties == null)
             return;
+        for (EventProperty ep : this.eventProperties)
+            ep.setParent(null);
         List<EventProperty> propertiesTemp = new ArrayList<>();
-        for (EventProperty property : eventProperties)
-            propertiesTemp.add(property.clone());
+        for (EventProperty property : eventProperties) {
+            EventProperty ep = property.clone();
+            ep.setParent(this);
+            propertiesTemp.add(ep);
+        }
         this.eventProperties = Collections.unmodifiableList(propertiesTemp);
     }
 
@@ -197,6 +202,8 @@ public abstract class MapEvent implements Comparable<MapEvent> {
         if (eventProperties == null)
             return;
         this.eventProperties = Collections.unmodifiableList(new ArrayList<>(eventProperties));
+        for (EventProperty ep : eventProperties)
+            ep.setParent(this);
     }
 
     public final ArcProperty getArcProperty() {
@@ -214,6 +221,8 @@ public abstract class MapEvent implements Comparable<MapEvent> {
     }
 
     protected final void setTimedEventProperty(TimedEventProperty timedEventProperty) {
+        if (this.timedEventProperty != null)
+            this.timedEventProperty.setParent(null);
         this.timedEventProperty = timedEventProperty;
         if (timedEventProperty != null)
             timedEventProperty.setParent(this);
@@ -224,6 +233,8 @@ public abstract class MapEvent implements Comparable<MapEvent> {
     }
 
     protected final void setTimingProperty(TimingProperty timingProperty) {
+        if (this.timingProperty != null)
+            this.timingProperty.setParent(null);
         this.timingProperty = timingProperty;
         if (timingProperty != null)
             timingProperty.setParent(this);
@@ -234,6 +245,8 @@ public abstract class MapEvent implements Comparable<MapEvent> {
     }
 
     protected final void setBackgroundResourceProperty(ResourceProperty backgroundResourceProperty) {
+        if (this.backgroundResourceProperty != null)
+            this.backgroundResourceProperty.setParent(null);
         this.backgroundResourceProperty = backgroundResourceProperty;
         if (backgroundResourceProperty == null)
             return;
@@ -246,6 +259,8 @@ public abstract class MapEvent implements Comparable<MapEvent> {
     }
 
     protected final void setForegroundResourceProperty(ResourceProperty foregroundResourceProperty) {
+        if (this.foregroundResourceProperty != null)
+            this.foregroundResourceProperty.setParent(null);
         this.foregroundResourceProperty = foregroundResourceProperty;
         if (foregroundResourceProperty == null)
             return;
@@ -258,6 +273,8 @@ public abstract class MapEvent implements Comparable<MapEvent> {
     }
 
     protected final void setMainResourceProperty(ResourceProperty mainResourceProperty) {
+        if (this.mainResourceProperty != null)
+            this.mainResourceProperty.setParent(null);
         this.mainResourceProperty = mainResourceProperty;
         if (mainResourceProperty == null)
             return;

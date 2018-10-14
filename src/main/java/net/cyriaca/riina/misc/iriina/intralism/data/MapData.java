@@ -51,6 +51,8 @@ public class MapData {
     private List<MapEvent> timedEventList;
     private MapEvent onlyEndEvent;
     private int nextMetaId;
+    private float checkpointTimingOffset;
+    private float eventTimingOffset;
 
     public MapData() {
         id = "Undefined";
@@ -80,6 +82,8 @@ public class MapData {
         timedEventList = new ArrayList<>();
         onlyEndEvent = null;
         nextMetaId = 0;
+        checkpointTimingOffset = 0.0f;
+        eventTimingOffset = 0.0f;
     }
 
     public static MapEvent createMapEvent(String type, float time) {
@@ -949,4 +953,19 @@ public class MapData {
             evt.getTimedEventProperty().clearTimingEventId();
     }
 
+    public float getCheckpointTimingOffset() {
+        return checkpointTimingOffset;
+    }
+
+    public float getEventTimingOffset() {
+        return eventTimingOffset;
+    }
+
+    public void setCheckpointTimingOffset(float checkpointTimingOffset) {
+        this.checkpointTimingOffset = checkpointTimingOffset;
+    }
+
+    public void setEventTimingOffset(float eventTimingOffset) {
+        this.eventTimingOffset = eventTimingOffset;
+    }
 }

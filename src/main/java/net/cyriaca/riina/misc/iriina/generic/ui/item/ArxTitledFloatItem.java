@@ -12,19 +12,20 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ArxTitledFloatItem extends ArxTitledGenericItem implements ActionListener, FocusListener, ChangeListener {
 
     private static final int FLOAT_PRECISION = 1000;
-    private JFormattedTextField field = null;
-    private NumberFormat format = null;
-    private FloatBoundedValue boundedValue = null;
-    private JSlider slider = null;
+    private JFormattedTextField field;
+    private NumberFormat format;
+    private FloatBoundedValue boundedValue;
+    private JSlider slider;
 
-    private List<ActionListener> actionListeners = null;
-    private List<ChangeListener> changeListeners = null;
+    private List<ActionListener> actionListeners;
+    private List<ChangeListener> changeListeners;
 
     public ArxTitledFloatItem(FloatBounds bounds, float initValue) {
         super();
@@ -45,6 +46,10 @@ public class ArxTitledFloatItem extends ArxTitledGenericItem implements ActionLi
 
     public ArxTitledFloatItem(FloatBounds bounds) {
         this(bounds, (bounds.getLowerLimit() + bounds.getUpperLimit()) / 2.0f);
+    }
+
+    public void setSliderVisibility(boolean value){
+        slider.setVisible(value);
     }
 
     public FloatBounds getValueBounds() {
@@ -117,7 +122,12 @@ public class ArxTitledFloatItem extends ArxTitledGenericItem implements ActionLi
 
     public void focusLost(FocusEvent e) {
         if (e.getSource() == field) {
-            setValue(Float.parseFloat(field.getValue().toString()));
+            try {
+                field.commitEdit();
+                setValue(Float.parseFloat(field.getValue().toString()));
+            } catch (ParseException ignored) {
+                setValue(boundedValue.getValue());
+            }
             for (ActionListener l : actionListeners)
                 l.actionPerformed(new ActionEvent(field, 0, ""));
         }

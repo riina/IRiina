@@ -21,6 +21,8 @@ public final class ShowSpriteEvent extends MapEvent {
     public static final String KEY_EVENT_SHOW_SPRITE_PROPERTY_POS = "event_show_sprite_property_pos";
     public static final String KEY_EVENT_SHOW_SPRITE_PROPERTY_KEEP_ASPECT_RATIO = "event_show_sprite_property_keep_aspect_ratio";
     public static final String KEY_EVENT_SHOW_SPRITE_PROPERTY_DURATION = "event_show_sprite_property_duration";
+    public static final String KEY_EVENT_SHOW_SPRITE_PROPERTY_FADE_IN_DURATION = "event_show_sprite_property_fade_in_duration";
+    public static final String KEY_EVENT_SHOW_SPRITE_PROPERTY_FADE_OUT_DURATION = "event_show_sprite_property_fade_out_duration";
     public static final String KEY_EVENT_SHOW_SPRITE_PROPERTY_POS_VALUE_BACKGROUND_HR_NAME = "event_show_sprite_property_pos_value_background_hr_name";
     public static final String POS_VALUE_BACKGROUND = "0";
     public static final String KEY_EVENT_SHOW_SPRITE_PROPERTY_POS_VALUE_FOREGROUND_HR_NAME = "event_show_sprite_property_pos_value_foreground_hr_name";
@@ -28,6 +30,7 @@ public final class ShowSpriteEvent extends MapEvent {
 
     public static final float DURATION_MIN = 0.1f;
     public static final float DURATION_DEF = 1.0f;
+    public static final float DURATION_FADE_DEF = 0.5f;
     public static final float DURATION_MAX_DEF = 2.0f;
 
     public ShowSpriteEvent(float time) {
@@ -49,23 +52,38 @@ public final class ShowSpriteEvent extends MapEvent {
         durationProperty.setFloatBounds(new FloatBounds(DURATION_MIN, false, DURATION_MAX_DEF, true));
         durationProperty.setFloat(DURATION_DEF);
         propertiesTemp.add(durationProperty);
+        EventProperty fadeInDurationProperty = new EventProperty(KEY_EVENT_SHOW_SPRITE_PROPERTY_FADE_IN_DURATION,
+                EventProperty.Type.FLOAT);
+        fadeInDurationProperty.setFloatBounds(new FloatBounds(DURATION_MIN, false, DURATION_MAX_DEF, true));
+        fadeInDurationProperty.setFloat(DURATION_FADE_DEF);
+        propertiesTemp.add(fadeInDurationProperty);
+        EventProperty fadeOutDurationProperty = new EventProperty(KEY_EVENT_SHOW_SPRITE_PROPERTY_FADE_OUT_DURATION,
+                EventProperty.Type.FLOAT);
+        fadeOutDurationProperty.setFloatBounds(new FloatBounds(DURATION_MIN, false, DURATION_MAX_DEF, true));
+        fadeOutDurationProperty.setFloat(DURATION_FADE_DEF);
+        propertiesTemp.add(fadeOutDurationProperty);
         setEventProperties(propertiesTemp);
     }
 
     public String getEventData() {
         List<EventProperty> properties = getEventProperties();
         return getMainResourceProperty().getResourceName() + "," + properties.get(0).getDataValue() + ","
-                + properties.get(1).getDataValue() + "," + properties.get(2).getDataValue();
+                + properties.get(1).getDataValue() + "," + properties.get(2).getDataValue() + ","
+                + properties.get(3).getDataValue() + "," + properties.get(4).getDataValue();
     }
 
     public void setEventData(String data) {
         String[] eventData = data.split("\\s*,\\s*");
-        if (eventData.length != 4)
+        if (eventData.length < 4)
             return;
         getMainResourceProperty().setResourceName(eventData[0]);
         List<EventProperty> properties = getEventProperties();
         for (int i = 0; i < 3; i++)
             properties.get(i).setValue(eventData[i + 1]);
+        if (eventData.length == 6) {
+            properties.get(3).setValue(eventData[4]);
+            properties.get(4).setValue(eventData[5]);
+        }
     }
 
     public MapEvent clone() {

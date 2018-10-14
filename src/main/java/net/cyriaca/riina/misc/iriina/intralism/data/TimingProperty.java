@@ -257,7 +257,7 @@ public class TimingProperty extends Property {
     }
 
     public int getSubtickFromTick(int tick) {
-        return tick % beatTicks;
+        return tick > 0 ? tick % beatTicks : (tick % beatTicks + beatTicks) % beatTicks;
     }
 
     public int getTickFromMeasureAndBeat(int measure, int beat) {

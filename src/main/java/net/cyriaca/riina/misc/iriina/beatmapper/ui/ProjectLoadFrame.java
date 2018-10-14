@@ -100,7 +100,7 @@ public class ProjectLoadFrame extends JFrame implements IViewFrame, LocaleChange
                 contentPane.paintImmediately(contentPane.getVisibleRect());
                 MapParseResult mapParseResult;
                 try {
-                    mapParseResult = DataManager.parseMap(dataFile.getAbsolutePath(), 0.0f, 0.0f);
+                    mapParseResult = DataManager.parseMap(dataFile.getAbsolutePath());
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                     JOptionPane.showMessageDialog(this,
@@ -132,7 +132,7 @@ public class ProjectLoadFrame extends JFrame implements IViewFrame, LocaleChange
             contentPane.paintImmediately(contentPane.getVisibleRect());
             MapParseResult mapParseResult;
             try {
-                mapParseResult = DataManager.parseMap(backupFile.getAbsolutePath(), 0.0f, 0.0f);
+                mapParseResult = DataManager.parseMap(backupFile.getAbsolutePath());
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(this,

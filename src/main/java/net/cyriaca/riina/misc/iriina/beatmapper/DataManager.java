@@ -28,26 +28,26 @@ public class DataManager {
         return fileName.endsWith(".png") || fileName.endsWith(".jpeg") || fileName.endsWith(".jpg");
     }
 
-    public static MapParseResult parseMap(File inFile, float checkpointTimingOffset, float eventTimingOffset) throws FileNotFoundException {
+    public static MapParseResult parseMap(File inFile) throws FileNotFoundException {
         JsonReader reader = Json.createReader(new FileReader(inFile));
         JsonObject obj = reader.readObject();
         reader.close();
-        return MapManager.parseMap(obj, checkpointTimingOffset, eventTimingOffset);
+        return MapManager.parseMap(obj);
     }
 
-    public static MapParseResult parseMap(String inFile, float checkpointTimingOffset, float eventTimingOffset) throws FileNotFoundException {
-        return parseMap(new File(inFile), checkpointTimingOffset, eventTimingOffset);
+    public static MapParseResult parseMap(String inFile) throws FileNotFoundException {
+        return parseMap(new File(inFile));
     }
 
-    public static void exportMap(MapData mapData, File outFile, float checkpointTimingOffset, float eventTimingOffset, boolean pure) throws IOException {
+    public static void exportMap(MapData mapData, File outFile, boolean pure) throws IOException {
         JsonWriter writer = Json.createWriter(new FileWriter(outFile));
-        JsonObject obj = MapManager.exportMap(mapData, checkpointTimingOffset, eventTimingOffset, pure);
+        JsonObject obj = MapManager.exportMap(mapData, pure);
         writer.write(obj);
         writer.close();
     }
 
-    public static void exportMap(MapData mapData, String outFile, float checkpointTimingOffset, float eventTimingOffset, boolean pure) throws IOException {
-        exportMap(mapData, new File(outFile), checkpointTimingOffset, eventTimingOffset, pure);
+    public static void exportMap(MapData mapData, String outFile, boolean pure) throws IOException {
+        exportMap(mapData, new File(outFile), pure);
     }
 
     public static DirectoryCreationResult createDirectory(File path) {

@@ -11,9 +11,11 @@ import net.cyriaca.riina.misc.iriina.beatmapper.data.editor.EventRenderItem;
 import net.cyriaca.riina.misc.iriina.beatmapper.data.editor.ManipTarget;
 import net.cyriaca.riina.misc.iriina.beatmapper.ui.editor.*;
 import net.cyriaca.riina.misc.iriina.generic.FloatBounds;
+import net.cyriaca.riina.misc.iriina.generic.IntBounds;
 import net.cyriaca.riina.misc.iriina.generic.localization.Locale;
 import net.cyriaca.riina.misc.iriina.generic.ui.item.ArxTitledFloatItem;
 import net.cyriaca.riina.misc.iriina.generic.ui.item.ArxTitledFolderSelectorItem;
+import net.cyriaca.riina.misc.iriina.generic.ui.item.ArxTitledIntItem;
 import net.cyriaca.riina.misc.iriina.generic.ui.item.ArxTitledStringItem;
 import net.cyriaca.riina.misc.iriina.intralism.data.*;
 
@@ -71,6 +73,7 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
     private static final String KEY_MENU_EDIT_PASTE = "menu_edit_paste";
     private static final String KEY_MENU_EDIT_DELETE = "menu_edit_delete";
     private static final String KEY_MENU_EDIT_SELECT_ALL = "menu_edit_select_all";
+    private static final String KEY_MENU_EDIT_SEQUENCE_SELECTION = "menu_edit_sequence_selection";
     private static final String KEY_MENU_CONTROLS = "menu_controls";
     private static final String KEY_MENU_CONTROLS_TOGGLE_PLAY = "menu_controls_toggle_play";
     private static final String KEY_MENU_CONTROLS_POSITION_BACK = "menu_controls_position_back";
@@ -100,6 +103,11 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
     private static final String KEY_FRAME_EDITOR_EXPORT_FAIL_NO_EDITOR_DIRECTORY = "frame_editor_export_fail_no_editor_directory";
     private static final String KEY_FRAME_EDITOR_EXPORT_FAIL_NO_FOLDER_NAME = "frame_editor_export_fail_no_folder_name";
     private static final String KEY_FRAME_EDITOR_EXPORT_FAIL_TARGET_IS_FILE = "frame_editor_export_fail_target_is_file";
+    private static final String KEY_FRAME_EDITOR_SEQUENCE_SELECTION_TITLE = "frame_editor_sequence_selection_title";
+    private static final String KEY_FRAME_EDITOR_SEQUENCE_SELECTION_BASE_TICK = "frame_editor_sequence_selection_base_tick";
+    private static final String KEY_FRAME_EDITOR_SEQUENCE_SELECTION_TICK_SEPARATION = "frame_editor_sequence_selection_tick_separation";
+    private static final String KEY_FRAME_EDITOR_SEQUENCE_SELECTION_OPTION_CONFIRM = "frame_editor_sequence_selection_option_confirm";
+    private static final String KEY_FRAME_EDITOR_SEQUENCE_SELECTION_OPTION_CANCEL = "frame_editor_sequence_selection_option_cancel";
     private static final String TARGET_DIRECTORY = "%targetDirectory%";
     private static final String KEY_FRAME_EDITOR_EXPORT_FAIL_TARGET_DIRECTORY_CREATION_FAIL = "frame_editor_export_fail_target_directory_creation_fail";
     private static final String KEY_FRAME_EDITOR_EXPORT_PROGRESSING = "frame_editor_export_progressing";
@@ -151,6 +159,7 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
     private JMenuItem deleteItem;
     private JMenuItem selectAllItem;
     private JMenuItem applyChangesItem;
+    private JMenuItem sequenceSelectionItem;
     private JMenu controlsMenu;
     private JMenuItem togglePlay;
     private JMenuItem positionBack;
@@ -168,6 +177,10 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
     private String[] reloadOptions;
     private String exportTitle;
     private String[] exportOptions;
+    private String sequenceSelectionTitle;
+    private String sequenceSelectionBaseTick;
+    private String sequenceSelectionTickSeparation;
+    private String[] sequenceSelectionOptions;
     private String exportEditorDirectory;
     private String exportEditorDirectorySelect;
     private String exportFolderName;
@@ -228,6 +241,11 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
         exportOptions = new String[2];
         exportOptions[0] = "Export";
         exportOptions[1] = "Cancel";
+
+        sequenceSelectionTitle = "Sequence selection";
+        sequenceSelectionOptions = new String[2];
+        sequenceSelectionOptions[0] = "Sequence";
+        sequenceSelectionOptions[1] = "Cancel";
 
         operations = new ArrayList<>();
         opPoint = operations.size() - 1;
@@ -316,6 +334,12 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
         editMenu.add(menuItem);
         menuItem.addActionListener(this);
         applyChangesItem = menuItem;
+        editMenu.addSeparator();
+        menuItem = new JMenuItem();
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F6, 0));
+        editMenu.add(menuItem);
+        menuItem.addActionListener(this);
+        sequenceSelectionItem = menuItem;
 
         controlsMenu = new JMenu();
         menuBar.add(controlsMenu);
@@ -561,6 +585,58 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
         controlReferenceFrame.hideFrame();
     }
 
+    private void sequenceSelection() {
+        if (realSelection.size() != 0) {
+            MapEvent e0 = realSelection.get(0);
+            MapEvent te = mapData.getFirstTimingEventForTime(e0.getTime());
+            if (te == null)
+                return;
+            TimingProperty tp = te.getTimingProperty();
+            int baseTick = tp.getClosestTickFromTime(e0.getTime());
+            int tickSeparation = tp.getTimingMode() == TimingProperty.TimingMode.MEASURE ? tp.getBeatTicks() : 4;
+            ArxTitledIntItem baseTickItem = new ArxTitledIntItem(new IntBounds(0, false, baseTick, true), baseTick);
+            baseTickItem.setTitle(sequenceSelectionBaseTick);
+            baseTickItem.setSliderVisibility(false);
+            ArxTitledIntItem tickSeparationItem = new ArxTitledIntItem(new IntBounds(0, false, tickSeparation, true), tickSeparation);
+            tickSeparationItem.setTitle(sequenceSelectionTickSeparation);
+            tickSeparationItem.setSliderVisibility(false);
+            JComponent[] options = new JComponent[]{
+                    baseTickItem,
+                    tickSeparationItem
+            };
+            int x = JOptionPane.showOptionDialog(this, options, sequenceSelectionTitle, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, IRiina.getIcon64(), sequenceSelectionOptions, sequenceSelectionOptions[0]);
+            if (x == 1 || x == JOptionPane.CLOSED_OPTION)
+                return;
+            baseTick = baseTickItem.getValue();
+            tickSeparation = tickSeparationItem.getValue();
+            int offset = 0;
+            int len = realSelection.size();
+            List<String> oldDataList = new ArrayList<>(len), oldExtraDataList = new ArrayList<>(len), dataList = new ArrayList<>(len), extraDataList = new ArrayList<>(len);
+            List<Float> oldTimeList = new ArrayList<>(len), timeList = new ArrayList<>(len);
+            for (MapEvent evt : realSelection) {
+                oldDataList.add(evt.getEventData());
+                String extraData = evt.getEventExtraData();
+                if (extraData == null)
+                    extraData = "";
+                oldExtraDataList.add(extraData);
+                oldTimeList.add(evt.getTime());
+                TimedEventProperty tep = evt.getTimedEventProperty();
+                if (tep != null) {
+                    tep.setTimingEventId(te.getMetaId());
+                    tep.setTick(baseTick + tickSeparation * offset);
+                }
+                dataList.add(evt.getEventData());
+                extraData = evt.getEventExtraData();
+                if (extraData == null)
+                    extraData = "";
+                extraDataList.add(extraData);
+                timeList.add(evt.getTime());
+                offset++;
+            }
+            addOperationForEventGroupDataMod(realSelection, oldDataList, oldExtraDataList, oldTimeList, dataList, extraDataList, timeList);
+        }
+    }
+
     public void addOperationForResourceAdd(MapResource res) {
         addOperation(ReversibleOperation.createResourceAddOperation(res));
         eventModContainerPanel.updateEventTargets();
@@ -717,7 +793,7 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
         eventDisplayPanel.setMessage(l.getKey(KEY_FRAME_EDITOR_SAVING_PROJECT));
         eventDisplayPanel.paintImmediately(eventDisplayPanel.getVisibleRect());
         try {
-            DataManager.exportMap(mapData, configTarget, 0.0f, 0.0f, false);
+            DataManager.exportMap(mapData, configTarget, false);
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this,
@@ -729,7 +805,7 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
         String odt = OffsetDateTime.now().format(DateTimeFormatter.ofPattern("yyyy MM dd kk mm ss SSSS"));
         File backupTarget = Paths.get(projectDirectory.getAbsolutePath(), IRiinaConstants.PROJECT_DIR_BACKUP, (odt) + ".ibm").toFile();
         try {
-            DataManager.exportMap(mapData, backupTarget, 0.0f, 0.0f, false);
+            DataManager.exportMap(mapData, backupTarget, false);
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this,
@@ -767,9 +843,9 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
         if (mapName == null || mapName.length() == 0)
             mapName = "SetMapNameHere";
         folderNameSelector.setValue(mapName);
-        ArxTitledFloatItem checkpointTimingOffsetSelector = new ArxTitledFloatItem(new FloatBounds(-1.0f, true, 1.0f, true), 0.0f);
+        ArxTitledFloatItem checkpointTimingOffsetSelector = new ArxTitledFloatItem(new FloatBounds(-1.0f, true, 1.0f, true), mapData.getCheckpointTimingOffset());
         checkpointTimingOffsetSelector.setTitle(exportCheckpointTimingOffset);
-        ArxTitledFloatItem eventTimingOffsetSelector = new ArxTitledFloatItem(new FloatBounds(-1.0f, true, 1.0f, true), 0.0f);
+        ArxTitledFloatItem eventTimingOffsetSelector = new ArxTitledFloatItem(new FloatBounds(-1.0f, true, 1.0f, true), mapData.getCheckpointTimingOffset());
         eventTimingOffsetSelector.setTitle(exportEventTimingOffset);
         JComponent[] options = new JComponent[]{
                 folderSelector,
@@ -850,6 +926,8 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
                     return;
                 }
         }
+        mapData.setCheckpointTimingOffset(checkpointTimingOffsetSelector.getValue());
+        mapData.setEventTimingOffset(eventTimingOffsetSelector.getValue());
 
         int progress = 0;
         //step 1 - save config
@@ -857,7 +935,7 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
         eventDisplayPanel.paintImmediately(eventDisplayPanel.getVisibleRect());
         File configTarget = Paths.get(targetDirectory.getAbsolutePath(), IRiinaConstants.CONFIG_FILE).toFile();
         try {
-            DataManager.exportMap(mapData, configTarget, checkpointTimingOffsetSelector.getValue(), eventTimingOffsetSelector.getValue(), true);
+            DataManager.exportMap(mapData, configTarget, true);
         } catch (IOException e) {
             e.printStackTrace();
             showError(l.getKey(KEY_UI_DIALOG_ERROR), l.getKey(KEY_FRAME_EDITOR_SAVE_FAIL_CONFIG).replaceAll(CONFIG_FILE, Matcher.quoteReplacement(configTarget.getAbsolutePath())).replaceAll(EXCEPTION, e.toString()));
@@ -896,7 +974,6 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
                 showError(l.getKey(KEY_UI_DIALOG_ERROR), resourceCopyResult.getLocalizedFailureInfo(l));
             }
         }
-
         showMessage(l.getKey(KEY_UI_DIALOG_INFORMATION), l.getKey(KEY_FRAME_EDITOR_EXPORT_SUCCESS).replaceAll(TARGET_DIRECTORY, Matcher.quoteReplacement(targetDirectory.getAbsolutePath())));
         eventDisplayPanel.setMessage(null);
     }
@@ -1167,8 +1244,7 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
                         realSelection.add(e);
                     break;
                 case SUBTRACTIVE:
-                    if (realSelection.contains(e))
-                        realSelection.remove(e);
+                    realSelection.remove(e);
                     break;
                 case INVERT:
                     if (realSelection.contains(e))
@@ -1595,6 +1671,7 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
         deleteItem.setText(l.getKey(KEY_MENU_EDIT_DELETE));
         selectAllItem.setText(l.getKey(KEY_MENU_EDIT_SELECT_ALL));
         applyChangesItem.setText(l.getKey(KEY_PANEL_EVENT_MOD_WRITE_CHANGES));
+        sequenceSelectionItem.setText(l.getKey(KEY_MENU_EDIT_SEQUENCE_SELECTION));
 
         controlsMenu.setText(l.getKey(KEY_MENU_CONTROLS));
         togglePlay.setText(l.getKey(KEY_MENU_CONTROLS_TOGGLE_PLAY));
@@ -1626,6 +1703,12 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
         exportFolderName = l.getKey(KEY_FRAME_EDITOR_EXPORT_FOLDER_NAME);
         exportCheckpointTimingOffset = l.getKey(KEY_FRAME_EDITOR_EXPORT_CHECKPOINT_TIMING_OFFSET);
         exportEventTimingOffset = l.getKey(KEY_FRAME_EDITOR_EXPORT_EVENT_TIMING_OFFSET);
+
+        sequenceSelectionTitle = l.getKey(KEY_FRAME_EDITOR_SEQUENCE_SELECTION_TITLE);
+        sequenceSelectionOptions[0] = l.getKey(KEY_FRAME_EDITOR_SEQUENCE_SELECTION_OPTION_CONFIRM);
+        sequenceSelectionOptions[1] = l.getKey(KEY_FRAME_EDITOR_SEQUENCE_SELECTION_OPTION_CANCEL);
+        sequenceSelectionBaseTick = l.getKey(KEY_FRAME_EDITOR_SEQUENCE_SELECTION_BASE_TICK);
+        sequenceSelectionTickSeparation = l.getKey(KEY_FRAME_EDITOR_SEQUENCE_SELECTION_TICK_SEPARATION);
 
         eventDisplayPanel.localize(l);
         controlReferenceFrame.localize(l);
@@ -1703,6 +1786,8 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
             selectAll();
         } else if (e.getSource() == applyChangesItem) {
             eventModContainerPanel.applyChanges();
+        } else if (e.getSource() == sequenceSelectionItem) {
+            sequenceSelection();
         }
     }
 

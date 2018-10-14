@@ -12,18 +12,19 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ArxTitledIntItem extends ArxTitledGenericItem implements ActionListener, FocusListener, ChangeListener {
 
-    private JFormattedTextField field = null;
-    private NumberFormat format = null;
-    private IntBoundedValue boundedValue = null;
-    private JSlider slider = null;
+    private JFormattedTextField field;
+    private NumberFormat format;
+    private IntBoundedValue boundedValue;
+    private JSlider slider;
 
-    private List<ActionListener> actionListeners = null;
-    private List<ChangeListener> changeListeners = null;
+    private List<ActionListener> actionListeners;
+    private List<ChangeListener> changeListeners;
 
     public ArxTitledIntItem(IntBounds bounds, int initValue) {
         super();
@@ -44,6 +45,14 @@ public class ArxTitledIntItem extends ArxTitledGenericItem implements ActionList
 
     public ArxTitledIntItem(IntBounds bounds) {
         this(bounds, (bounds.getLowerLimit() + bounds.getUpperLimit()) / 2);
+    }
+
+    public void setSliderVisibility(boolean value){
+        slider.setVisible(value);
+    }
+
+    public void setFieldFocusLostBehaviour(int value){
+        //field.setFocusLostBehavior(value);
     }
 
     public void setModEnabled(boolean value) {
@@ -112,7 +121,12 @@ public class ArxTitledIntItem extends ArxTitledGenericItem implements ActionList
 
     public void focusLost(FocusEvent e) {
         if (e.getSource() == field) {
-            setValue(Integer.parseInt(field.getValue().toString()));
+            try {
+                field.commitEdit();
+                setValue(Integer.parseInt(field.getValue().toString()));
+            } catch (ParseException ignored) {
+                setValue(boundedValue.getValue());
+            }
             for (ActionListener l : actionListeners)
                 l.actionPerformed(new ActionEvent(field, 0, ""));
         }

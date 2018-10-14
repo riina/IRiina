@@ -3,6 +3,8 @@ package net.cyriaca.riina.misc.iriina.intralism;
 import net.cyriaca.riina.misc.iriina.intralism.data.*;
 
 import javax.json.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,11 +20,23 @@ public class MapManager {
      * @param eventTimingOffset Offset to use while importing events
      * @return Result container
      */
-    public static MapParseResult parseMap(JsonObject json, float checkpointTimingOfset, float eventTimingOffset) {
+    public static MapParseResult parseMap(JsonObject json) {
         if (json == null) {
             return MapParseResult.createFailureResult(MapParseResult.FailureSource.NO_JSON_DATA_PROVIDED);
         }
         MapData out = new MapData();
+        float checkpointTimingOffset = 0.0f;
+        try {
+            checkpointTimingOffset = (float) json.getJsonNumber("checkpoint_timing").doubleValue();
+        } catch (ClassCastException | NullPointerException ignored) {
+        }
+        out.setCheckpointTimingOffset(checkpointTimingOffset);
+        float eventTimingOffset = 0.0f;
+        try {
+            eventTimingOffset = (float) json.getJsonNumber("event_timing").doubleValue();
+        } catch (ClassCastException | NullPointerException ignored) {
+        }
+        out.setCheckpointTimingOffset(checkpointTimingOffset);
         try {
             out.setName(json.getString("name"));
         } catch (NullPointerException e) {
@@ -169,7 +183,7 @@ public class MapManager {
             } catch (ClassCastException e) {
                 return MapParseResult.createInvalidValueResult("checkpoints[" + i + "]", MapParseResult.ValueType.NUMBER);
             }
-            checkpoints.add(new Checkpoint((float) num.doubleValue() + checkpointTimingOfset, out));
+            checkpoints.add(new Checkpoint((float) num.doubleValue() + checkpointTimingOffset, out));
         }
         out.setCheckpoints(checkpoints);
         JsonArray eventsArr = json.getJsonArray("events");
@@ -274,7 +288,9 @@ public class MapManager {
      * @param pure Export as a pure Intralism config
      * @return JSON representation of configuration
      */
-    public static JsonObject exportMap(MapData mapData, float checkpointTimingOfset, float eventTimingOffset, boolean pure) {
+    public static JsonObject exportMap(MapData mapData, boolean pure) {
+        float checkpointTimingOffset = mapData.getCheckpointTimingOffset();
+        float eventTimingOffset = mapData.getEventTimingOffset();
         JsonBuilderFactory f = Json.createBuilderFactory(null);
         JsonArrayBuilder levelResourcesBuilder = f.createArrayBuilder();
         List<MapResource> mapResources = mapData.getMapResources();
@@ -290,7 +306,7 @@ public class MapManager {
         JsonArrayBuilder checkpointsBuilder = f.createArrayBuilder();
         List<Checkpoint> checkpoints = mapData.getCheckpoints();
         for (Checkpoint checkpoint : checkpoints) {
-            checkpointsBuilder.add((double) checkpoint.getTime() + checkpointTimingOfset);
+            checkpointsBuilder.add((double) checkpoint.getTime() + checkpointTimingOffset);
         }
         JsonArrayBuilder eventsBuilder = f.createArrayBuilder();
         List<MapEvent> events = mapData.getEventList();
@@ -304,14 +320,17 @@ public class MapManager {
                 }
             }
         }
-        return f.createObjectBuilder().add("id", mapData.getId()).add("name", mapData.getName())
+        JsonObjectBuilder result = f.createObjectBuilder().add("id", mapData.getId()).add("name", mapData.getName())
                 .add("info", mapData.getInfo()).add("levelResources", levelResourcesBuilder.build())
                 .add("tags", tagsBuilder.build()).add("handCount", 1).add("moreInfoURL", mapData.getMoreInfoURL())
                 .add("speed", mapData.getSpeed()).add("lives", mapData.getLives()).add("maxLives", mapData.getLives())
                 .add("musicFile", mapData.getMusicFile()).add("musicTime", mapData.getMusicTime())
                 .add("iconFile", mapData.getIconFile()).add("generationType", mapData.getGenerationType())
                 .add("environmentType", mapData.getEnvironmentType()).add("checkpoints", checkpointsBuilder.build())
-                .add("events", eventsBuilder.build()).build();
+                .add("events", eventsBuilder.build());
+        if (!pure)
+            result.add("checkpoint_timing", mapData.getCheckpointTimingOffset()).add("event_timing", mapData.getEventTimingOffset());
+        return result.build();
     }
 
     private static void _exportMap_EvaluateEvent(JsonBuilderFactory f, JsonArrayBuilder eventsBuilder, MapEvent evt, boolean pure, float eventTimingOffset) {

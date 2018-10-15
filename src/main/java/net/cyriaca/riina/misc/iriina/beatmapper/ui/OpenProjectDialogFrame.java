@@ -55,7 +55,7 @@ public class OpenProjectDialogFrame extends JFrame
         setLocationRelativeTo(null);
         setVisible(true);
         File projectDirectory = FileDialogs.folderDialog(this, new File(parent.getPreferences().getWorkspaceDirectory()));
-        if (projectDirectory == null) {//dialog.getFile() == null) {
+        if (projectDirectory == null) {
             parent.setView(View.WelcomeFrame);
             return;
         }
@@ -69,6 +69,7 @@ public class OpenProjectDialogFrame extends JFrame
                 selector.addItem(new ConfigDef(ConfigDef.Type.BACKUP, projectDirectory, backupDirItem));
             }
         }
+        getRootPane().setDefaultButton(launch);
     }
 
     public void cleanupAndHideFrame() {

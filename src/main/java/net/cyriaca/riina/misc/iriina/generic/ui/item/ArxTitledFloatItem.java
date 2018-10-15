@@ -48,7 +48,7 @@ public class ArxTitledFloatItem extends ArxTitledGenericItem implements ActionLi
         this(bounds, (bounds.getLowerLimit() + bounds.getUpperLimit()) / 2.0f);
     }
 
-    public void setSliderVisibility(boolean value){
+    public void setSliderVisibility(boolean value) {
         slider.setVisible(value);
     }
 

@@ -73,7 +73,10 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
     private static final String KEY_MENU_EDIT_PASTE = "menu_edit_paste";
     private static final String KEY_MENU_EDIT_DELETE = "menu_edit_delete";
     private static final String KEY_MENU_EDIT_SELECT_ALL = "menu_edit_select_all";
+    private static final String KEY_MENU_EDIT_WRITE_CHANGES_TOP = "menu_edit_write_changes_bot";
+    private static final String KEY_MENU_EDIT_WRITE_CHANGES_BOT = "menu_edit_write_changes_top";
     private static final String KEY_MENU_EDIT_SEQUENCE_SELECTION = "menu_edit_sequence_selection";
+    private static final String KEY_MENU_EDIT_GENERATE_SEQUENCE = "menu_edit_generate_sequence";
     private static final String KEY_MENU_CONTROLS = "menu_controls";
     private static final String KEY_MENU_CONTROLS_TOGGLE_PLAY = "menu_controls_toggle_play";
     private static final String KEY_MENU_CONTROLS_POSITION_BACK = "menu_controls_position_back";
@@ -105,9 +108,17 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
     private static final String KEY_FRAME_EDITOR_EXPORT_FAIL_TARGET_IS_FILE = "frame_editor_export_fail_target_is_file";
     private static final String KEY_FRAME_EDITOR_SEQUENCE_SELECTION_TITLE = "frame_editor_sequence_selection_title";
     private static final String KEY_FRAME_EDITOR_SEQUENCE_SELECTION_BASE_TICK = "frame_editor_sequence_selection_base_tick";
+    private static final String KEY_FRAME_EDITOR_SEQUENCE_SELECTION_BASE_MEASURE = "frame_editor_sequence_selection_base_measure";
+    private static final String KEY_FRAME_EDITOR_SEQUENCE_SELECTION_BASE_BEAT = "frame_editor_sequence_selection_base_beat";
+    private static final String KEY_FRAME_EDITOR_SEQUENCE_SELECTION_BASE_SUBTICK = "frame_editor_sequence_selection_base_subtick";
     private static final String KEY_FRAME_EDITOR_SEQUENCE_SELECTION_TICK_SEPARATION = "frame_editor_sequence_selection_tick_separation";
+    private static final String KEY_FRAME_EDITOR_SEQUENCE_SELECTION_SUBTICK_SEPARATION = "frame_editor_sequence_selection_subtick_separation";
+    private static final String KEY_FRAME_EDITOR_GENERATE_SEQUENCE_TITLE = "frame_editor_generate_sequence_title";
+    private static final String KEY_FRAME_EDITOR_GENERATE_SEQUENCE_EVENT_COUNT = "frame_editor_generate_sequence_event_count";
     private static final String KEY_FRAME_EDITOR_SEQUENCE_SELECTION_OPTION_CONFIRM = "frame_editor_sequence_selection_option_confirm";
     private static final String KEY_FRAME_EDITOR_SEQUENCE_SELECTION_OPTION_CANCEL = "frame_editor_sequence_selection_option_cancel";
+    private static final String KEY_FRAME_EDITOR_GENERATE_SEQUENCE_OPTION_CONFIRM = "frame_editor_generate_sequence_option_confirm";
+    private static final String KEY_FRAME_EDITOR_GENERATE_SEQUENCE_OPTION_CANCEL = "frame_editor_generate_sequence_option_cancel";
     private static final String TARGET_DIRECTORY = "%targetDirectory%";
     private static final String KEY_FRAME_EDITOR_EXPORT_FAIL_TARGET_DIRECTORY_CREATION_FAIL = "frame_editor_export_fail_target_directory_creation_fail";
     private static final String KEY_FRAME_EDITOR_EXPORT_PROGRESSING = "frame_editor_export_progressing";
@@ -159,7 +170,10 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
     private JMenuItem deleteItem;
     private JMenuItem selectAllItem;
     private JMenuItem applyChangesItem;
+    private JMenuItem applyChangesLeftItem;
+    private JMenuItem applyChangesRightItem;
     private JMenuItem sequenceSelectionItem;
+    private JMenuItem generateSequenceItem;
     private JMenu controlsMenu;
     private JMenuItem togglePlay;
     private JMenuItem positionBack;
@@ -179,8 +193,15 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
     private String[] exportOptions;
     private String sequenceSelectionTitle;
     private String sequenceSelectionBaseTick;
+    private String sequenceSelectionBaseMeasure;
+    private String sequenceSelectionBaseBeat;
+    private String sequenceSelectionBaseSubtick;
     private String sequenceSelectionTickSeparation;
+    private String sequenceSelectionSubtickSeparation;
+    private String generateSequenceTitle;
+    private String generateSequenceEventCount;
     private String[] sequenceSelectionOptions;
+    private String[] generateSequenceOptions;
     private String exportEditorDirectory;
     private String exportEditorDirectorySelect;
     private String exportFolderName;
@@ -243,9 +264,21 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
         exportOptions[1] = "Cancel";
 
         sequenceSelectionTitle = "Sequence selection";
+        sequenceSelectionBaseTick = "Base tick";
+        sequenceSelectionBaseMeasure = "Base measure";
+        sequenceSelectionBaseBeat = "Base beat";
+        sequenceSelectionBaseSubtick = "Base subtick";
+        sequenceSelectionTickSeparation = "Tick separation";
+        sequenceSelectionSubtickSeparation = "Subtick separation";
         sequenceSelectionOptions = new String[2];
         sequenceSelectionOptions[0] = "Sequence";
         sequenceSelectionOptions[1] = "Cancel";
+
+        generateSequenceTitle = "Generate sequence";
+        generateSequenceEventCount = "Event count";
+        generateSequenceOptions = new String[2];
+        generateSequenceOptions[0] = "Generate";
+        generateSequenceOptions[1] = "Cancel";
 
         operations = new ArrayList<>();
         opPoint = operations.size() - 1;
@@ -334,12 +367,27 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
         editMenu.add(menuItem);
         menuItem.addActionListener(this);
         applyChangesItem = menuItem;
-        editMenu.addSeparator();
+        menuItem = new JMenuItem();
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0));
+        editMenu.add(menuItem);
+        menuItem.addActionListener(this);
+        applyChangesLeftItem = menuItem;
         menuItem = new JMenuItem();
         menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F6, 0));
         editMenu.add(menuItem);
         menuItem.addActionListener(this);
+        applyChangesRightItem = menuItem;
+        editMenu.addSeparator();
+        menuItem = new JMenuItem();
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F10, 0));
+        editMenu.add(menuItem);
+        menuItem.addActionListener(this);
         sequenceSelectionItem = menuItem;
+        menuItem = new JMenuItem();
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0));
+        editMenu.add(menuItem);
+        menuItem.addActionListener(this);
+        generateSequenceItem = menuItem;
 
         controlsMenu = new JMenu();
         menuBar.add(controlsMenu);
@@ -585,6 +633,72 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
         controlReferenceFrame.hideFrame();
     }
 
+    private void generateSequence() {
+        MapEvent te = mapData.getFirstTimingEventForTime(getPlayHeadPos());
+        if (te == null)
+            return;
+        TimingProperty tp = te.getTimingProperty();
+        int baseTick = tp.getClosestTickFromTime(getPlayHeadPos());
+        int tickSeparation = tp.getTimingMode() == TimingProperty.TimingMode.MEASURE ? tp.getBeatTicks() : 4;
+        ArxTitledIntItem tickSeparationItem = new ArxTitledIntItem(new IntBounds(0, false, tickSeparation, true), tickSeparation);
+        tickSeparationItem.setSliderVisibility(false);
+        int eventCount = tp.getTimingMode() == TimingProperty.TimingMode.MEASURE ? tp.getMeasureBeats() : 4;
+        ArxTitledIntItem eventCountItem = new ArxTitledIntItem(new IntBounds(0, false, eventCount, true), eventCount);
+        eventCountItem.setTitle(generateSequenceEventCount);
+        eventCountItem.setSliderVisibility(false);
+        if (tp.getTimingMode() == TimingProperty.TimingMode.TICK) {
+            tickSeparationItem.setTitle(sequenceSelectionTickSeparation);
+            ArxTitledIntItem baseTickItem = new ArxTitledIntItem(new IntBounds(0, false, baseTick, true), baseTick);
+            baseTickItem.setTitle(sequenceSelectionBaseTick);
+            baseTickItem.setSliderVisibility(false);
+            JComponent[] options = new JComponent[]{
+                    baseTickItem,
+                    tickSeparationItem,
+                    eventCountItem
+            };
+            int x = JOptionPane.showOptionDialog(this, options, generateSequenceTitle, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, IRiina.getIcon64(), generateSequenceOptions, generateSequenceOptions[0]);
+            if (x == 1 || x == JOptionPane.CLOSED_OPTION)
+                return;
+            baseTick = baseTickItem.getValue();
+        } else {
+            tickSeparationItem.setTitle(sequenceSelectionSubtickSeparation);
+            int baseMeasure = tp.getMeasureFromTick(baseTick);
+            ArxTitledIntItem baseMeasureItem = new ArxTitledIntItem(new IntBounds(0, false, baseMeasure, true), baseMeasure);
+            baseMeasureItem.setTitle(sequenceSelectionBaseMeasure);
+            baseMeasureItem.setSliderVisibility(false);
+            ArxTitledIntItem baseBeatItem = new ArxTitledIntItem(new IntBounds(0, false, tp.getMeasureBeats(), false), tp.getBeatFromTick(baseTick));
+            baseBeatItem.setTitle(sequenceSelectionBaseBeat);
+            baseBeatItem.setSliderVisibility(false);
+            ArxTitledIntItem baseSubtickItem = new ArxTitledIntItem(new IntBounds(0, false, tp.getBeatTicks(), false), tp.getSubtickFromTick(baseTick));
+            baseSubtickItem.setTitle(sequenceSelectionBaseSubtick);
+            baseSubtickItem.setSliderVisibility(false);
+            JComponent[] options = new JComponent[]{
+                    baseMeasureItem,
+                    baseBeatItem,
+                    baseSubtickItem,
+                    tickSeparationItem,
+                    eventCountItem
+            };
+            int x = JOptionPane.showOptionDialog(this, options, generateSequenceTitle, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, IRiina.getIcon64(), generateSequenceOptions, generateSequenceOptions[0]);
+            if (x == 1 || x == JOptionPane.CLOSED_OPTION)
+                return;
+            baseTick = tp.getTickFromMeasureAndBeatAndSubtick(baseMeasureItem.getValue(), baseBeatItem.getValue(), baseSubtickItem.getValue());
+        }
+        eventCount = eventCountItem.getValue();
+        tickSeparation = tickSeparationItem.getValue();
+        List<MapEvent> theCreated = new ArrayList<>();
+        for (int i = 0; i < eventCount; i++) {
+            MapEvent evt = new SpawnObjEvent(0.0f);
+            mapData.addNewEvent(evt);
+            TimedEventProperty tep = evt.getTimedEventProperty();
+            tep.setTimingEventId(te.getMetaId());
+            tep.setTickRefreshLight(baseTick + tickSeparation * i);
+            theCreated.add(evt);
+        }
+        mapData.repositionEventsFinalize(theCreated);
+        addOperation(ReversibleOperation.createEventGroupCreateOperation(theCreated));
+    }
+
     private void sequenceSelection() {
         if (realSelection.size() != 0) {
             MapEvent e0 = realSelection.get(0);
@@ -594,20 +708,44 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
             TimingProperty tp = te.getTimingProperty();
             int baseTick = tp.getClosestTickFromTime(e0.getTime());
             int tickSeparation = tp.getTimingMode() == TimingProperty.TimingMode.MEASURE ? tp.getBeatTicks() : 4;
-            ArxTitledIntItem baseTickItem = new ArxTitledIntItem(new IntBounds(0, false, baseTick, true), baseTick);
-            baseTickItem.setTitle(sequenceSelectionBaseTick);
-            baseTickItem.setSliderVisibility(false);
             ArxTitledIntItem tickSeparationItem = new ArxTitledIntItem(new IntBounds(0, false, tickSeparation, true), tickSeparation);
-            tickSeparationItem.setTitle(sequenceSelectionTickSeparation);
             tickSeparationItem.setSliderVisibility(false);
-            JComponent[] options = new JComponent[]{
-                    baseTickItem,
-                    tickSeparationItem
-            };
-            int x = JOptionPane.showOptionDialog(this, options, sequenceSelectionTitle, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, IRiina.getIcon64(), sequenceSelectionOptions, sequenceSelectionOptions[0]);
-            if (x == 1 || x == JOptionPane.CLOSED_OPTION)
-                return;
-            baseTick = baseTickItem.getValue();
+            if (tp.getTimingMode() == TimingProperty.TimingMode.TICK) {
+                tickSeparationItem.setTitle(sequenceSelectionTickSeparation);
+                ArxTitledIntItem baseTickItem = new ArxTitledIntItem(new IntBounds(0, false, baseTick, true), baseTick);
+                baseTickItem.setTitle(sequenceSelectionBaseTick);
+                baseTickItem.setSliderVisibility(false);
+                JComponent[] options = new JComponent[]{
+                        baseTickItem,
+                        tickSeparationItem
+                };
+                int x = JOptionPane.showOptionDialog(this, options, sequenceSelectionTitle, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, IRiina.getIcon64(), sequenceSelectionOptions, sequenceSelectionOptions[0]);
+                if (x == 1 || x == JOptionPane.CLOSED_OPTION)
+                    return;
+                baseTick = baseTickItem.getValue();
+            } else {
+                tickSeparationItem.setTitle(sequenceSelectionSubtickSeparation);
+                int baseMeasure = tp.getMeasureFromTick(baseTick);
+                ArxTitledIntItem baseMeasureItem = new ArxTitledIntItem(new IntBounds(0, false, baseMeasure, true), baseMeasure);
+                baseMeasureItem.setTitle(sequenceSelectionBaseMeasure);
+                baseMeasureItem.setSliderVisibility(false);
+                ArxTitledIntItem baseBeatItem = new ArxTitledIntItem(new IntBounds(0, false, tp.getMeasureBeats(), false), tp.getBeatFromTick(baseTick));
+                baseBeatItem.setTitle(sequenceSelectionBaseBeat);
+                baseBeatItem.setSliderVisibility(false);
+                ArxTitledIntItem baseSubtickItem = new ArxTitledIntItem(new IntBounds(0, false, tp.getBeatTicks(), false), tp.getSubtickFromTick(baseTick));
+                baseSubtickItem.setTitle(sequenceSelectionBaseSubtick);
+                baseSubtickItem.setSliderVisibility(false);
+                JComponent[] options = new JComponent[]{
+                        baseMeasureItem,
+                        baseBeatItem,
+                        baseSubtickItem,
+                        tickSeparationItem
+                };
+                int x = JOptionPane.showOptionDialog(this, options, sequenceSelectionTitle, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, IRiina.getIcon64(), sequenceSelectionOptions, sequenceSelectionOptions[0]);
+                if (x == 1 || x == JOptionPane.CLOSED_OPTION)
+                    return;
+                baseTick = tp.getTickFromMeasureAndBeatAndSubtick(baseMeasureItem.getValue(), baseBeatItem.getValue(), baseSubtickItem.getValue());
+            }
             tickSeparation = tickSeparationItem.getValue();
             int offset = 0;
             int len = realSelection.size();
@@ -712,9 +850,8 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
     }
 
     private void addOperation(ReversibleOperation operation) {
-        if (opPoint != -1)
-            while (operations.size() > opPoint + 1)
-                operations.remove(operations.size() - 1);
+        while (operations.size() > opPoint + 1)
+            operations.remove(operations.size() - 1);
         operations.add(operation);
         opPoint = operations.size() - 1;
         Locale l = parent.getLocale();
@@ -1671,7 +1808,10 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
         deleteItem.setText(l.getKey(KEY_MENU_EDIT_DELETE));
         selectAllItem.setText(l.getKey(KEY_MENU_EDIT_SELECT_ALL));
         applyChangesItem.setText(l.getKey(KEY_PANEL_EVENT_MOD_WRITE_CHANGES));
+        applyChangesLeftItem.setText(l.getKey(KEY_MENU_EDIT_WRITE_CHANGES_BOT));
+        applyChangesRightItem.setText(l.getKey(KEY_MENU_EDIT_WRITE_CHANGES_TOP));
         sequenceSelectionItem.setText(l.getKey(KEY_MENU_EDIT_SEQUENCE_SELECTION));
+        generateSequenceItem.setText(l.getKey(KEY_MENU_EDIT_GENERATE_SEQUENCE));
 
         controlsMenu.setText(l.getKey(KEY_MENU_CONTROLS));
         togglePlay.setText(l.getKey(KEY_MENU_CONTROLS_TOGGLE_PLAY));
@@ -1708,7 +1848,15 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
         sequenceSelectionOptions[0] = l.getKey(KEY_FRAME_EDITOR_SEQUENCE_SELECTION_OPTION_CONFIRM);
         sequenceSelectionOptions[1] = l.getKey(KEY_FRAME_EDITOR_SEQUENCE_SELECTION_OPTION_CANCEL);
         sequenceSelectionBaseTick = l.getKey(KEY_FRAME_EDITOR_SEQUENCE_SELECTION_BASE_TICK);
+        sequenceSelectionBaseMeasure = l.getKey(KEY_FRAME_EDITOR_SEQUENCE_SELECTION_BASE_MEASURE);
+        sequenceSelectionBaseBeat = l.getKey(KEY_FRAME_EDITOR_SEQUENCE_SELECTION_BASE_BEAT);
+        sequenceSelectionBaseSubtick = l.getKey(KEY_FRAME_EDITOR_SEQUENCE_SELECTION_BASE_SUBTICK);
         sequenceSelectionTickSeparation = l.getKey(KEY_FRAME_EDITOR_SEQUENCE_SELECTION_TICK_SEPARATION);
+        sequenceSelectionSubtickSeparation = l.getKey(KEY_FRAME_EDITOR_SEQUENCE_SELECTION_SUBTICK_SEPARATION);
+        generateSequenceTitle = l.getKey(KEY_FRAME_EDITOR_GENERATE_SEQUENCE_TITLE);
+        generateSequenceEventCount = l.getKey(KEY_FRAME_EDITOR_GENERATE_SEQUENCE_EVENT_COUNT);
+        generateSequenceOptions[0] = l.getKey(KEY_FRAME_EDITOR_GENERATE_SEQUENCE_OPTION_CONFIRM);
+        generateSequenceOptions[1] = l.getKey(KEY_FRAME_EDITOR_GENERATE_SEQUENCE_OPTION_CANCEL);
 
         eventDisplayPanel.localize(l);
         controlReferenceFrame.localize(l);
@@ -1734,6 +1882,11 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
             cutItem.setEnabled(realSelection.size() != 0);
             copyItem.setEnabled(realSelection.size() != 0);
             pasteItem.setEnabled(clipboard.size() != 0);
+            boolean lA = eventModContainerPanel.topActive(), rA = eventModContainerPanel.botActive();
+            applyChangesItem.setEnabled(lA || rA);
+            applyChangesLeftItem.setEnabled(lA);
+            applyChangesRightItem.setEnabled(rA);
+            sequenceSelectionItem.setEnabled(realSelection.size() != 0);
             eventModContainerPanel.updateEventTargets();
             contentPane.repaint();
         }
@@ -1786,8 +1939,14 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
             selectAll();
         } else if (e.getSource() == applyChangesItem) {
             eventModContainerPanel.applyChanges();
+        } else if (e.getSource() == applyChangesLeftItem) {
+            eventModContainerPanel.applyChangesTop();
+        } else if (e.getSource() == applyChangesRightItem) {
+            eventModContainerPanel.applyChangesBot();
         } else if (e.getSource() == sequenceSelectionItem) {
             sequenceSelection();
+        } else if (e.getSource() == generateSequenceItem) {
+            generateSequence();
         }
     }
 

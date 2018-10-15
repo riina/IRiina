@@ -3,8 +3,6 @@ package net.cyriaca.riina.misc.iriina.intralism;
 import net.cyriaca.riina.misc.iriina.intralism.data.*;
 
 import javax.json.*;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 

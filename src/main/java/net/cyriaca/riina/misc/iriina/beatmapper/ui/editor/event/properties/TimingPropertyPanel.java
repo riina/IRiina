@@ -199,7 +199,7 @@ public class TimingPropertyPanel extends PropertyPanel implements ActionListener
     public void setTimingProperty(TimingProperty timingProperty) {
         this.timingProperty = timingProperty;
         if (this.timingProperty != null) {
-            setUIForTimingProperty();
+            setUIForTimingProperty(true);
             setVisible(true);
         } else {
             setVisible(false);
@@ -248,11 +248,12 @@ public class TimingPropertyPanel extends PropertyPanel implements ActionListener
         }
     }
 
-    private void setUIForTimingProperty() {
+    private void setUIForTimingProperty(boolean pullTimingMode) {
         if (timingProperty != null) {
             rootTime.setValue(timingProperty.getRootTime());
             length.setValue(timingProperty.getLength());
-            modeSelector.setSelectedIndex(timingProperty.getTimingMode().ordinal());
+            if (pullTimingMode)
+                modeSelector.setSelectedIndex(timingProperty.getTimingMode().ordinal());
             switch (TimingProperty.TimingMode.values()[modeSelector.getSelectedIndex()]) {
 
                 case TICK:
@@ -332,7 +333,7 @@ public class TimingPropertyPanel extends PropertyPanel implements ActionListener
     public void actionPerformed(ActionEvent e) {
         if (timingProperty != null) {
             if (e.getSource() == modeSelector) {
-                setUIForTimingProperty();
+                setUIForTimingProperty(false);
             }
             MapData data = host.getMapData();
             MapEvent evt = timingProperty.getParent();
@@ -379,11 +380,12 @@ public class TimingPropertyPanel extends PropertyPanel implements ActionListener
                     oldExtraDataList.add(t.getEventExtraData());
                     oldTimeList.add(t.getTime());
                     TimedEventProperty tep = t.getTimedEventProperty();
-                    tep.setTimingEventId(evt.getMetaId());
+                    tep.setTimingEventIdRefreshLight(evt.getMetaId());
                     dataList.add(t.getEventData());
                     extraDataList.add(t.getEventExtraData());
                     timeList.add(t.getTime());
                 }
+                data.repositionEventsFinalize(targets);
                 host.addOperationForEventGroupDataMod(targets, oldDataList, oldExtraDataList, oldTimeList, dataList, extraDataList, timeList);
             }
             if (e.getSource() == actionReleaseEvents) {

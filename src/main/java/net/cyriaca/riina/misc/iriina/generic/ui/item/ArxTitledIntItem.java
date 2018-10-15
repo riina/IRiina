@@ -47,12 +47,8 @@ public class ArxTitledIntItem extends ArxTitledGenericItem implements ActionList
         this(bounds, (bounds.getLowerLimit() + bounds.getUpperLimit()) / 2);
     }
 
-    public void setSliderVisibility(boolean value){
+    public void setSliderVisibility(boolean value) {
         slider.setVisible(value);
-    }
-
-    public void setFieldFocusLostBehaviour(int value){
-        //field.setFocusLostBehavior(value);
     }
 
     public void setModEnabled(boolean value) {

@@ -103,6 +103,8 @@ public class TimedEventProperty extends Property {
 
     public void setTimingEventId(int value) {
         timingEventId = value;
+        if(timingEventId == NO_TIMING_EVENT)
+            return;
         MapEvent event = getParent();
         if (event != null) {
             MapData data = event.getParent();
@@ -122,6 +124,29 @@ public class TimedEventProperty extends Property {
         refresh();
     }
 
+    public void setTimingEventIdRefreshLight(int value) {
+        timingEventId = value;
+        if(timingEventId == NO_TIMING_EVENT)
+            return;
+        MapEvent event = getParent();
+        if (event != null) {
+            MapData data = event.getParent();
+            if (data != null) {
+                TimingEvent timing = data.getTimingEventById(timingEventId);
+                if (timing != null) {
+                    TimingProperty tp = timing.getTimingProperty();
+                    if (tp != null) {
+                        tick = tp.getClosestTickFromTime(event.getTime());
+                    } else {
+                        System.err.println("ERROR: Timing event at time " + timing.getTime() + " with data \"" + timing.getEventData() + "\" and extra data \"" + timing.getEventExtraData() + "\" doesn't have a timing property!");
+                        System.exit(4043);
+                    }
+                }
+            }
+        }
+        refreshLight();
+    }
+
     public int getTick() {
         return tick;
     }
@@ -129,6 +154,11 @@ public class TimedEventProperty extends Property {
     public void setTick(int tick) {
         this.tick = tick;
         refresh();
+    }
+
+    public void setTickRefreshLight(int tick) {
+        this.tick = tick;
+        refreshLight();
     }
 
     public void clearTimingEventId() {

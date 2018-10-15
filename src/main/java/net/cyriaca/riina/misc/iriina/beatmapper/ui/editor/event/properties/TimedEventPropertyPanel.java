@@ -152,6 +152,8 @@ public class TimedEventPropertyPanel extends PropertyPanel implements ActionList
                     if (timingProperty != null) {
                         panel_Tick_Tick.setVisible(true);
                         field_Tick_Tick.setValue(timedEventProperty.getTick());
+                        if (timingProperty.getTimingMode() == TimingProperty.TimingMode.TICK)
+                            modeSelector.setSelectedIndex(0);
                         switch (TimingProperty.TimingMode.values()[modeSelector.getSelectedIndex()]) {
                             case TICK:
                                 panel_Measure_Measure.setVisible(false);

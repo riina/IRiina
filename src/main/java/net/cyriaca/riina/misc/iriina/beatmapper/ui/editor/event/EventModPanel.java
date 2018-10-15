@@ -25,10 +25,7 @@ public class EventModPanel extends JPanel implements ActionListener {
     private static final String EVENT_NAME = "%eventName%";
     private static final String EVENT_META_ID = "%eventMetaId%";
     private static final String EVENT_OFFSET = "%eventOffset%";
-    /**
-     *
-     */
-    private static final long serialVersionUID = -5189374726177394847L;
+
     private String eventNameFormat = null;
     private JLabel lockLabel;
     private JCheckBox lockBox;

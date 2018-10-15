@@ -60,6 +60,14 @@ public class EventModContainerPanel extends JPanel {
         setPreferredSize(new Dimension(560, 800));
     }
 
+    public boolean botActive() {
+        return botPanel.getTargetEvent() != null;
+    }
+
+    public boolean topActive() {
+        return topPanel.getTargetEvent() != null;
+    }
+
     public List<EventPropertyPanel> getPanels(List<EventProperty.Type> types) {
         List<EventPropertyPanel> out = new ArrayList<>();
         for (EventProperty.Type type : types) {
@@ -113,6 +121,18 @@ public class EventModContainerPanel extends JPanel {
         topPanel.subApplyChanges();
         botPanel.subApplyChanges();
         updateEventTargets();
+        reevaluateTargets();
+    }
+
+    public void applyChangesBot() {
+        botPanel.subApplyChanges();
+        botPanel.reevaluateTarget();
+        reevaluateTargets();
+    }
+
+    public void applyChangesTop() {
+        topPanel.subApplyChanges();
+        topPanel.reevaluateTarget();
         reevaluateTargets();
     }
 

@@ -20,6 +20,12 @@
             
             * Click the BPM button to the beat while the song is playing to help find the right BPM to use
 
+* Remapping mode
+
+    * Sequentially choose what arc type to use for each existing arc event
+
+    * Automatically scrolls to the next event once you choose, or you can move forward and back with [ and ]
+
 * Event selection sequencing
 
     * Make the events you selected align to ticks or subbeats based on your selected starting point and spacing between events

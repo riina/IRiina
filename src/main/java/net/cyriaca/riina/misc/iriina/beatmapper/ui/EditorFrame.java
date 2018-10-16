@@ -576,6 +576,7 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
 
         setVisible(true);
         timer.start();
+        queueRender();
     }
 
     public void updateResourceList(List<MapResource> resources) {

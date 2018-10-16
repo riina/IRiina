@@ -10,7 +10,7 @@ import java.awt.event.MouseMotionListener;
 
 public class PlaybackControlPanel extends JPanel implements MouseListener, MouseMotionListener {
 
-    private static final int PLAYBACK_BAR_HEIGHT = 60;
+    private static final int PLAYBACK_BAR_HEIGHT = 30;
 
     private EditorFrame parent;
 
@@ -19,12 +19,13 @@ public class PlaybackControlPanel extends JPanel implements MouseListener, Mouse
 
         addMouseListener(this);
         addMouseMotionListener(this);
-        setMinimumSize(new Dimension(PLAYBACK_BAR_HEIGHT, -1));
+        setPreferredSize(new Dimension(-1, PLAYBACK_BAR_HEIGHT));
     }
 
     public void mouseDragged(MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON1) {
             parent.setPlayHeadPercent(((float) e.getX()) / getWidth());
+            parent.queueRender();
         }
     }
 
@@ -45,8 +46,10 @@ public class PlaybackControlPanel extends JPanel implements MouseListener, Mouse
     public void mousePressed(MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON3) {
             parent.togglePlaying();
+            parent.queueRender();
         } else if (e.getButton() == MouseEvent.BUTTON1) {
             parent.setPlayHeadPercent(((float) e.getX()) / getWidth());
+            parent.queueRender();
         }
     }
 

@@ -843,7 +843,7 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
         for (MapEvent evt : realSelection)
             mapData.removeEvent(evt);
         addOperation(ReversibleOperation.createEventGroupDeleteOperation(new ArrayList<>(realSelection)));
-        eventDisplayPanel.pretendLikeIWasntSelectingAnything();
+        eventDisplayPanel.deselect();
         realSelection.clear();
         eventModContainerPanel.updateEventTargets();
         eventModContainerPanel.reevaluateTargets();
@@ -1876,6 +1876,11 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
         localizeStrings(event.getNewLocale());
     }
 
+    public void queueRender() {
+        if (!isPlaying())
+            contentPane.repaint();
+    }
+
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == timer) {
             storedTimeThisFrame = false;
@@ -1888,65 +1893,68 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
             applyChangesRightItem.setEnabled(rA);
             sequenceSelectionItem.setEnabled(realSelection.size() != 0);
             eventModContainerPanel.updateEventTargets();
-            contentPane.repaint();
-        }
-        if (e.getSource() == newProjectItem) {
-            setPlaying(false);
-            if (confirmExitSave())
-                parent.setView(View.NewProjectDialogFrame);
-        } else if (e.getSource() == importMapItem) {
-            setPlaying(false);
-            if (confirmExitSave())
-                parent.setView(View.MapImportFrame);
-        } else if (e.getSource() == openProjectItem) {
-            setPlaying(false);
-            if (confirmExitSave())
-                parent.setView(View.OpenProjectDialogFrame);
-        } else if (e.getSource() == aboutItem) {
-            parent.showAboutFrame();
-        } else if (e.getSource() == preferencesItem) {
-            parent.showPreferencesFrame();
-        } else if (e.getSource() == undoItem) {
-            undo();
-        } else if (e.getSource() == redoItem) {
-            redo();
-        } else if (e.getSource() == cutItem) {
-            cut();
-        } else if (e.getSource() == copyItem) {
-            copy();
-        } else if (e.getSource() == pasteItem) {
-            paste();
-        } else if (e.getSource() == saveProjectItem) {
-            saveProject();
-        } else if (e.getSource() == exportMapItem) {
-            exportProject();
-        } else if (e.getSource() == reloadProjectItem) {
-            if (confirmReload())
-                reloadProject();
-        } else if (e.getSource() == togglePlay) {
-            togglePlaying();
-        } else if (e.getSource() == positionBack) {
-            setPlayHeadPos(getPlayHeadPos() - SKIP_AMT);
-        } else if (e.getSource() == positionFwd) {
-            setPlayHeadPos(getPlayHeadPos() + SKIP_AMT);
-        } else if (e.getSource() == evtBack) {
-            evtBack();
-        } else if (e.getSource() == evtFwd) {
-            evtFwd();
-        } else if (e.getSource() == deleteItem) {
-            deleteSelection();
-        } else if (e.getSource() == selectAllItem) {
-            selectAll();
-        } else if (e.getSource() == applyChangesItem) {
-            eventModContainerPanel.applyChanges();
-        } else if (e.getSource() == applyChangesLeftItem) {
-            eventModContainerPanel.applyChangesTop();
-        } else if (e.getSource() == applyChangesRightItem) {
-            eventModContainerPanel.applyChangesBot();
-        } else if (e.getSource() == sequenceSelectionItem) {
-            sequenceSelection();
-        } else if (e.getSource() == generateSequenceItem) {
-            generateSequence();
+            if (isPlaying())
+                contentPane.repaint();
+        } else {
+            if (e.getSource() == newProjectItem) {
+                setPlaying(false);
+                if (confirmExitSave())
+                    parent.setView(View.NewProjectDialogFrame);
+            } else if (e.getSource() == importMapItem) {
+                setPlaying(false);
+                if (confirmExitSave())
+                    parent.setView(View.MapImportFrame);
+            } else if (e.getSource() == openProjectItem) {
+                setPlaying(false);
+                if (confirmExitSave())
+                    parent.setView(View.OpenProjectDialogFrame);
+            } else if (e.getSource() == aboutItem) {
+                parent.showAboutFrame();
+            } else if (e.getSource() == preferencesItem) {
+                parent.showPreferencesFrame();
+            } else if (e.getSource() == undoItem) {
+                undo();
+            } else if (e.getSource() == redoItem) {
+                redo();
+            } else if (e.getSource() == cutItem) {
+                cut();
+            } else if (e.getSource() == copyItem) {
+                copy();
+            } else if (e.getSource() == pasteItem) {
+                paste();
+            } else if (e.getSource() == saveProjectItem) {
+                saveProject();
+            } else if (e.getSource() == exportMapItem) {
+                exportProject();
+            } else if (e.getSource() == reloadProjectItem) {
+                if (confirmReload())
+                    reloadProject();
+            } else if (e.getSource() == togglePlay) {
+                togglePlaying();
+            } else if (e.getSource() == positionBack) {
+                setPlayHeadPos(getPlayHeadPos() - SKIP_AMT);
+            } else if (e.getSource() == positionFwd) {
+                setPlayHeadPos(getPlayHeadPos() + SKIP_AMT);
+            } else if (e.getSource() == evtBack) {
+                evtBack();
+            } else if (e.getSource() == evtFwd) {
+                evtFwd();
+            } else if (e.getSource() == deleteItem) {
+                deleteSelection();
+            } else if (e.getSource() == selectAllItem) {
+                selectAll();
+            } else if (e.getSource() == applyChangesItem) {
+                eventModContainerPanel.applyChanges();
+            } else if (e.getSource() == applyChangesLeftItem) {
+                eventModContainerPanel.applyChangesTop();
+            } else if (e.getSource() == applyChangesRightItem) {
+                eventModContainerPanel.applyChangesBot();
+            } else if (e.getSource() == sequenceSelectionItem) {
+                sequenceSelection();
+            } else if (e.getSource() == generateSequenceItem) {
+                generateSequence();
+            }
+            queueRender();
         }
     }
 

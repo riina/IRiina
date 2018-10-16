@@ -437,7 +437,7 @@ public class EventDisplayPanel extends JPanel implements MouseMotionListener, Mo
                     parent.evtFwd();
             }
         }
-
+        parent.queueRender();
     }
 
     public void keyReleased(KeyEvent e) {
@@ -674,7 +674,7 @@ public class EventDisplayPanel extends JPanel implements MouseMotionListener, Mo
         g.drawString(Float.toString(time), getWidth() / 2, getHeight());
     }
 
-    public void pretendLikeIWasntSelectingAnything() {
+    public void deselect() {
         switch (selectionState) {
             case SELECT:
                 parent.setSelectionUp();
@@ -737,6 +737,7 @@ public class EventDisplayPanel extends JPanel implements MouseMotionListener, Mo
                 parent.setSelectionDown(selMode, initSelectionType, selT1, selT2, false);
             }
         }
+        parent.queueRender();
     }
 
     public void mouseReleased(MouseEvent e) {
@@ -762,6 +763,7 @@ public class EventDisplayPanel extends JPanel implements MouseMotionListener, Mo
                 parent.setSelectionUp();
             }
         }
+        parent.queueRender();
     }
 
     public void mouseEntered(MouseEvent e) {
@@ -769,10 +771,12 @@ public class EventDisplayPanel extends JPanel implements MouseMotionListener, Mo
         float width = getWidth();
         curHover = Math.max(0, Math.min(3, (int) (4.0f * ((float) e.getY()) / ((float) getHeight()))));
         curTimeHover = ((float) e.getX()) / width * (t2 - t1) + t1;
+        parent.queueRender();
     }
 
     public void mouseExited(MouseEvent e) {
         curHover = -1;
+        parent.queueRender();
     }
 
     public void mouseDragged(MouseEvent e) {
@@ -836,6 +840,7 @@ public class EventDisplayPanel extends JPanel implements MouseMotionListener, Mo
                 parent.setSelectionDown(selMode, initSelectionType, Math.min(selT1, selT2), Math.max(selT1, selT2), false);
             }
         }
+        parent.queueRender();
     }
 
     public void setMessage(String message) {
@@ -848,6 +853,7 @@ public class EventDisplayPanel extends JPanel implements MouseMotionListener, Mo
         if (curHover != -1)
             curHover = Math.max(0, Math.min(3, (int) (4.0f * ((float) e.getY()) / ((float) getHeight()))));
         curTimeHover = ((float) e.getX()) / width * (t2 - t1) + t1;
+        repaint();
     }
 
     public void localize(Locale l) {

@@ -1,8 +1,12 @@
 # IRiina
 
-#### *Intralism* map editor written in ***Java (SE 10)***
+#### *Intralism* map editor
 
-[Releases](https://github.com/cyriaca-technologies/IRiina/releases)
+You can download the latest release for Windows and macOS [here](https://github.com/cyriaca-technologies/IRiina/releases/latest)
+
+(You do not need Java installed on your system to use this)
+
+[All releases](https://github.com/cyriaca-technologies/IRiina/releases)
 
 ## Features
 
@@ -54,7 +58,13 @@
 
     * Events set up in the combo event will be exported as separate events
 
-## Building native images
+## Project Info
+
+This project is Java 10-based. It utilizes javapackager and modules to create self-contained application bundles.
+
+Some dependencies are only available as legacy JARs without a module-info.class, so we have provided compiled module-info.class files  for these dependencies under `build/injections_info` that are injected into the JARs you copy into `build/modules` as part of the build  process.
+
+### Building native images
 
 Compile `src/main/java` to `build/modules/net.cyriaca.riina.misc.iriina`
 
@@ -62,19 +72,19 @@ Copy dependency jars to `build/modules`
 
 Run `build-win.bat` or `build-mac.sh`
 
-## Dependencies
+### Dependencies
 
-[Jaudiotagger](https://mvnrepository.com/artifact/org/jaudiotagger)
+[Jaudiotagger](https://mvnrepository.com/artifact/org/jaudiotagger) 2.0.3 (LEGACY JAR)
 
-[JSR 374 (JSON Processing) Default Provider](https://mvnrepository.com/artifact/org.glassfish/javax.json)
+[JSR 374 (JSON Processing) Default Provider](https://mvnrepository.com/artifact/org.glassfish/javax.json) 1.1.3
 
-* [JSR 374 (JSON Processing) API](https://mvnrepository.com/artifact/javax.json/javax.json-api)
+* [JSR 374 (JSON Processing) API](https://mvnrepository.com/artifact/javax.json/javax.json-api) 1.1.3
 
-[VorbisSPI](https://mvnrepository.com/artifact/com.googlecode.soundlibs/vorbisspi)
+[VorbisSPI](https://mvnrepository.com/artifact/com.googlecode.soundlibs/vorbisspi) 1.0.3.3 (LEGACY JAR)
 
-* [Jorbis](https://mvnrepository.com/artifact/com.googlecode.soundlibs/jorbis)
+* [Jorbis](https://mvnrepository.com/artifact/com.googlecode.soundlibs/jorbis) 0.0.17.4 (LEGACY JAR)
 
-* [Tritonus Share](https://mvnrepository.com/artifact/com.googlecode.soundlibs/tritonus-share)
+* [Tritonus Share](https://mvnrepository.com/artifact/com.googlecode.soundlibs/tritonus-share) 0.3.7.4 (LEGACY JAR)
 
 ##
 

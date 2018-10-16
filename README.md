@@ -8,6 +8,8 @@ You can download the latest release for Windows and macOS [here](https://github.
 
 [All releases](https://github.com/cyriaca-technologies/IRiina/releases)
 
+![Screenshot](https://i.imgur.com/gKwCEfH.jpg)
+
 ## Features
 
 * Timing events

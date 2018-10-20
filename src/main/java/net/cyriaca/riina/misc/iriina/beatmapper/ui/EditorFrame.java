@@ -1326,6 +1326,8 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
 
     private void setPlayHeadPos(float posSec) {
         long targetMicroSecondValue = Math.max(0, Math.min((long) (posSec * 1000000.0f), clip.getMicrosecondLength() - 1));
+        storedTime = (float) targetMicroSecondValue / 1000000.0f;
+        storedTimeThisFrame = true;
         clip.setMicrosecondPosition(targetMicroSecondValue);
     }
 

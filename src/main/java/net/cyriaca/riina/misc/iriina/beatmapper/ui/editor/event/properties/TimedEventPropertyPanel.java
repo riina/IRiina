@@ -328,6 +328,7 @@ public class TimedEventPropertyPanel extends PropertyPanel implements ActionList
             if (e.getSource() == modeSelector) {
                 setUIForTimedEventProperty();
             }
+            host.queueRender();
         }
     }
 }

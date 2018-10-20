@@ -408,6 +408,7 @@ public class TimingPropertyPanel extends PropertyPanel implements ActionListener
                 }
                 host.addOperationForEventGroupDataMod(targets, oldDataList, oldExtraDataList, oldTimeList, dataList, extraDataList, timeList);
             }
+            host.queueRender();
         }
     }
 }

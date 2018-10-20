@@ -99,6 +99,7 @@ public class EventDisplayControlPanel extends JPanel implements ChangeListener, 
     public void stateChanged(ChangeEvent e) {
         if (e.getSource() == scaleSlider) {
             parent.getConfig().setDisplayXScale(((float) scaleSlider.getValue() / 100000.0f));
+            parent.queueRender();
         }
     }
 
@@ -117,6 +118,7 @@ public class EventDisplayControlPanel extends JPanel implements ChangeListener, 
             parent.toggleEventMod();
         if (e.getSource() == remapButton)
             parent.setRemapMode(remapButton.isSelected());
+        parent.queueRender();
     }
 
     public void localize(Locale l) {

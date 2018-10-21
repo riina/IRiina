@@ -182,6 +182,7 @@ public class ArcPropertyPanel extends PropertyPanel {
                 String extraData = evt.getEventExtraData();
                 float time = evt.getTime();
                 host.addOperationForEventDataMod(arcProperty.getParent(), oldData, oldExtraData, oldTime, data, extraData, time);
+                host.queueRender();
             }
         }
 

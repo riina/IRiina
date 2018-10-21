@@ -1884,6 +1884,10 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
             contentPane.repaint();
     }
 
+    public void updateEventTargets(){
+        eventModContainerPanel.updateEventTargets();
+    }
+
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == timer) {
             storedTimeThisFrame = false;

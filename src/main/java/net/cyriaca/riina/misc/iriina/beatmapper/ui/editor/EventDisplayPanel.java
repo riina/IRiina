@@ -431,10 +431,14 @@ public class EventDisplayPanel extends JPanel implements MouseMotionListener, Mo
                     parent.addOperationForCheckpointAdd(checkpoint);
                 }
             } else {
-                if (e.getKeyCode() == KeyEvent.VK_OPEN_BRACKET)
+                if (e.getKeyCode() == KeyEvent.VK_OPEN_BRACKET) {
                     parent.evtBack();
-                else if (e.getKeyCode() == KeyEvent.VK_CLOSE_BRACKET)
+                    parent.updateEventTargets();
+                }
+                else if (e.getKeyCode() == KeyEvent.VK_CLOSE_BRACKET) {
                     parent.evtFwd();
+                    parent.updateEventTargets();
+                }
             }
         }
         parent.queueRender();

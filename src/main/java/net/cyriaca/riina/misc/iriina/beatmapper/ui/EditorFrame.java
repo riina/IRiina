@@ -289,6 +289,7 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
         storedTimeThisFrame = false;
 
         menuBar = new JMenuBar();
+        menuBar.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_F10, 0), "none");
         fileMenu = new JMenu();
         menuBar.add(fileMenu);
         JMenuItem menuItem = new JMenuItem();

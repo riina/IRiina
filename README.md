@@ -1,12 +1,10 @@
 # IRiina
 
-#### *Intralism* map editor
+### *Intralism* map editor
 
-You can download the latest release for Windows and macOS [here](https://github.com/cyriaca-technologies/IRiina/releases/latest)
+#### You can download the latest release for Windows and macOS [here](https://github.com/cyriaca-technologies/IRiina/releases/latest)
 
-(You do not need Java installed on your system to use this)
-
-[All releases](https://github.com/cyriaca-technologies/IRiina/releases)
+(You do not need Java installed on your system to use prebuilt releases)
 
 ![Screenshot](https://i.imgur.com/gKwCEfH.jpg)
 

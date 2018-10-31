@@ -1,6 +1,6 @@
 # IRiina
 
-### *Intralism* map editor
+### Unofficial *Intralism* map editor
 
 #### You can download the latest release for Windows and macOS [here](https://github.com/cyriaca-technologies/IRiina/releases/latest)
 

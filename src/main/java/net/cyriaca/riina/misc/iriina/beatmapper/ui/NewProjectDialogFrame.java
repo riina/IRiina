@@ -326,7 +326,7 @@ public class NewProjectDialogFrame extends JFrame
             contentPane.paintImmediately(contentPane.getVisibleRect());
             // WRITE LEVEL DATA
             try {
-                DataManager.exportMap(mapData, new File(projectFolder, "config.txt").getAbsolutePath(), false);
+                DataManager.exportMap(mapData, new File(projectFolder, "config.txt").getAbsolutePath(), false, false);
             } catch (IOException e1) {
                 JOptionPane
                         .showMessageDialog(

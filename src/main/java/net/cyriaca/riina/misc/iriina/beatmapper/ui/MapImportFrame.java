@@ -383,7 +383,7 @@ public class MapImportFrame extends JFrame implements IViewFrame, LocaleChangeLi
             contentPane.paintImmediately(contentPane.getVisibleRect());
             File configOut = new File(projDir, IRiinaConstants.CONFIG_FILE);
             try {
-                DataManager.exportMap(data, configOut, false);
+                DataManager.exportMap(data, configOut, false, false);
             } catch (IOException e1) {
                 JOptionPane.showMessageDialog(this, l.getKey(KEY_FRAME_MAP_IMPORT_ERR_WRITE_CONFIG_ERR).replaceAll(
                         CP_OUT, Matcher.quoteReplacement(configOut.getAbsolutePath())), l.getKey(KEY_UI_DIALOG_ERROR), JOptionPane.ERROR_MESSAGE);

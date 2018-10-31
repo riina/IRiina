@@ -434,8 +434,7 @@ public class EventDisplayPanel extends JPanel implements MouseMotionListener, Mo
                 if (e.getKeyCode() == KeyEvent.VK_OPEN_BRACKET) {
                     parent.evtBack();
                     parent.updateEventTargets();
-                }
-                else if (e.getKeyCode() == KeyEvent.VK_CLOSE_BRACKET) {
+                } else if (e.getKeyCode() == KeyEvent.VK_CLOSE_BRACKET) {
                     parent.evtFwd();
                     parent.updateEventTargets();
                 }

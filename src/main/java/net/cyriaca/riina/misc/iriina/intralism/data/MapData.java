@@ -957,12 +957,12 @@ public class MapData {
         return checkpointTimingOffset;
     }
 
-    public float getEventTimingOffset() {
-        return eventTimingOffset;
-    }
-
     public void setCheckpointTimingOffset(float checkpointTimingOffset) {
         this.checkpointTimingOffset = checkpointTimingOffset;
+    }
+
+    public float getEventTimingOffset() {
+        return eventTimingOffset;
     }
 
     public void setEventTimingOffset(float eventTimingOffset) {

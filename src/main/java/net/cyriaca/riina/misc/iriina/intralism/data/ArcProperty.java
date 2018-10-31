@@ -65,16 +65,16 @@ public class ArcProperty extends Property {
         return "[" + out + "]";
     }
 
+    public void setDataValue(String dataValue) {
+        setDataValue(Arrays.asList(dataValue.split("\\s*,\\s*")));
+    }
+
     public void setDataValue(List<String> dataValueElements) {
         if (dataValueElements.size() != 1)
             return;
         setMask(getMaskFromDataValue(dataValueElements.get(0)));
         notifyParentOfChange();
 
-    }
-
-    public void setDataValue(String dataValue) {
-        setDataValue(Arrays.asList(dataValue.split("\\s*,\\s*")));
     }
 
     public boolean containsArcFromMask(byte mask) {

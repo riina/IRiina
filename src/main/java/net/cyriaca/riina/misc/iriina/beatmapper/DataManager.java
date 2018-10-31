@@ -39,15 +39,15 @@ public class DataManager {
         return parseMap(new File(inFile));
     }
 
-    public static void exportMap(MapData mapData, File outFile, boolean pure) throws IOException {
+    public static void exportMap(MapData mapData, File outFile, boolean pure, boolean useOffsets) throws IOException {
         JsonWriter writer = Json.createWriter(new FileWriter(outFile));
-        JsonObject obj = MapManager.exportMap(mapData, pure);
+        JsonObject obj = MapManager.exportMap(mapData, pure, useOffsets);
         writer.write(obj);
         writer.close();
     }
 
-    public static void exportMap(MapData mapData, String outFile, boolean pure) throws IOException {
-        exportMap(mapData, new File(outFile), pure);
+    public static void exportMap(MapData mapData, String outFile, boolean pure, boolean useOffsets) throws IOException {
+        exportMap(mapData, new File(outFile), pure, useOffsets);
     }
 
     public static DirectoryCreationResult createDirectory(File path) {

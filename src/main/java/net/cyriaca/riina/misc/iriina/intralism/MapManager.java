@@ -286,9 +286,9 @@ public class MapManager {
      * @param pure Export as a pure Intralism config
      * @return JSON representation of configuration
      */
-    public static JsonObject exportMap(MapData mapData, boolean pure) {
-        float checkpointTimingOffset = mapData.getCheckpointTimingOffset();
-        float eventTimingOffset = mapData.getEventTimingOffset();
+    public static JsonObject exportMap(MapData mapData, boolean pure, boolean useOffsets) {
+        float checkpointTimingOffset = useOffsets ? mapData.getCheckpointTimingOffset() : 0.0f;
+        float eventTimingOffset = useOffsets ? mapData.getEventTimingOffset() : 0.0f;
         JsonBuilderFactory f = Json.createBuilderFactory(null);
         JsonArrayBuilder levelResourcesBuilder = f.createArrayBuilder();
         List<MapResource> mapResources = mapData.getMapResources();

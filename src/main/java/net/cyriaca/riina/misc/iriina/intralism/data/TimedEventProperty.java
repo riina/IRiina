@@ -67,11 +67,6 @@ public class TimedEventProperty extends Property {
         return timingEventId + "," + tick;
     }
 
-    public void setExtraDataValue(String extraDataValue) {
-        if (extraDataValue != null)
-            setExtraDataValue(Arrays.asList(extraDataValue.split("\\s*,\\s*")));
-    }
-
     public void setExtraDataValue(List<String> extraDataValueElements) {
         if (extraDataValueElements == null)
             return;
@@ -90,6 +85,11 @@ public class TimedEventProperty extends Property {
         refresh();
     }
 
+    public void setExtraDataValue(String extraDataValue) {
+        if (extraDataValue != null)
+            setExtraDataValue(Arrays.asList(extraDataValue.split("\\s*,\\s*")));
+    }
+
     public List<String> getExtraDataValueElements() {
         List<String> out = new ArrayList<>(2);
         out.add(Integer.toString(timingEventId));
@@ -103,7 +103,7 @@ public class TimedEventProperty extends Property {
 
     public void setTimingEventId(int value) {
         timingEventId = value;
-        if(timingEventId == NO_TIMING_EVENT)
+        if (timingEventId == NO_TIMING_EVENT)
             return;
         MapEvent event = getParent();
         if (event != null) {
@@ -126,7 +126,7 @@ public class TimedEventProperty extends Property {
 
     public void setTimingEventIdRefreshLight(int value) {
         timingEventId = value;
-        if(timingEventId == NO_TIMING_EVENT)
+        if (timingEventId == NO_TIMING_EVENT)
             return;
         MapEvent event = getParent();
         if (event != null) {

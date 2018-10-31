@@ -77,6 +77,11 @@ public class TimingProperty extends Property {
                 + length;
     }
 
+    public void setDataValue(String dataValue) {
+        if (dataValue != null)
+            setDataValue(Arrays.asList(dataValue.split("\\s*,\\s*")));
+    }
+
     public void setDataValue(List<String> dataValueElements) {
         if (dataValueElements == null)
             return;
@@ -113,11 +118,6 @@ public class TimingProperty extends Property {
             return;
         }
         notifyParentOfChange();
-    }
-
-    public void setDataValue(String dataValue) {
-        if (dataValue != null)
-            setDataValue(Arrays.asList(dataValue.split("\\s*,\\s*")));
     }
 
     public float getRootTime() {

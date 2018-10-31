@@ -932,7 +932,7 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
         eventDisplayPanel.setMessage(l.getKey(KEY_FRAME_EDITOR_SAVING_PROJECT));
         eventDisplayPanel.paintImmediately(eventDisplayPanel.getVisibleRect());
         try {
-            DataManager.exportMap(mapData, configTarget, false);
+            DataManager.exportMap(mapData, configTarget, false, false);
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this,
@@ -944,7 +944,7 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
         String odt = OffsetDateTime.now().format(DateTimeFormatter.ofPattern("yyyy MM dd kk mm ss SSSS"));
         File backupTarget = Paths.get(projectDirectory.getAbsolutePath(), IRiinaConstants.PROJECT_DIR_BACKUP, (odt) + ".ibm").toFile();
         try {
-            DataManager.exportMap(mapData, backupTarget, false);
+            DataManager.exportMap(mapData, backupTarget, false, false);
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this,
@@ -1074,7 +1074,7 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
         eventDisplayPanel.paintImmediately(eventDisplayPanel.getVisibleRect());
         File configTarget = Paths.get(targetDirectory.getAbsolutePath(), IRiinaConstants.CONFIG_FILE).toFile();
         try {
-            DataManager.exportMap(mapData, configTarget, true);
+            DataManager.exportMap(mapData, configTarget, true, true);
         } catch (IOException e) {
             e.printStackTrace();
             showError(l.getKey(KEY_UI_DIALOG_ERROR), l.getKey(KEY_FRAME_EDITOR_SAVE_FAIL_CONFIG).replaceAll(CONFIG_FILE, Matcher.quoteReplacement(configTarget.getAbsolutePath())).replaceAll(EXCEPTION, e.toString()));
@@ -1885,7 +1885,7 @@ public class EditorFrame extends JFrame implements IViewFrame, WindowListener, L
             contentPane.repaint();
     }
 
-    public void updateEventTargets(){
+    public void updateEventTargets() {
         eventModContainerPanel.updateEventTargets();
     }
 
